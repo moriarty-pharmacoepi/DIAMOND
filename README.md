@@ -1,3 +1,5 @@
+[![banner](assets/images/banner.png)](http://introtodeeplearning.com)
+
 # DIAMOND: Developing Innovative Analytical Methods for research ON Deprescribing
 
 ### The aims of this program are to: 
