@@ -1,4 +1,4 @@
-[![banner](assets/images/banner.png)](http://introtodeeplearning.com)
+[![banner](assets/images/RCSI-Royal_Irish-Primary_Logo_CMYK_Jun24)]
 
 # DIAMOND: Developing Innovative Analytical Methods for research ON Deprescribing
 
