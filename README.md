@@ -4,4 +4,4 @@
 
 (i) develop and advance novel methods to research deprescribing by harnessing big data, 
 
-(ii) apply these methods to generate knowle
+(ii) apply these methods to generate knowledge and discoveries that improve our understanding of the benefits and harms of deprescribing. 
