@@ -1,5 +1,4 @@
-![banner](assets/imgs/RCSI-Royal_Irish-Primary_Logo_CMYK_Jun24.png)
-
+[<img src="assets/imgs/RCSI-Royal_Irish-Primary_Logo_CMYK_Jun24.png" width="30" />]
 # DIAMOND: Developing Innovative Analytical Methods for research ON Deprescribing
 
 ### The aims of this program are to: 
