@@ -2,7 +2,7 @@
 
 # DIAMOND: Developing Innovative Analytical Methods for research ON Deprescribing
 
-**Code for generating simulated data and performing statistical analysis on deprescribing**
+**Code for generating simulated data and performing statistical analysis on data related to deprescribing**
 
 Overview
 --------
