@@ -1,3 +1,2 @@
 # a test R script
-
-jjj
+library(usethis)
