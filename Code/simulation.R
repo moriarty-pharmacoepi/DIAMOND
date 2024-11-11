@@ -187,7 +187,7 @@ generate_Q_matrix_from_hazards <- function(hazards) {
 }
 
 # Define hazard rates for a 4-state system (off-diagonal elements)
-hazards <- matrix(c(0,   0.1,   0.05,  0.0001,  # Prescribed
+hazards <- matrix(c(0,   0.01,   0.01,  0.00001,  # Prescribed
                     0.000,   0,   0,  0.001,  # Adverse
                     0, 0.0,   0, 0.002, # Deprescribed
                     0,   0, 0.0,  0), # Death
