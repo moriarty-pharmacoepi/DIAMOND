@@ -199,7 +199,7 @@ Q <- generate_Q_matrix_from_hazards(hazards)
 
 # Parameters: time to simulate, warm-up time
 #time unit: months
-time <- 5
+time <- 5000
 warm_up <- 0
 
 # Run the simulation
@@ -221,7 +221,7 @@ for (i in 1:1000) {
   # Simulate the patient history (assuming simulate_cmc returns an object with a $history attribute)
   out <- simulate_cmc(Q, time, warm_up)
   history <- out$history  # Assuming history is a data frame or matrix
-  history <- rbind(c(1,0),history)
+  #history <- rbind(c(1,0),history)
   # Add a Patient_ID column to the history to identify the patient for each state-time pair
   patient_id <- rep(i, nrow(history))  # Replicate the patient ID for each row in their history
   history_with_id <- cbind(Patient_ID = patient_id, history)  # Combine Patient_ID with history data
