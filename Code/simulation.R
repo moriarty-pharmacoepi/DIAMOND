@@ -17,23 +17,30 @@ library(survminer)
 library(dplyr)
 
 # Initialization of simulation parameters ---------------------------------
-num_patients = 10
+num_patients = 1
 
 # number of continuous random covariates
-n_continuous_covariates = 1
+n_continuous_covariates = 2
 
 # number of binary random covariates
-n_binary_covariates = 2
+n_binary_covariates = 0
 
 # Names of each covariate, continuous first then binary
-covariate_names <- c("Age", "risk1", "risk2")
+covariate_names <- c("Age", "deprescribing")
 
 # Function for generating patient baseline covariates
 generate_random_covariates <- function(covariate_names) {
+  # Example of probabilistic mapping using a logistic function
+    map_to_binary_probabilistic <- function(covariate_value, beta_0 = 0, beta_1 = 1) {
+    # Logistic function for probability of binary outcome = 1
+    prob <- 1 / (1 + exp(-(beta_0 + beta_1 * covariate_value)))
+    
+    # Draw a random number between 0 and 1, and map to 0 or 1
+    return(rbinom(1, 1, prob))  # rbinom draws from a Bernoulli distribution
+  }
   covariate_value<- c(
     runif(1, 18, 35),
-    sample(0:1, 1),
-    sample(0:10, 1))
+    sapply(runif(1, 0, 1), map_to_binary_probabilistic))
   # transpose the dataframe
   covariates = t(data.frame(covariate_value))
   colnames(covariates) <- covariate_names
@@ -143,6 +150,7 @@ simulate_cmc <- function(Q, time, warm_up) {
     next_state <- which.min(sojourn_times)  # Find the index of the minimum sojourn time
     sojourn <- sojourn_times[next_state]  # The sojourn time to the next state
     clock <- clock + sojourn  # Advance the clock by the sojourn time
+    #message('clock is', clock)
     #print(sojourn_times)
     history[nrow(history) + 1,] = c(current_state, sojourn)
     # If the clock is past the warm-up period, record the time spent in the current state
@@ -154,7 +162,7 @@ simulate_cmc <- function(Q, time, warm_up) {
     current_state <- next_state  # Transition to the next state
     
     # if in the absorbing state, finish simulation and append last state
-    if (current_state == 4){
+    if (current_state == 3){
       history[nrow(history) + 1,] = c(current_state, 0)
       break} 
   }
@@ -187,11 +195,10 @@ generate_Q_matrix_from_hazards <- function(hazards) {
 }
 
 # Define hazard rates for a 4-state system (off-diagonal elements)
-hazards <- matrix(c(0,   0.01,   0.01,  0.00001,  # Prescribed
-                    0.000,   0,   0,  0.001,  # Adverse
-                    0, 0.0,   0, 0.002, # Deprescribed
-                    0,   0, 0.0,  0), # Death
-                  nrow = 4, ncol = 4, byrow = TRUE)
+hazards <- matrix(c(0,  0.0, 1,  # Healthy
+                    0.01,  0.0,   0.003,  # Adverse
+                    0,   0.00,     0), # Death
+                  nrow = 3, ncol = 3, byrow = TRUE)
 
 # Generate the Q-matrix based on the hazard rates
 Q <- generate_Q_matrix_from_hazards(hazards)
@@ -199,7 +206,7 @@ Q <- generate_Q_matrix_from_hazards(hazards)
 
 # Parameters: time to simulate, warm-up time
 #time unit: months
-time <- 5
+time <- 1000
 warm_up <- 0
 
 # Run the simulation
@@ -252,14 +259,14 @@ df_history$State <- factor(df_history$State)
 mean_time_in_state_1 <- df_history %>%
   filter(State == 1) %>%
   group_by(Patient_ID) %>%
-  slice(-1) %>%     # Filter for rows where State is 1           # Group by Patient ID
+  slice(-1) %>%     # Filter for rows where State is 1           
   summarise(total_time_in_state_1 = mean(Time_Spent, na.rm = TRUE)) # Calculate the mean
 
 # Print the result
 print('mean sojourn empirically calculated:')
 print(mean(mean_time_in_state_1$total_time_in_state_1))
-print('mean sojourn predicted from Q:')
-print(-1/Q[1,1])
+#print('mean sojourn predicted from Q:')
+#print(-1/Q[1,1])
 
 # Assuming df_history is the data frame that contains the simulation history with Patient_ID, State, and Time_Spent
 
@@ -283,22 +290,23 @@ steady_state_123 <- steady_state_123 / sum(steady_state_123)  # Normalize so tha
 # Create a Surv object
 #We will set event = 1 for all transitions (you can modify this based on actual exit criteria)
 
-df_history$Event <- ifelse(df_history$State == 4, 1, 0)
+df_history$Event <- ifelse(df_history$State == 3, 1, 0)
 
 df_history <- df_history %>%
   group_by(Patient_ID) %>%
   mutate(Group = if_else(sum(State == 3) > 0, 1, 0)) %>%
   ungroup()
-df_history$Group <- factor(df_history$Group, levels = c(0, 1), labels = c("Continuing", "Deprescribed"))
-print(df_history,n=200)
+#df_history$Group <- factor(df_history$Group, levels = c(0, 1), labels = c("Continuing", "Deprescribed"))
+
 
 df_history <- df_history %>%
   group_by(Patient_ID) %>%
   mutate(time_to_death = sum(Time_Spent))%>%
   ungroup()
+#print(df_history,n=300)
 
 #df_history$Group <- factor(df_history$Group, levels = c(0, 1), labels = c("No State 3", "State 3 Entered"))
-#print(df_history,n=200)
+
 
 
 # Create a survival object
@@ -307,17 +315,17 @@ surv_obj <- Surv(time = df_history$time_to_death, event = df_history$Event)
 # Inspect the survival object
 surv_obj
 
-fit <- survfit(surv_obj ~ Group, data = df_history)
+fit <- survfit(surv_obj ~ 1, data = df_history)
 
 # Print the survival curve summary
-print(fit)
+#print(fit,rmean= 2000)
 
 # Plot the Kaplan-Meier curves by Group
-plot(fit, main = "Survival Curves by Group", xlab = "Time", ylab = "Survival Probability",
-     col = c("blue", "red"), lty = 1:2)  # Different colors and line types for the two groups
-
-# Add a legend to the plot
-legend("topright", legend = c("Continuing", "Deprescribed"), col = c("blue", "red"), lty = 1:2)
+ggsurv <- ggsurvplot(fit,
+                     risk.table = F,
+                     xlab = "Months", 
+                     ylab = "Survival")
+print(ggsurv)
 
 
 df_history2 <- df_history %>%
@@ -326,13 +334,25 @@ df_history2 <- df_history %>%
   ungroup()
 
 # Plot individual state trajectories for each patient
+state_labels <- c("1" = "Prescribed", "2" = "Adverse event", "3" = "Dead")
+
 h<-ggplot(df_history2, aes(x = Cumulative_Time, y = State, group = Patient_ID, color = Patient_ID)) +
-  geom_step(direction = "vh") +  # Use a step plot to show state changes over time
+  geom_step(direction = "vh",size = 1.2, alpha = 0.5) +  # Use a step plot to show state changes over time
   labs(title = "State Transitions for Each Patient",
-       x = "Time (Days)",
+       x = "Time (Months)",
        y = "State",
        color = "Patient") +
+  scale_y_discrete(labels = state_labels)+
   theme_minimal() +
-  theme(legend.position = "none")  #
+  theme(legend.position = "right") +
+  theme(
+    panel.border = element_rect(colour = "black", fill=NA, size=1)  # Add a black border around the plot
+  )#
 #print(h)
-#print(history_list)
+
+#ggsave(
+#  "ggtest.png",
+#  width = 4.25,
+#  height = 3.25,
+#  dpi = 300
+#)
