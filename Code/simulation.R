@@ -11,36 +11,39 @@
 library(usethis)
 library("tidyverse")
 library(ggplot2)
-library(msm)
 library(survival)
 library(survminer)
 library(dplyr)
 library(patchwork)
+#library('plot.matrix')
+library("lattice")                       
+library("ggplotify")    
+
 # Initialization of simulation parameters ---------------------------------
-num_patients = 30
+num_patients = 50
 
 # number of continuous random covariates
-n_continuous_covariates = 2
+n_continuous_covariates = 1
 
 # number of binary random covariates
 n_binary_covariates = 0
 
 # Names of each covariate, continuous first then binary
-covariate_names <- c("Age", "deprescribing")
+covariate_names <- c("Age","Sex")
+
+
+
+nsim = 1
+betaHat <- rep(NA, nsim)
+
+for (sim in 1:nsim){
+  #print(sim)
 
 # Function for generating patient baseline covariates
 generate_random_covariates <- function(covariate_names) {
-  # Example of probabilistic mapping using a logistic function
-  map_to_binary_probabilistic <- function(covariate_value, beta_0 = 0, beta_1 = 1) {
-    # Logistic function for probability of binary outcome = 1
-    prob <- 1 / (1 + exp(-(beta_0 + beta_1 * covariate_value)))
-    prob<-0.5
-    # Draw a random number between 0 and 1, and map to 0 or 1
-    return(rbinom(1, 1, prob))  # rbinom draws from a Bernoulli distribution
-  }
-  covariate_value<- c(
-    runif(1, 18, 35),
-    sapply(runif(1, 0, 1), map_to_binary_probabilistic))
+
+  covariate_value<- c(runif(1,18,60),
+                      rbinom(1,1,0.5))
   # transpose the dataframe
   covariates = t(data.frame(covariate_value))
   # add column names to dataframe
@@ -56,14 +59,12 @@ new_Patient <- function(id) {
 }
 
 # Patient population generation
-start.time <- Sys.time()
+
 Patient_pop <- list()
 for (x in 1:num_patients) {
   Patient_pop[[x]] <- new_Patient(x)  # Assign a unique ID to each patient
 }
-end.time <- Sys.time()
-time.taken <- end.time - start.time
-time.taken
+
 
 
 #print(Patient_pop[1])
@@ -73,84 +74,63 @@ df_patient_covariates <- data.frame(matrix(unlist(Patient_pop), nrow=length(Pati
 colnames(df_patient_covariates) <- c('id',covariate_names)
 
 
-
-#generate_event_history(Patient_pop[1])
-#
-#for (x in 1:num_patients) {
-#  Patient_pop[[x]] <- generate_event_history(Patient_pop[x])  
-#}
-
-
-sample_from_rate <- function(rate) {
-  if (rate == 0) {
-    return(Inf)# Return Inf if rate is 0 (no transition)
-  }
-  if (rate > 0) {
-    return(rexp(1, rate))# Sample from an exponential distribution for positive rates
-  }
-  # If the rate is negative, we return Inf 
-  # because we're not "sampling" from a negative rate in this context.
-  return(Inf)
-}
-
 # Function to compute cumulative hazard and sample sojourn time
 compute_cumulative_hazard <- function(hazard_params,  covariates_fn) {
   # Define the total hazard function that sums individual cause-specific hazards
   total_hazard <- function(t) {
     total_hazard_value <- 0
-    total_hazard_value <- rep(0, length(t)) # new
+    #total_hazard_value <- rep(0, length(t)) # new
     # Loop over the hazard parameters to sum the individual hazards
     for (i in 1:length(hazard_params)) {
-      #message('i is:',i)
-      hazard <- hazard_params[[i]]  # Access the i-th hazard transition
+      hazard <- hazard_params[[i]]  # Access the i-th cause-specific hazard
       hazard_type <- hazard$type  # Extract hazard type for the transition
-      #print(hazard_type)
-      
       covariates_at_t <- covariates_fn(t)  # Get the covariates for this time
+      #print(dim(covariates_at_t))
+      effect_function <- function(t) { (t) }  # linear time effect
       
-      # Calculate covariate effect: exp(covariates * coefficients)
-      covariate_effect <- exp(sum(covariates_at_t * hazard$effects))  # Apply covariate effect
+      beta_effect <- hazard$effects  # Baseline effect
+      gamma_effect <- hazard$time_effects
       
+      #print(beta_effect)
+      
+      time_effect_values <- t((beta_effect) + t(outer(effect_function(t),gamma_effect)))
+      #print((time_effect_values))
+      # unexponentiated covariate value (vector of t)
+      covariate_effect <- rowSums(covariates_at_t * time_effect_values)
+      #print((covariate_effect))
+      #print(length(covariate_effect))
       if (hazard_type == "exp") {
-        #print('hazard is exp')
         # Exponential hazard function: constant rate
-        total_hazard_value <- total_hazard_value + rep(hazard$rate*covariate_effect, length(t))
+        total_hazard_value <- total_hazard_value + rep(hazard$rate, length(t))
         #print(total_hazard_value)
       } 
       else{
-        #print('hazard is weibull')
         # Weibull hazard function: (shape / scale) * (t / scale)^(shape - 1)
         if (hazard$scale > 0) {
-          #print('doing this')
           baseline_hazard<-(hazard$shape / hazard$scale) * (t / hazard$scale)^(hazard$shape - 1)
-          total_hazard_value <- total_hazard_value + baseline_hazard*covariate_effect
-            
+          total_hazard_value <- total_hazard_value + baseline_hazard
         }else{total_hazard_value<- total_hazard_value}
         # No need to add 0 explicitly, just skip if scale == 0
       }
     } 
-    #print(total_hazard_value)
-    return(total_hazard_value)
+    return(total_hazard_value*exp(covariate_effect))
   }
   
-  #print(total_hazard(100))
   # Cumulative hazard function is the integral of the total hazard
   H <- function(t) {
     # Integrate total hazard to get cumulative hazard
-    result <- integrate(total_hazard, lower = 0, upper = t)
+    result <- integrate(total_hazard, lower = 0, upper = t,subdivisions=2000)
     return(result$value)
   }
-  
   # Sample sojourn time using inversion sampling
   u <- runif(1)  # Uniform random sample [0, 1]
   target_H <- -log(u)  # Target cumulative hazard (using inversion sampling)
   
   # Solve for T such that H(T) = target_H using root-finding (uniroot)
   find_T <- function(t) H(t) - target_H
-  sojourn_time <- uniroot(find_T, interval = c(0, 100))$root
+  sojourn_time <- uniroot(find_T, interval = c(0, 100),extendInt ="upX")$root
   return(sojourn_time)  # Return the sampled sojourn time
 }
-
 
 
 # Function to compute the all-cause hazard for a given state
@@ -174,36 +154,60 @@ total_hazard <- function(hazard_params, time) {
 
 
 # Function to get the cause-specific hazard for a given state at a given time
-get_cause_specific_hazard <- function(state, time, hazard_params) {
+get_cause_specific_hazard <- function(state, time, hazard_params, covariates_fn) {
   # Extract the list of transitions for the given state
   state_hazards <- hazard_params[[state]]
+  
   # Initialize an empty vector to store cause-specific hazard values
   cause_specific_hazards <- numeric(length(state_hazards))
+  
   # Loop over each cause (transition) for the state and calculate the hazard
   for (i in 1:length(state_hazards)) {
     h <- state_hazards[[i]]
+    covariates_at_t <- covariates_fn(time)  # Get the covariates for this time
+    #print(covariates_at_t)
+    
+    # Define effect function (linear time effect as an example)
+    effect_function <- function(t) { (t) }  # This could be extended to other time-varying effects (e.g., log(t))
+    
+    # Extract the baseline effect (beta) and time-varying effect (gamma)
+    beta_effect <- h$effects  # Baseline effects (coefficients)
+    gamma_effect <- h$time_effects  # Time-varying effects (coefficients)
+    
+    # Calculate the time-varying effect: beta + gamma * f(t)
+    time_effect_values <- beta_effect + effect_function(time)*gamma_effect
+    
+    # Unexponentiated covariate effect (the product of covariates and time-varying effect values)
+    covariate_effect <- exp(sum(covariates_at_t * time_effect_values))
+    
+    # Calculate the cause-specific hazard based on hazard type
     if (h$type == "exp") {
-      # For exponential, the hazard is constant over time
-      cause_specific_hazards[i] <- h$rate
+      # For exponential hazard, the hazard is constant over time
+      cause_specific_hazards[i] <- h$rate * covariate_effect
     } else if (h$type == "weibull") {
       # For Weibull, the hazard depends on time
-      if (h$scale>0){
-      cause_specific_hazards[i] <- (h$shape / h$scale) * (time / h$scale)^(h$shape - 1)}
-      else {cause_specific_hazards[i] <- 0 }
+      if (h$scale > 0) {
+        baseline_hazard <- (h$shape / h$scale) * (time / h$scale)^(h$shape - 1)
+        cause_specific_hazards[i] <- baseline_hazard * covariate_effect
+      } else {
+        cause_specific_hazards[i] <- 0  # No hazard if scale is zero
+      }
     }
   }
+  # Return the vector of cause-specific hazard values
   return(cause_specific_hazards)
 }
 
 
 
 
-simulate_cmc <- function(time, warm_up = 0, hazard_params,covariates) {
-  state_space <- 1:3  # State space is indexed from 1 to 3
+# Defining CMC function ---------------------------------------------------
+simulate_cmc <- function(time, warm_up = 0, hazard_params,baseline_covariates) {
+  state_space <- 1:5  # State space is indexed from 1 to 3
   time_spent <- rep(0, length(state_space))  # Vector to keep track of time spent in each state
   clock <- 0  # The simulation clock
   current_state <- 1  # Initial state (1-based indexing in R)
-  history <- data.frame(matrix(ncol = 2, nrow = 0))
+  history <- data.frame(matrix(ncol = 4, nrow = 0))
   colnames(history) <- c('state', 'time_spent')
   
   while (clock < time) {
@@ -211,23 +215,31 @@ simulate_cmc <- function(time, warm_up = 0, hazard_params,covariates) {
     state_hazards <- hazard_params[[current_state]]
     # Sample the sojourn time using the cumulative hazard
     
-    # Define a simple time-dependent covariate function
-    
     covariates_fn <- function(t) {
-      z1 <- 0*covariates[1] + 0.0 * t  # e.g., Treatment effect increases with time
-      z2 <- covariates[2]       # e.g., Deprescribed
-      return(c(z1, z2))    # Return a vector of covariates at time t
+      fn <- Vectorize(function(t) {
+        z1 <- baseline_covariates[1]# + t  # Adjust age by t
+        z2 <- baseline_covariates[2]
+        c(z1, z2) # Return a vector for each t
+      }, vectorize.args = "t")
+      
+      result <- fn(t)
+      if (is.vector(t)) {
+        return(t(result)) # Transpose for vector input
+      }
+      return(result) # No transpose for scalar input
     }
     
-    sojourn_time <- compute_cumulative_hazard(state_hazards, covariates_fn)
-    #print(state_hazards)
     
+    sojourn_time <- compute_cumulative_hazard(state_hazards, covariates_fn)
+    #print(i)
     # Update time spent in the current state
     time_spent[current_state] <- time_spent[current_state] + sojourn_time
     
     # Record history (if past warm-up period)
     if (clock >= warm_up) {
-      history <- rbind(history, data.frame(state = current_state, time_spent = sojourn_time))
+      history <- rbind(history, data.frame(state = current_state, time_spent = sojourn_time,covs = covariates_fn(clock)))
+      #history <- cbind(history, covs = covariates_fn(time))
+      #print(history)
     }
     # Update the simulation clock
     clock <- clock + sojourn_time
@@ -235,23 +247,26 @@ simulate_cmc <- function(time, warm_up = 0, hazard_params,covariates) {
     # Determine possible states to transition to
     possible_states <- which(Q[current_state, ] != 0)
     possible_states <- possible_states[possible_states != current_state]
-    
+    #message('possible states:',possible_states)
     total_hazard_current_state <- total_hazard(state_hazards, clock)
     
     # Compute the cause-specific hazards for each possible state
-    cause_specific_hazards <- get_cause_specific_hazard(current_state,time,hazard_params)
-    #print(possible_states)
+    cause_specific_hazards <- get_cause_specific_hazard(current_state,time,hazard_params,covariates_fn)
+
+    # Calculate vector of probabilities using relative hazard
     transition_probs = cause_specific_hazards/sum(cause_specific_hazards)
-    #message('tprobs:',transition_probs)
+    #message('tprobs:',round(transition_probs))
     #message('possible states:',possible_states)
     
     if (length(possible_states)==1){
       current_state <- possible_states
     }else {
+    # Next state is based on a multinomial draw  
     current_state <- sample(possible_states, size = 1, prob = transition_probs)}
-    #message('current state:', current_state)
-    if (current_state == 3){
-      history[nrow(history) + 1,] = c(current_state, 0)
+
+    # If dead, stop simulation
+    if (current_state == 5){
+      history[nrow(history) + 1,] = c(current_state, 0,covariates_fn(clock))
       break}
   }
   return(list(time_spent = time_spent, history = history))
@@ -280,41 +295,63 @@ generate_Q_matrix_from_hazards <- function(hazards) {
 }
 
 # Define hazard rates for a 4-state system (off-diagonal elements)
-hazards <- matrix(c(0,  0.1, 0.1,  # Healthy
-                    1,  0.0,   0.1,  # Adverse
-                    0.0,   0.00,     0), # Death
-                  nrow = 3, ncol = 3, byrow = TRUE)
+hazards <- matrix(c(0,  0.1, 0.01, 0.001, 0.1,   # Healthy - prescribed
+                    0.1,  0.0, 0.1,   0, 0,     # Adverse minor
+                    0,    0,   0,   1, 0.1,     # Adverse major
+                    0,    0,   0,   0, 0.1,     # Deprescribed
+                    0,    0,   0,   0, 0),      # Dead
+                  nrow = 5, ncol = 5, byrow = TRUE)
 
 # Define hazard parameters for each state
 hazard_params <- list(
   list(  # State 1
     list(type = "exp",                # Transition to state 2
          rate = hazards[1,2],
-         effects = c(0, 0)),        
+         effects = c(0,0),
+         time_effects = c(0,0)),        
     list(type = "weibull",            # Transition to state 3
          shape = 1, 
          scale = 1/hazards[1,3],
-         effects = c(0, 0))
+         effects = c(0,0),
+         time_effects = c(0,0)),
+    list(type = "weibull",            # Transition to state 4
+         shape = 1, 
+         scale = 1/hazards[1,4],
+         effects = c(0,0),
+         time_effects = c(0,0)),
+    list(type = "weibull",            # Transition to state 5
+         shape = 1, 
+         scale = 1/hazards[1,5],
+         effects = c(0,0.3),
+         time_effects = c(0,0))
   ),
   list(  # State 2
     list(type = "weibull",         # Transition to state 1
          shape = 1,
          scale = 1/hazards[2,1],
-         effects = c(0.0, 0)),  
+         effects = c(0.0, 0),
+         time_effects = c(0,0)),  
     list(type = "exp",             # Transition to state 3
          rate = hazards[2,3],
-         effects = c(0, 0))      
+         effects = c(0,0),
+         time_effects = c(0,0))      
   ),
   list(  # State 3
+    list(type = "exp",             # Transition to state 4
+         rate = hazards[3,4],
+         effects = c(0,0),
+         time_effects = c(0,0)),
+    list(type = "exp",             # Transition to state 5
+              rate = hazards[3,5],
+              effects = c(0,0),
+              time_effects = c(0,0))  
+  ),
+  list(  # State 4
     list(type = "exp",             # Transition to state 1
-         rate = hazards[3,1],
-         effects = c(0, 0)),  
-    list(type = "weibull",         # Transition to state 2
-         shape = 1,
-         scale = 1/hazards[3,2],
-         effects = c(0, 0))  
-  )
-)
+         rate = hazards[4,5],
+         effects = c(0,0),
+         time_effects = c(0,0))
+))
 
 
 # Generate the Q-matrix based on the hazard rates
@@ -326,55 +363,48 @@ Q <- generate_Q_matrix_from_hazards(hazards)
 time <- 100
 warm_up <- 0
 
-# Run the simulation
-#out <- simulate_cmc(Q, time, warm_up,hazard_params)
-#steady_state_probabilities <-out$pi
-#history <- out$history
-# Print the result
-#print((steady_state_probabilities))
 
 
 # Initialize an empty list to store the full histories of states and times for each patient
 history_list <- list()
-
 # Initialize an empty vector to store the time spent in all states for each patient
 history_time_spent <- list()
 
-# Simulating histories for 100 patients
+
+# Main simulation loop ----------------------------------------------------
+#start.time <- Sys.time()
+
+# Simulating histories for many patients
 for (i in 1:num_patients) {
-  # Simulate the patient history (assuming simulate_cmc returns an object with a $history attribute)
-  covariates <- unlist(Patient_pop[[i]]$init_covariates)[1:2]
-  #print(covariates)
-  out <- simulate_cmc(time, warm_up,hazard_params,covariates)
+  # get initial covariates
+  baseline_covariates <- unlist(Patient_pop[[i]]$init_covariates)
+  #print(baseline_covariates)
+  out <- simulate_cmc(time, warm_up, hazard_params, baseline_covariates)
   history <- out$history  # Assuming history is a data frame or matrix
-  history <- rbind(c(1,0),history)
-  #print(history)
+  history <- rbind(c(1,0), history)
   # Add a Patient_ID column to the history to identify the patient for each state-time pair
   patient_id <- rep(i, nrow(history))  # Replicate the patient ID for each row in their history
   history_with_id <- cbind(Patient_ID = patient_id, history)  # Combine Patient_ID with history data
-  covariate_extend<-matrix(rep(covariates, times = nrow(history)), nrow = nrow(history), byrow = TRUE)
-  #print(covariate_extend)
-  history_with_id <- cbind(history_with_id,covariate_extend)
-  #print(history_with_id)
+  #covariate_extend<-matrix(rep(baseline_covariates, times = nrow(history)), nrow = nrow(history), byrow = TRUE)
+  #history_with_id <- cbind(history_with_id,covariate_extend)
   # Store the entire history for patient i (with Patient_ID)
   history_list[[i]] <- history_with_id
-  
   # Store time spent in all states for patient i
   # Assuming the second column of history contains the time spent in each state
   history_time_spent[[i]] <- history[, 2]  # Extracting the time spent in each state for patient i
 }
+#end.time <- Sys.time()
+#time.taken <- end.time - start.time
+#print(time.taken)
 
 # Flatten the list into a single data frame
 flat_history <- do.call(rbind, history_list)
-
 # Assign column names (adjust according to the structure of your `history`)
-colnames(flat_history) <- c("Patient_ID", "State", "Time_Spent","Age","Deprescribed")
-
+colnames(flat_history) <- c("Patient_ID", "State", "Time_Spent",(covariate_names))
 # Convert the flattened history into a data frame
 df_history <- as.data.frame(flat_history)
 
-# Inspect the first few rows of the flattened data frame
-#print(head(df_history))
+
 
 # Convert Patient_ID and State to factors
 df_history$Patient_ID <- factor(df_history$Patient_ID)
@@ -393,63 +423,37 @@ mean_time_in_state_1 <- df_history %>%
 #print('mean sojourn predicted from Q:')
 #print(-1/Q[1,1])
 
-# Assuming df_history is the data frame that contains the simulation history with Patient_ID, State, and Time_Spent
 
 
-hazards_123 <- hazards[-4, -4]
-# Adjust diagonal elements to ensure row sums are zero (Hazard matrix definition)
-for(i in 1:nrow(hazards_123)) {
-  hazards_123[i, i] <- -sum(hazards_123[i, -i])
-}
-# Solve the system pi Q = 0
-library(MASS)  # For ginv (generalized inverse)
-null_space_123 <- ginv(t(hazards_123))  # Generalized inverse to find the null space
-# Find steady-state probabilities (null space corresponds to pi Q = 0)
-steady_state_123 <- null_space_123[, 1]  # First column of the null space
-steady_state_123 <- steady_state_123 / sum(steady_state_123)  # Normalize so that the sum is 1
-# Output the steady-state distribution for states 1, 2, and 3
-#print(steady_state_123)
-
-
+# Analysis ----------------------------------------------------------------
 
 # Create a Surv object
-#We will set event = 1 for all transitions (you can modify this based on actual exit criteria)
-df_history$Event <- ifelse(df_history$State == 3, 1, 0)
-
-df_history <- df_history %>%
-  group_by(Patient_ID) %>%
-  mutate(Group = if_else(Deprescribed > 0, 1, 0)) %>%
-  ungroup()
-df_history$Group <- factor(df_history$Group, levels = c(0, 1), labels = c("Continuing", "Deprescribed"))
+#We will set event = 5 for all transitions (you can modify this based on actual exit criteria)
+df_history$Event <- ifelse(df_history$State == 5, 1, 0)
 
 
 df_history <- df_history %>%
   group_by(Patient_ID) %>%
   mutate(time_to_death = sum(Time_Spent))%>%
   ungroup()
-print(df_history,n=30)
+#print(df_history,n=30)
 
-#df_history$Group <- factor(df_history$Group, levels = c(0, 1), labels = c("No State 3", "State 3 Entered"))
+df_history$Sex <- factor(df_history$Sex, levels = c(0, 1))
 
 survival_data <- df_history %>%
-  group_by(Patient_ID, Group, Age, Deprescribed) %>%
+  group_by(Patient_ID) %>%
   summarize(
     Total_Time = sum(Time_Spent),
     Event = max(Event)  # Assumes Event = 1 if patient experienced the event
   ) %>%
   ungroup()
-
 # Create a survival object
 surv_obj <- Surv(time = survival_data$Total_Time, event = survival_data$Event)
-
 # Inspect the survival object
 surv_obj
-
 fit <- survfit(surv_obj ~ 1, data = survival_data)
-
 # Print the survival curve summary
-print(fit,rmean= 2000)
-par(mfrow = c(1, 2))
+#print(fit,rmean= 2000)
 # Plot the Kaplan-Meier curves by Group
 ggsurv <- ggsurvplot(fit,
                      risk.table = F,
@@ -463,7 +467,10 @@ ggsurv <- ggsurvplot(fit,
 df_history2 <- df_history %>%
   group_by(Patient_ID) %>%
   mutate(Cumulative_Time = cumsum(Time_Spent)) %>%
-  ungroup()
+  mutate(next_time = lag(Cumulative_Time)) %>%  # Get the next time for each state transition
+  filter(!is.na(next_time))
+
+
 
 # Plot individual state trajectories for each patient
 state_labels <- c("1" = "Prescribed", "2" = "Adverse event", "3" = "Dead")
@@ -489,40 +496,76 @@ h<-ggplot(df_history2, aes(x = Cumulative_Time, y = State, group = Patient_ID, c
 #  dpi = 300
 #)
 
-data_sorted <- df_history2 %>%
-  group_by(Patient_ID) %>% # Ensure the states are in the correct order
-  mutate(cumulative_time = cumsum(Time_Spent),  # Add cumulative time for each patient
-         next_time = lag(cumulative_time)) %>%  # Get the next time for each state transition
-  filter(!is.na(next_time))  # Remove the last row for each patient, as it has no next time
 
+
+
+df_death <- df_history2 %>% filter(Event == 1)  # Keep only death events
+fit_cox <- coxph(Surv(time_to_death, Event) ~ Sex, data=df_death)
+betaHat[sim]<- fit_cox$coef
+}
+#hist(betaHat, main = "Distribution of Estimated Beta", xlab = "Estimated Beta", breaks = 30)
+#print("bias in estimate:")
+#print(mean(betaHat)-0.3)
 
 # Plot with State 3 handled as a separate entry under the same 'State' legend
-h <- ggplot(data_sorted, aes(x = cumulative_time, xend = next_time, y = Patient_ID, yend = Patient_ID, color = State)) +
+h <- ggplot(df_history2, aes(x = Cumulative_Time, xend = next_time, y = Patient_ID, yend = Patient_ID, color = State)) +
   # Plot colored segments for states where Time_Spent > 0 (excluding State 3)
-  geom_segment(data = filter(data_sorted, State != 3 & Time_Spent > 0), size = 2.5) +  
+  geom_segment(data = filter(df_history2, State != 5 & Time_Spent > 0), size = 2.5) +  
   # Add symbol for State 3 when Time_Spent = 0 (plotting State 3 as a triangle symbol)
-  geom_point(data = filter(data_sorted, State == 3 & Time_Spent == 0),  
-             aes(x = cumulative_time, y = Patient_ID, shape = as.factor(State)),
+  geom_point(data = filter(df_history2, State == 5 & Time_Spent == 0),  
+             aes(x = Cumulative_Time, y = Patient_ID, shape = as.factor(State)),
              size = 2, color = "black") +
+  
+  geom_point(data = filter(df_history2, State == 5 & Time_Spent == 0),  
+             aes(x = Cumulative_Time, y = Patient_ID, shape = as.factor(State)),
+             size = 2, color = "cyan")+
+  
+  
+  
+   #geom_vline(xintercept=20)+
   # Set color for State 1 and State 2
-  scale_color_manual(values = c("red", "green"), 
-                     breaks = c("1", "2"),  # Explicitly define which states should appear in the color legend
-                     labels = c("Prescribed", "Adverse event")) +  # Labels for the color legend
+  scale_color_manual(values = c("red", "green","blue","orange"), 
+                     breaks = c("1", "2","3","4"),  # Explicitly define which states should appear in the color legend
+                     labels = c("Prescribed", "Adverse event-minor","Adverse event-major","Deprescribed")) +  # Labels for the color legend
   # Set shape for State 3 (triangle shape 17) and include in the legend
-  scale_shape_manual(values = c("3" = 16),labels='dead') +  # Assign shape 17 (triangle) for State 3
+  scale_shape_manual(values = c("5" = 16),labels='dead') +  # Assign shape 17 (triangle) for State 3
   labs(title = "Population State Transitions Over Time",
        x = "Time (months)",
        y = "Patient ID") +  # Removed shape legend title
   # Combine color and shape legends under a single title "State"
   guides(  # Title for the color legend (States 1 and 2)
-    shape = guide_legend(title = "")   # Title for the shape legend (State 3)
+    shape = guide_legend(title = ""),color = guide_legend(nrow = 2, byrow = TRUE)   # Title for the shape legend (State 3)
   ) +
   theme_minimal() +
-  theme(legend.position = "top",legend.background = element_rect(fill = "lightblue", # Background
-                                                                 colour = 1))
+  theme(legend.position = "top")
 
 
-all_plots<-h+ggsurv$plot
+
+par(mfrow = c(1, 2))
+par(mar=c(4.1, 4.1, 4.1, 4.1)) # adapt margins
+#class(Q)
+#k<-plot(Q,breaks=10,digits=4,asp=TRUE,col=viridis)
+
+q_df <-Q
+rownames(q_df) <- c("Prescribed",
+                    "Adverse event - minor",
+                    "Adverse event - major",
+                    "Deprescribed",
+                    "Dead")
+library(gplots) # not to be confused with `ggplot2`, which is a very different package
+color_palette <- bluered(100)
+max_abs <- max(abs(q_df))
+brk <- do.breaks(c(-max_abs, max_abs), 15)
+q_df<-q_df[nrow(q_df):1, ]
+my_lattice<-levelplot(t(q_df),col.regions = color_palette,at = brk,
+                      colorkey = list(col = color_palette, 
+                                      at = brk))
+all_plots<-h#+ggsurv$plot
 print(all_plots)
+#p<-as.ggplot(h)+
+p<-  as.ggplot(my_lattice)
+  #ggsurv$plot
+#print(p)
+
 
 
