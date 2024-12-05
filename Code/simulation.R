@@ -20,7 +20,7 @@ library("lattice")
 library("ggplotify")    
 
 # Initialization of simulation parameters ---------------------------------
-num_patients = 50
+num_patients = 2
 
 # number of continuous random covariates
 n_continuous_covariates = 1
@@ -59,7 +59,6 @@ new_Patient <- function(id) {
 }
 
 # Patient population generation
-
 Patient_pop <- list()
 for (x in 1:num_patients) {
   Patient_pop[[x]] <- new_Patient(x)  # Assign a unique ID to each patient
@@ -203,35 +202,40 @@ get_cause_specific_hazard <- function(state, time, hazard_params, covariates_fn)
 
 # Defining CMC function ---------------------------------------------------
 simulate_cmc <- function(time, warm_up = 0, hazard_params,baseline_covariates) {
-  state_space <- 1:5  # State space is indexed from 1 to 3
-  time_spent <- rep(0, length(state_space))  # Vector to keep track of time spent in each state
-  clock <- 0  # The simulation clock
-  current_state <- 1  # Initial state (1-based indexing in R)
+  # State space is indexed from 1 
+  state_space <- 1:5  
+  # Vector to keep track of time spent in each state
+  time_spent <- rep(0, length(state_space))  
+  # The simulation clock
+  clock <- 0  
+  # Initial state (1-based indexing in R)
+  current_state <- 1  
   history <- data.frame(matrix(ncol = 4, nrow = 0))
   colnames(history) <- c('state', 'time_spent')
   
   while (clock < time) {
     # Get hazard parameters for all transitions from the current state
     state_hazards <- hazard_params[[current_state]]
-    # Sample the sojourn time using the cumulative hazard
     
+    # A deterministic function of time for simulating covariate evolution
     covariates_fn <- function(t) {
       fn <- Vectorize(function(t) {
-        z1 <- baseline_covariates[1]# + t  # Adjust age by t
+        z1 <- baseline_covariates[1] + t/12  # age is in years but sim-time is months
         z2 <- baseline_covariates[2]
         c(z1, z2) # Return a vector for each t
       }, vectorize.args = "t")
       
       result <- fn(t)
       if (is.vector(t)) {
-        return(t(result)) # Transpose for vector input
+        # Transpose for vector input
+        return(t(result)) 
       }
-      return(result) # No transpose for scalar input
+      # No transpose for scalar input
+      return(result) 
     }
     
-    
+    # Sample the sojourn time using the cumulative hazard
     sojourn_time <- compute_cumulative_hazard(state_hazards, covariates_fn)
-    #print(i)
     # Update time spent in the current state
     time_spent[current_state] <- time_spent[current_state] + sojourn_time
     
@@ -243,21 +247,18 @@ simulate_cmc <- function(time, warm_up = 0, hazard_params,baseline_covariates) {
     }
     # Update the simulation clock
     clock <- clock + sojourn_time
-    #print(clock)
     # Determine possible states to transition to
     possible_states <- which(Q[current_state, ] != 0)
     possible_states <- possible_states[possible_states != current_state]
     #message('possible states:',possible_states)
     total_hazard_current_state <- total_hazard(state_hazards, clock)
-    
     # Compute the cause-specific hazards for each possible state
     cause_specific_hazards <- get_cause_specific_hazard(current_state,time,hazard_params,covariates_fn)
 
     # Calculate vector of probabilities using relative hazard
     transition_probs = cause_specific_hazards/sum(cause_specific_hazards)
-    #message('tprobs:',round(transition_probs))
-    #message('possible states:',possible_states)
     
+    # If only one state possible, thats next with probability 1
     if (length(possible_states)==1){
       current_state <- possible_states
     }else {
@@ -266,7 +267,7 @@ simulate_cmc <- function(time, warm_up = 0, hazard_params,baseline_covariates) {
 
     # If dead, stop simulation
     if (current_state == 5){
-      history[nrow(history) + 1,] = c(current_state, 0,covariates_fn(clock))
+      history[nrow(history) + 1,] = c(current_state, 0, covariates_fn(clock))
       break}
   }
   return(list(time_spent = time_spent, history = history))
@@ -370,9 +371,7 @@ history_list <- list()
 # Initialize an empty vector to store the time spent in all states for each patient
 history_time_spent <- list()
 
-
 # Main simulation loop ----------------------------------------------------
-#start.time <- Sys.time()
 
 # Simulating histories for many patients
 for (i in 1:num_patients) {
@@ -380,11 +379,13 @@ for (i in 1:num_patients) {
   baseline_covariates <- unlist(Patient_pop[[i]]$init_covariates)
   #print(baseline_covariates)
   out <- simulate_cmc(time, warm_up, hazard_params, baseline_covariates)
-  history <- out$history  # Assuming history is a data frame or matrix
+  history <- out$history  
   history <- rbind(c(1,0), history)
   # Add a Patient_ID column to the history to identify the patient for each state-time pair
-  patient_id <- rep(i, nrow(history))  # Replicate the patient ID for each row in their history
-  history_with_id <- cbind(Patient_ID = patient_id, history)  # Combine Patient_ID with history data
+  # Replicate the patient ID for each row in their history
+  patient_id <- rep(i, nrow(history))  
+  # Combine Patient_ID with history data
+  history_with_id <- cbind(Patient_ID = patient_id, history)  
   #covariate_extend<-matrix(rep(baseline_covariates, times = nrow(history)), nrow = nrow(history), byrow = TRUE)
   #history_with_id <- cbind(history_with_id,covariate_extend)
   # Store the entire history for patient i (with Patient_ID)
@@ -393,10 +394,6 @@ for (i in 1:num_patients) {
   # Assuming the second column of history contains the time spent in each state
   history_time_spent[[i]] <- history[, 2]  # Extracting the time spent in each state for patient i
 }
-#end.time <- Sys.time()
-#time.taken <- end.time - start.time
-#print(time.taken)
-
 # Flatten the list into a single data frame
 flat_history <- do.call(rbind, history_list)
 # Assign column names (adjust according to the structure of your `history`)
@@ -561,7 +558,7 @@ my_lattice<-levelplot(t(q_df),col.regions = color_palette,at = brk,
                       colorkey = list(col = color_palette, 
                                       at = brk))
 all_plots<-h#+ggsurv$plot
-print(all_plots)
+#print(all_plots)
 #p<-as.ggplot(h)+
 p<-  as.ggplot(my_lattice)
   #ggsurv$plot
