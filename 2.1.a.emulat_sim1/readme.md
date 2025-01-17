@@ -3,8 +3,8 @@
 This is the official source code repository of the simulation study on immediate deprescribing using Monte Carlo simulation. 
 
 
-## Issues ##
-The Issue tracker was flooded with support questions and is closed until it is cleaned up. Use the [PyBullet forums](http://pybullet.org) to discuss with others.
+## Functionality ##
+The following describes the functionality of the code.
 
 ```
 If you use this code in your research, please cite it like this:
