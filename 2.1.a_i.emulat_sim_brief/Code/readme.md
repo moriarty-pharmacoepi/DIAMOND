@@ -7,7 +7,7 @@ This is the official source code repository of the review of simulation practice
 The following two scripts were used:
 
 * search_and_download.R
-* match_included
+* match_included.R
 
 To replicate our results, use the following;
 1. search_and_download.R should be called first which downloads the metadata for the simulation studies using easyPubMed and stores the data in an XML file for importing to Covidence. It also obtains the extracted data from [Tazare et al.](https://doi.org/10.1002/pds.5856) and creates another XML file for importing to Covidence.
