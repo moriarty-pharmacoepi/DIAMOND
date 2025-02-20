@@ -1,6 +1,6 @@
 <div style="display: flex; background-color: white; padding: 0px;">
   <img src="assets/imgs/Asset 4.jpg" width="500"/>
-  <img src="assets/imgs/RCSI_white_bg_logo.png" width="200" align="right"/>
+  <img src="assets/imgs/RCSI_white_bg_logo.png" width="180" align="right"/>
 </div>
 
 <hr/>
