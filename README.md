@@ -1,3 +1,5 @@
+<img src="assets/imgs/Asset 4.jpg" width="200" align="left" style="background-color: white; padding: 0px;"/>
+
 <img src="assets/imgs/RCSI_white_bg_logo.png" width="200" align="right" style="background-color: white; padding: 0px;"/>
 
 # DIAMOND: Developing Innovative Analytical Methods for research ON Deprescribing
