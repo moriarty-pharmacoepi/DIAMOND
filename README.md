@@ -1,5 +1,6 @@
+<div style="background-color: white; padding: 10px;">
 <img src="assets/imgs/RCSI-Royal_Irish-Primary_Logo_CMYK_Jun24.png" width="200" align="right" style="background-color: white; padding: 10px;"/>
-
+</div>
 # DIAMOND: Developing Innovative Analytical Methods for research ON Deprescribing
 
 **Code for generating simulated data and performing statistical analysis on data related to deprescribing**
