@@ -1,4 +1,4 @@
-<img src="assets/imgs/Asset 4.jpg" width="200" align="left" style="background-color: white; padding: 0px;"/>
+<img src="assets/imgs/Asset 4.jpg" width=800" align="left" style="background-color: white; padding: 0px;"/>
 
 <img src="assets/imgs/RCSI_white_bg_logo.png" width="200" align="right" style="background-color: white; padding: 0px;"/>
 
