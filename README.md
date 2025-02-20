@@ -1,4 +1,4 @@
-<img src="assets/imgs/RCSI-Royal_Irish-Primary_Logo_CMYK_Jun24.png" width="200" align="right" style="background-color: white; padding: 10px;"/>
+<img src="assets/imgs/RCSI_white_bg_logo.png" width="200" align="right" style="background-color: white; padding: 10px;"/>
 
 # DIAMOND: Developing Innovative Analytical Methods for research ON Deprescribing
 
