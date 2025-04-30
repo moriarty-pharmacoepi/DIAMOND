@@ -17,7 +17,7 @@ path <- getwd()
 #data_path <- paste0(path, "/data")
 
 query <- '"Pharmacoepidemiology and drug safety"[Journal] AND
-(("2022/12/31"[Date - Publication] : "2024/10/31"[Date - Publication]))'
+(("2022/12/31"[Date - Publication] : "2024/12/31"[Date - Publication]))'
 
 
 #my_entrez_id <- get_pubmed_ids(my_query)
