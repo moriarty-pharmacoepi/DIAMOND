@@ -1,13 +1,18 @@
-<img src="assets/imgs/RCSI-Royal_Irish-Primary_Logo_CMYK_Jun24.png" width="200" align="right"/>
+<div style="display: flex; background-color: white; padding: 0px;">
+  <img src="assets/imgs/Asset 4.jpg" width="600"/>
+  <img src="assets/imgs/RCSI_white_bg_logo.png" width="180" align="right"/>
+</div>
 
-# DIAMOND: Developing Innovative Analytical Methods for research ON Deprescribing
+<hr/>
+
+
 
 **Code for generating simulated data and performing statistical analysis on data related to deprescribing**
 
-Overview
---------
+## Overview
+
 ### The aims of this program are to: 
 
 (i) develop and advance novel methods to research deprescribing by harnessing big data, 
 
-(ii) apply these methods to generate knowledge and discoveries that improve our understanding of the benefits and harms of deprescribing. 
+(ii) apply these methods to generate knowledge and discoveries that improve our understanding of the benefits and harms of deprescribing.

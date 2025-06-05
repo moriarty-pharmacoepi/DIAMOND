@@ -1,0 +1,43 @@
+pmid,doi,title,year,publication_types
+27859943,10.1002/pds.4121,A comparison of entropy balance and probability weighting methods to generalize observational cohorts to a population: a simulation and empirical example.,2017,Journal Article
+28503870,10.1002/pds.4223,Correcting hazard ratio estimates for outcome misclassification using multiple imputation with internal validation data.,2017,Journal Article
+28799196,10.1002/pds.4280,Combining evidence from multiple electronic health care databases: performances of one-stage and two-stage meta-analysis in matched case-control studies.,2017,Journal Article
+28984050,10.1002/pds.4325,Comparison of the ability of double-robust estimators to correct bias in propensity score matching analysis. A monte carlo simulation study.,2017,Journal Article
+29292551,10.1002/pds.4374,Bias from outcome misclassification in immunization schedule safety research.,2018,Journal Article
+29341340,10.1002/pds.4387,Bias from restricting to live births when estimating effects of prescription drug use on pregnancy complications: a simulation.,2018,Journal Article
+30022561,10.1002/pds.4615,Comparison of privacy-protecting analytic and data-sharing methods: a simulation study.,2018,Journal Article
+30375122,10.1002/pds.4680,Inflation of type i error rates due to differential misclassification in ehr-derived outcomes: empirical illustration using breast cancer recurrence.,2019,Brief report
+30515908,10.1002/pds.4693,Comparing external and internal validation methods in correcting outcome misclassification bias in logistic regression: a simulation study and application to the case of postsurgical venous thromboembolism following total hip and knee arthroplasty.,2019,Journal Article
+30746841,10.1002/pds.4701,Conditional validation sampling for consistent risk estimation with binary outcome data subject to misclassification.,2019,Journal Article
+30784132,10.1002/pds.4756,Propensity score methods and regression adjustment for analysis of nonrandomized studies with health-related quality of life outcomes.,2019,Journal Article
+30786103,10.1002/pds.4729,Quantifying bias reduction with fixed-duration versus all-available covariate assessment periods.,2019,Journal Article
+30873729,10.1002/pds.4758,An evaluation of the impact of missing deaths on overall survival analyses of advanced non-small cell lung cancer patients conducted in an electronic health records database.,2019,Journal Article
+31020732,10.1002/pds.4784,Evaluating the use of bootstrapping in cohort studies conducted with 1:1 propensity score matching-a plasmode simulation study.,2019,Journal Article
+31131965,10.1002/pds.4767,A tool for empirical equipoise assessment in multigroup comparative effectiveness research.,2019,Journal Article
+31222967,10.1002/pds.4807,A simulation study of the statistical power and signaling characteristics of an early season sequential test for influenza vaccine safety.,2019,Journal Article
+31385394,10.1002/pds.4846,Comparison of alternative approaches to trim subjects in the tails of the propensity score distribution.,2019,Journal Article
+31486165,10.1002/pds.4876,Multiple imputation for systematically missing confounders within a distributed data drug safety network: a simulation study and real-world example.,2020,Journal Article
+31972062,10.1002/pds.4961,Improving measurement of binary covariates in claims data: a simulation study.,2020,Journal Article
+32092786,10.1002/pds.4970,Adverse drug reaction or innocent bystander? a systematic comparison of statistical discovery methods for spontaneous reporting systems.,2020,Journal Article
+32436295,10.1002/pds.5026,Using the waiting time distribution with random index dates to estimate prescription durations in the presence of seasonal stockpiling.,2020,Journal Article
+32548875,10.1002/pds.5031,Bias in case-crossover studies of medications due to persistent use: a simulation study.,2020,Journal Article
+32716126,10.1002/pds.5074,Machine learning outcome regression improves doubly robust estimation of average causal effects.,2020,Journal Article
+33733533,10.1002/pds.5232,Greedy caliper propensity score matching can yield variable estimates of the treatment-outcome association-a simulation study.,2021,Journal Article
+33988275,10.1002/pds.5294,Sensitivity analyses of unmeasured and partially-measured confounders using multiple imputation in a vaccine safety study.,2021,Journal Article
+34227170,10.1002/pds.5323,Differential frequency in imaging-based outcome measurement: bias in real-world oncology comparative-effectiveness studies.,2022,Journal Article
+34251702,10.1002/pds.5328,Bias of time-varying exposure effects due to time-varying covariate measurement strategies.,2022,Journal Article
+34382713,10.1002/pds.5340,Using multiple random index dates with the reverse waiting time distribution improves precision of estimated prescription durations.,2021,Journal Article
+34611960,10.1002/pds.5366,Pharmacological and epidemiological considerations while constructing treatment episodes using observational data: a simulation study.,2022,Journal Article
+34953160,10.1002/pds.5403,A comparison of confounder selection and adjustment methods for estimating causal effects using large healthcare databases.,2022,Journal Article
+35088482,10.1002/pds.5410,Sampling in the case-time-control design among drug users when outcome prevents further treatment.,2022,Journal Article
+35505471,10.1002/pds.5446,Alternative analytic and matching approaches for the prevalent new-user design: a simulation study.,2022,Journal Article
+36380400,10.1002/pds.5563,Imputing missing covariates in time-to-event analysis within distributed research networks: A simulation study.,2023,Journal Article
+36916014,10.1002/pds.5609,Exploring the impact of design criteria for reference sets on performance evaluation of signal detection algorithms: The case of drug-drug interactions.,2023,Journal Article
+36919941,10.1002/pds.5614,Bias amplification of unobserved confounding in pharmacoepidemiological studies using indication-based sampling.,2023,Journal Article
+36966482,10.1002/pds.5624,Sensitivity and specificity in signal detection with the reporting odds ratio and the information component.,2023,Journal Article
+37208837,10.1002/pds.5639,Differences in target estimands between different propensity score-based weights.,2023,Journal Article
+38362649,10.1002/pds.5750,Probabilistic precision calculations for the planning of studies assessing negative binomial rates.,2024,Journal Article
+38450934,10.1002/pds.5774,Is the sequence ratio an unbiased estimate of the incidence rate ratio? A simulation study.,2024,Brief report
+38680093,10.1002/pds.5796,Use of quantitative bias analysis to evaluate single-arm trials with real-world data external controls.,2024,Journal Article
+39252380,10.1002/pds.5873,A Two-Step Framework for Validating Causal Effect Estimates.,2024,Journal Article
+39375947,10.1002/pds.70019,Validation Assessment of Privacy-Preserving Synthetic Electronic Health Record Data: Comparison of Original Versus Synthetic Data on Real-World COVID-19 Vaccine Effectiveness.,2024,Journal Article
