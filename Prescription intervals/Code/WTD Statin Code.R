@@ -38,3 +38,31 @@ ggplot(first_rx, aes(x = days_to_first)) +
        x = "Days from study start to first script",
        y = "Number of patients" +
          theme_minimal())
+
+
+#---Adding in Figure 2----
+g_data <- data.frame(
+  days = seq(0, 250, length.out = 800)
+) %>%
+  mutate(density = g(days))
+
+#---##Combining both------
+
+ggplot(first_rx, aes(x = days_to_first)) +
+  geom_histogram(aes(y = ..density..), binwidth = 30, closed = "left", fill = "steelblue", colour = "black") +
+  geom_line(data = g_data, aes(x = days, y = density), color = "red", size = 1.2) +
+  labs(
+    title = "Overlay of g(r) Function on Statin Prescription Histogram",
+    x = "Days from study start to first script",
+    y = "Density"
+  ) +
+  theme_minimal()
+
+
+
+
+
+
+
+
+
