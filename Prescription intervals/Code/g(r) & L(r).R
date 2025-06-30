@@ -23,28 +23,23 @@ curve(g, from=0, to=250, n=800,
       main= "Figure 2")
 
 ##----Define L(r)---------------------------------------------------------------
-gamma <- 0.9 ##gamma is essentially how much you trust/rely on g(r)?? - max of 1
-delta <- 0.01 ##safety net in event of g(r) bring inaccurate?? - 0.01 being the biggest safety net
+gamma <- 0.5  # gamma is prevalence (50 % are already prescribed at time zero)
+delta <- 2500 # delta is the width of the observation window (in days), depends on plot/data
 
 L <- function(r) {
-  gamma * g(r) + (1 - gamma) / delta
+  (gamma * g(r)) + ((1 - gamma) / delta)
 }
 
 ##---Plot L---------------------------------------------------------------------
-curve(L, from=0, to=250, n=800,
-      xlab= "Time(Days)",
-      ylab= "Density",
-      main= "L(r)")
 
 ##----Plot Both Curves----------------------------------------------------------
-curve(g, from = 0, to = 250, n = 800,
-      ylim = c(0, 60),
+curve(g, from = 0, to = 2500, n = 800,
       xlab = "Time (Days)",
       ylab = "Value",
       main = "g(r) vs L(r)",
       col = "blue", lwd = 2)
 
-curve(L, from = 0, to = 250, n = 800,
+curve(L, from = 0, to = 2500, n = 800,
       add = TRUE, col = "red", lwd = 2, lty = 2)
 
 legend("topright",
