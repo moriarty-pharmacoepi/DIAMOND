@@ -1,37 +1,37 @@
----##Running Software##---------------------------------------------------------
+##---##Running Software##-------------------------------------------------------
 library(tidyverse)
 library(dplyr)     
 library(lubridate)  
 library(ggplot2)  
 
----##Isolating Statin Data##----------------------------------------------------
+##---##Isolating Statin Data##--------------------------------------------------
 df <- prescriptions_subsample_170625
 
 codes <- c("C10AA07","C10AA01", "C10AA03", "C10AA05" )
 
-statins <- df %>% 
+statins <- df %>%  
   filter(atc_final %in% codes)
 view(statins)
 
----##Formatting Date##----------------------------------------------------------
+##---##Formatting Date##--------------------------------------------------------
 statins <- statins %>% 
   mutate(script_date = as.Date(as.character(script_date), 
                                format = "%d%b%Y"))        
 
----##Gathering 1st Prescription Dates##-----------------------------------------
+##---##Gathering 1st Prescription Dates##---------------------------------------
 first_rx <- statins %>% 
   arrange(UniquePatientID, script_date) %>%     
   group_by(UniquePatientID) %>% 
   summarise(first_script = first(script_date), .groups = "drop")
 
----##Days To First Prescription##-----------------------------------------------
+##---##Days To First Prescription##---------------------------------------------
 study_start <- min(first_rx$first_script, na.rm = TRUE)
 
 first_rx <- first_rx %>% 
   mutate(days_to_first = as.integer(first_script - study_start)) 
 
 
----##Plotting The Histogram##---------------------------------------------------
+##---##Plotting The Histogram##-------------------------------------------------
 ggplot(first_rx, aes(x = days_to_first)) +
   geom_histogram(binwidth = 30, closed = "left", fill = "steelblue", colour = "black") +
   labs(title = "Graph of WTD for Statin Prescriptions From Study Start",
