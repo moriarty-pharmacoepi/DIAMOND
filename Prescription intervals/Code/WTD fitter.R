@@ -6,7 +6,13 @@ logit <- function(p) log(p / (1 - p))
 inv_logit <- function(g) 1 / (1 + exp(-g))
 
 # Width of obsevation window
-delta = 500
+delta = 1800
+
+first_times<-first_rx[,3]
+first_times<-first_times%>%
+  drop_na()
+
+first_times<-as.numeric(first_times$days_to_first)
 
 # Reparameterized log-likelihood using transformed parameters
 loglikelihood <- function(mu, log_sigma, gamma) {
@@ -25,9 +31,9 @@ loglikelihood <- function(mu, log_sigma, gamma) {
 # MLE with transformed parameters
 fit <- mle(
   loglikelihood ,
-  start = list(mu = 5,
+  start = list(mu = 1,
                log_sigma = 1,
-               gamma = logit(0.2)),
+               gamma = 0.1),
   method = "L-BFGS-B"
 )
 
@@ -50,9 +56,9 @@ gamma_hat <- inv_logit(coef(fit)["gamma"])
 
 
 # Plot histogram
-hist(first_times, breaks = 50, probability = TRUE,
+hist(first_times, breaks = 100, probability = TRUE,
      main = "Fitted Mixture Model", xlab = "Time to First Observation",
-     col = "lightgray", border = "white", xlim = c(0, T))
+     col = "lightgray", border = "white", xlim = c(0, delta))
 
 
 # Overlay fitted density
@@ -61,6 +67,6 @@ t_vals <- seq(0, delta, length.out = 500)
 fitted_density <- function(t) mixture(t, mu_hat, sigma_hat, logit(gamma_hat))
 
 
-curve(fitted_density(x), from = 0, to = delta, col = "blue", lwd = 3, add = TRUE)
+curve(fitted_density(x), from = 0, to = delta, col = "blue", lwd = 2, add = TRUE)
 
 
