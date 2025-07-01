@@ -1,15 +1,14 @@
 
 library(tidyverse)
-view(prescriptions_subsample_170625)
+df <- read.csv("/Users/padraicdonoghue/Library/CloudStorage/OneDrive-SharedLibraries-RoyalCollegeofSurgeonsinIreland/Frank Moriarty - RSS 2025/prescriptions_subsample_170625.csv")
 
 
 library(stringr)
 
 # Filter for ATC codes that contain "C10A"
-df <- prescriptions_subsample_170625
-filtered_df <- df %>% 
-  filter(str_detect(atc_final, "C10A"))
 
+filtered_df <- df %>% 
+  filter(str_detect(atc_final, "C10AA"))
 view(filtered_df)
 
 

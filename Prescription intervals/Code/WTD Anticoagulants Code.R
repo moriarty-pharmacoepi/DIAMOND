@@ -5,9 +5,10 @@ library(lubridate)
 library(ggplot2)
 
 ##---##Isolating Desired ATC Codes From Data set##------------------------------
-ac <- prescriptions_subsample_170625
+anticoagulants <- read.csv("/Users/padraicdonoghue/Library/CloudStorage/OneDrive-SharedLibraries-RoyalCollegeofSurgeonsinIreland/Frank Moriarty - RSS 2025/prescriptions_subsample_170625.csv")
+view(anticoagulants)
 codes <- c("B01AA03", "B01AB01", "B01AB04", "B01AB05", "B01AB10", "B01AE07", "B01AF01", "B01AF02", "B01AF03" )
-anticoagulants <- ac %>%
+anticoagulants <- anticoagulants %>%
   filter(atc_final %in% codes)
 view(anticoagulants)
 

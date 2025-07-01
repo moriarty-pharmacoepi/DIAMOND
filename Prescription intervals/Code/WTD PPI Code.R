@@ -5,13 +5,14 @@ library(lubridate)
 library(ggplot2)  
 
 ##---##Isolating Statin Data##--------------------------------------------------
-master <- prescriptions_subsample_170625
+master <- read.csv("/Users/padraicdonoghue/Library/CloudStorage/OneDrive-SharedLibraries-RoyalCollegeofSurgeonsinIreland/Frank Moriarty - RSS 2025/prescriptions_subsample_170625.csv")
 
 codes <- c("A02BC01","A02BC02", "A02BC03", "A02BC05" )
 
 master <- master %>% 
   filter(atc_final %in% codes)
 view(master)
+
 
 ##---##Formatting Date##--------------------------------------------------------
 master <- master %>% 

@@ -4,10 +4,10 @@ library(dplyr)
 library(lubridate)  
 library(ggplot2)
 
-view(prescriptions_subsample_170625)
+
 
 ##---##Isolating Statin Data----------------------------------------------------
-df <- prescriptions_subsample_170625
+df <- read.csv("/Users/padraicdonoghue/Library/CloudStorage/OneDrive-SharedLibraries-RoyalCollegeofSurgeonsinIreland/Frank Moriarty - RSS 2025/prescriptions_subsample_170625.csv")
 
 codes <- c("C10AA07","C10AA01", "C10AA03", "C10AA05" )
 
