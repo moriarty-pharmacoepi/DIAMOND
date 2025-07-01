@@ -2,18 +2,15 @@
 library(tidyverse)
 library(dplyr)     
 library(lubridate)  
-library(ggplot2)  
+library(ggplot2)
+library(stringr)
 
-##---##Isolating Statin Data##--------------------------------------------------
+##---##Isolating & Formatting Statin Data##-------------------------------------
 df <- read.csv("/Users/padraicdonoghue/Library/CloudStorage/OneDrive-SharedLibraries-RoyalCollegeofSurgeonsinIreland/Frank Moriarty - RSS 2025/prescriptions_subsample_170625.csv")
 
-codes <- c("C10AA07","C10AA01", "C10AA03", "C10AA05" )
+statins <- df %>% 
+  filter(str_detect(atc_final, "C10AA"))
 
-statins <- df %>%  
-  filter(atc_final %in% codes)
-view(statins)
-
-##---##Formatting Date##--------------------------------------------------------
 statins <- statins %>% 
   mutate(script_date = as.Date(as.character(script_date), 
                                format = "%d%b%Y"))        
@@ -32,31 +29,14 @@ first_rx <- first_rx %>%
 
 
 ##---##Plotting The Histogram##-------------------------------------------------
-ggplot(first_rx, aes(x = days_to_first)) +
+graph <- ggplot(first_rx, aes(x = days_to_first)) +
   geom_histogram(binwidth = 30, closed = "left", fill = "steelblue", colour = "black") +
   labs(title = "Graph of WTD for Statin Prescriptions From Study Start",
        x = "Days from study start to first script",
        y = "Number of patients" +
          theme_minimal())
 
-
-#---Adding in Figure 2----
-g_data <- data.frame(
-  days = seq(0, 250, length.out = 800)
-) %>%
-  mutate(density = g(days))
-
-#---##Combining both------
-
-ggplot(first_rx, aes(x = days_to_first)) +
-  geom_histogram(aes(y = ..density..), binwidth = 30, closed = "left", fill = "steelblue", colour = "black") +
-  geom_line(data = g_data, aes(x = days, y = density), color = "red", size = 1.2) +
-  labs(
-    title = "Overlay of g(r) Function on Statin Prescription Histogram",
-    x = "Days from study start to first script",
-    y = "Density"
-  ) +
-  theme_minimal()
+plot(graph)
 
 
 

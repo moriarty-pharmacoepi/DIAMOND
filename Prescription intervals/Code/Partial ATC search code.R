@@ -8,7 +8,7 @@ library(stringr)
 # Filter for ATC codes that contain "C10A"
 
 filtered_df <- df %>% 
-  filter(str_detect(atc_final, "C10AA"))
+  filter(str_detect(atc_final, "####"))
 view(filtered_df)
 
 
