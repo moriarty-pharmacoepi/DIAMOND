@@ -6,7 +6,7 @@ logit <- function(p) log(p / (1 - p))
 inv_logit <- function(g) 1 / (1 + exp(-g))
 
 # Width of obsevation window
-delta = 500
+delta = 1500
 
 # Reparameterized log-likelihood using transformed parameters
 loglikelihood <- function(mu, log_sigma, gamma) {

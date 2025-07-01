@@ -20,6 +20,9 @@ first_rx <- statins %>%
   arrange(UniquePatientID, script_date) %>%     
   group_by(UniquePatientID) %>% 
   summarise(first_script = first(script_date), .groups = "drop")
+first_times <- first_rx$days_to_first
+#view(first_times)
+
 
 ##---##Days To First Prescription##---------------------------------------------
 study_start <- min(first_rx$first_script, na.rm = TRUE)
