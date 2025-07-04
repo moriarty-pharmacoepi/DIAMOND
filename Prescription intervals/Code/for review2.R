@@ -6,7 +6,7 @@ library(ggplot2)
 library(stringr)
 
 ##---##Isolating & Formatting Statin Data##-------------------------------------
-df <- read.csv("/Users/padraicdonoghue/Library/CloudStorage/OneDrive-SharedLibraries-RoyalCollegeofSurgeonsinIreland/Frank Moriarty - RSS 2025/prescriptions_subsample_170625.csv")
+df <- read.csv("prescriptions_subsample_170625.csv")
 
 statins <- df %>% 
   filter(str_detect(atc_final, "C10AA"))
@@ -20,7 +20,7 @@ first_rx <- statins %>%
   arrange(UniquePatientID, script_date) %>%     
   group_by(UniquePatientID) %>% 
   summarise(first_script = first(script_date), .groups = "drop")
-first_times <- first_rx$days_to_first
+
 #view(first_times)
 
 
@@ -29,7 +29,7 @@ study_start <- min(first_rx$first_script, na.rm = TRUE)
 
 first_rx <- first_rx %>% 
   mutate(days_to_first = as.integer(first_script - study_start)) 
-
+first_times <- first_rx$days_to_first
 
 ##---##Plotting The Histogram##-------------------------------------------------
 graph <- ggplot(first_rx, aes(x = days_to_first)) +

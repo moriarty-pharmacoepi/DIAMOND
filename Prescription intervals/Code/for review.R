@@ -9,7 +9,7 @@ inv_logit <- function(g) 1 / (1 + exp(-g))
 #<<<<<<< HEAD
 delta = 1500
 #=======
-delta = 1800
+#delta = 1800
 
 first_times<-first_rx[,3]
 first_times<-first_times%>%
@@ -58,19 +58,43 @@ sigma_hat <- (coef(fit)["log_sigma"])
 gamma_hat <- inv_logit(coef(fit)["gamma"])
 
 
+# Create time values for density line
+t_vals <- seq(0, delta, length.out = 500)
+fitted_density <- function(t) mixture(t, mu_hat, sigma_hat, logit(gamma_hat))
 
-# Plot histogram
-hist(first_times, breaks = 100, probability = TRUE,
-     main = "Fitted Mixture Model", xlab = "Time to First Observation",
-     col = "lightgray", border = "white", xlim = c(0, delta))
+# Compute fitted density values
+density_vals <- fitted_density(t_vals)
+
+# Prepare data frame for the fitted line
+density_df <- data.frame(t = t_vals, density = density_vals)
+
+# Plot normalized histogram and fitted line
+graph <- ggplot(first_rx, aes(x = days_to_first)) +
+  geom_histogram(aes(y = after_stat(density)),  # Normalize histogram
+                 binwidth = 30,
+                 closed = "left",
+                 fill = "steelblue",
+                 colour = "black") +
+  geom_line(data = density_df, aes(x = t, y = density),  # Fitted density curve
+            color = "red", size = 1) +
+  labs(
+    title = "Graph of WTD for Statin Prescriptions From Study Start",
+    x = "Days from study start to first script",
+    y = "Density"
+  ) +
+  theme_minimal()
+
+# Display the plot
+plot(graph)
+
 
 
 # Overlay fitted density
-t_vals <- seq(0, delta, length.out = 500)
+
 # Define a proper function of t for plotting
-fitted_density <- function(t) mixture(t, mu_hat, sigma_hat, logit(gamma_hat))
 
 
-curve(fitted_density(x), from = 0, to = delta, col = "blue", lwd = 2, add = TRUE)
+
+
 
 
