@@ -116,14 +116,14 @@ plot(multigraph)
 
 ##---Statin Summary By ATC-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 statin_summary_by_atc <- statinGP37all %>%
-  group_by(atc_final) %>%
+  group_by(atc_final, genericname) %>%
   summarise(
     count = sum(!is.na(gap_days)),
-    mean_gap = mean(gap_days, na.rm = TRUE),
-    median_gap = median(gap_days, na.rm = TRUE),
-    sd_gap = sd(gap_days, na.rm = TRUE),
-    iqr_gap = IQR(gap_days, na.rm = TRUE),
-    min_gap = min(gap_days, na.rm = TRUE),
-    max_gap = max(gap_days, na.rm = TRUE)
+    mean_IAD = mean(gap_days, na.rm = TRUE),
+    median_IAD = median(gap_days, na.rm = TRUE),
+    sd_IAD = sd(gap_days, na.rm = TRUE),
+    iqr_IAD = IQR(gap_days, na.rm = TRUE),
+    min_IAD = min(gap_days, na.rm = TRUE),
+    max_IAD = max(gap_days, na.rm = TRUE)
   )
 view(statin_summary_by_atc)
