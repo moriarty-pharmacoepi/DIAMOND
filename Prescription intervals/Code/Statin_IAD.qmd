@@ -1,3 +1,12 @@
+---
+title: "Statin IAD for Practice 37"
+format: html
+editor: visual
+---
+
+# **Summary Analysis of the Inter-arrival Density (time between two consecutive prescriptions for a chosen drug to be issued) for Statin prescriptions in GP practice number 37**
+
+```{r, include=FALSE}
 ##---##Getting Started##-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 library(tidyverse)
 library(dplyr)     
@@ -147,6 +156,12 @@ merged_data <- left_join(demographics, prescriptions, by = c("UniquePatientID", 
 write.csv(merged_data, "merged_output.csv", row.names = FALSE)
 #view(merged_data)
 
+```
+
+## This analysis is categorized to analyse differences in prescribing patterns and intervals across various healthcare scheme entitlements, genders and age brackets.
+
+```{r}
+library(knitr)
 ##---Working with merged Data--------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 # Step 2: Filter statins
 statins_all <- merged_data %>%
@@ -190,11 +205,14 @@ statin_summary <- statins_all %>%
     max_IAD = max(gap_days, na.rm = TRUE),
     .groups = "drop"
   )
+kable(statin_summary, caption = "Summary of Stastical Analysis of Prescribing Patterns for Statins")
+```
 
-# View result
-#View(statin_summary)
+## Below is an error bar plot displaying the variation in results grouped by healthcare scheme and its associated standard deviation.
 
-
+```{r}
+#| fig.width: 10
+#| fig.height: 6
 ggplot(statin_summary, aes(x = age_bracket, y = mean_IAD, color = factor(sex), group = sex)) +
   geom_point(size = 3) +
   geom_errorbar(aes(ymin = mean_IAD - sd_IAD, ymax = mean_IAD + sd_IAD), width = 0.2) +
@@ -207,9 +225,4 @@ ggplot(statin_summary, aes(x = age_bracket, y = mean_IAD, color = factor(sex), g
     color = "Sex"
   ) +
   theme_minimal()
-
-
-
-
-
-
+```
