@@ -76,7 +76,7 @@ graph <- ggplot(first_rx, aes(x = days_to_first)) +
                  fill = "steelblue",
                  colour = "black") +
   geom_line(data = density_df, aes(x = t, y = density),  # Fitted density curve
-            color = "red", size = 1) +
+            color = "red", linewidth = 1) +
   labs(
     title = "Graph of WTD for Statin Prescriptions From Study Start",
     x = "Days from study start to first script",
