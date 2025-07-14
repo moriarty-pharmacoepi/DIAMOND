@@ -108,7 +108,7 @@ multigraph<- ggplot(statinGP37all, aes(x = gap_days, y = ..density..)) +
   ) +
   scale_x_continuous(breaks = seq(0, 365, by = 30)) +
   coord_cartesian(xlim = c(0, 365)) +
-  facet_wrap(~ genericname) +  # Facet by statin ATC code/generic name
+ # facet_wrap(~ genericname) +  # Facet by statin ATC code/generic name
   theme_minimal() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
@@ -116,7 +116,7 @@ plot(multigraph)
 
 ##---Statin Summary By ATC-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 statin_summary_by_atc <- statinGP37all %>%
-  group_by(atc_final, genericname) %>%
+ # group_by(atc_final, genericname) %>%
   summarise(
     count = sum(!is.na(gap_days)),
     mean_IAD = mean(gap_days, na.rm = TRUE),
@@ -126,4 +126,79 @@ statin_summary_by_atc <- statinGP37all %>%
     min_IAD = min(gap_days, na.rm = TRUE),
     max_IAD = max(gap_days, na.rm = TRUE)
   )
-view(statin_summary_by_atc)
+#view(statin_summary_by_atc)
+
+
+
+
+
+
+##---Merging Datasets----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+# Step 1: Read in the data
+demographics <- read.csv("/Users/padraicdonoghue/Library/CloudStorage/OneDrive-SharedLibraries-RoyalCollegeofSurgeonsinIreland/Frank Moriarty - RSS 2025/demographics_subsample.csv")
+prescriptions <- read.csv("/Users/padraicdonoghue/Library/CloudStorage/OneDrive-SharedLibraries-RoyalCollegeofSurgeonsinIreland/Frank Moriarty - RSS 2025/prescriptions_subsample_170625.csv")
+#view(prescriptions)
+#view(demographics)
+# Step 2: Merge the data on patient_id and practice_id
+merged_data <- left_join(demographics, prescriptions, by = c("UniquePatientID", "UniquePracticeID"))
+
+# Step 3: Optional - Save the merged data to a new CSV
+write.csv(merged_data, "merged_output.csv", row.names = FALSE)
+#view(merged_data)
+
+##---Working with merged Data--------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+# Step 2: Filter statins
+statins_all <- merged_data %>%
+  filter(str_detect(atc_final, "C10AA"))
+
+# Step 3: Convert script_date to Date type
+statins_all <- statins_all %>%
+  mutate(script_date = as.Date(as.character(script_date), format = "%d%b%Y"))
+#view (statins_all)
+
+# Step 4: Create age brackets
+statins_all <- statins_all %>%
+  mutate(age_bracket = case_when(
+    age >= 60 & age <= 64 ~ "60–64",
+    age >= 65 & age <= 69 ~ "65–69",
+    age >= 70 & age <= 74 ~ "70–74",
+    age >= 75 & age <= 79 ~ "75–79",
+    age >= 80 & age <= 84 ~ "80–84",
+    age >= 85 & age <= 90 ~ "85–90",
+    age > 90 ~ "90+",
+    TRUE ~ NA_character_
+  ))
+
+# Step 5: Calculate gap_days by patient
+statins_all <- statins_all %>%
+  arrange(UniquePatientID, script_date) %>%
+  group_by(UniquePatientID) %>%
+  mutate(gap_days = as.numeric(script_date - lag(script_date))) %>%
+  ungroup()
+
+# Step 6: Group by scheme, sex, age bracket — and summarise
+statin_summary <- statins_all %>%
+  group_by(scheme, sex, age_bracket) %>%
+  summarise(
+    count = sum(!is.na(gap_days)),
+    mean_IAD = mean(gap_days, na.rm = TRUE),
+    median_IAD = median(gap_days, na.rm = TRUE),
+    sd_IAD = sd(gap_days, na.rm = TRUE),
+    iqr_IAD = IQR(gap_days, na.rm = TRUE),
+    min_IAD = min(gap_days, na.rm = TRUE),
+    max_IAD = max(gap_days, na.rm = TRUE),
+    .groups = "drop"
+  )
+
+# View result
+View(statin_summary)
+
+
+
+
+
+
+
+
+
