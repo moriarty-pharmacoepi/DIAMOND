@@ -177,7 +177,7 @@ PPI_all <- PPI_all %>%
   mutate(gap_days = as.numeric(script_date - lag(script_date))) %>%
   ungroup()
 
-# Step 6: Group by scheme, sex, age bracket — and summarise
+# Step 6: Group by sex,  scheme, age bracket
 PPI_summary <- PPI_all %>%
   group_by(scheme, sex, age_bracket) %>%
   summarise(
@@ -190,9 +190,52 @@ PPI_summary <- PPI_all %>%
     max_IAD = max(gap_days, na.rm = TRUE),
     .groups = "drop"
   )
-
-# View result
 #View(PPI_summary)
+
+# Step 6: Group by scheme
+PPI_summary_scheme <- PPI_all %>%
+  group_by(scheme) %>%
+  summarise(
+    count = sum(!is.na(gap_days)),
+    mean_IAD = mean(gap_days, na.rm = TRUE),
+    median_IAD = median(gap_days, na.rm = TRUE),
+    sd_IAD = sd(gap_days, na.rm = TRUE),
+    iqr_IAD = IQR(gap_days, na.rm = TRUE),
+    min_IAD = min(gap_days, na.rm = TRUE),
+    max_IAD = max(gap_days, na.rm = TRUE),
+    .groups = "drop"
+  )
+#View(PPI_summary_scheme)
+
+# Step 6: Group by sex
+PPI_summary_sex <- PPI_all %>%
+  group_by(sex) %>%
+  summarise(
+    count = sum(!is.na(gap_days)),
+    mean_IAD = mean(gap_days, na.rm = TRUE),
+    median_IAD = median(gap_days, na.rm = TRUE),
+    sd_IAD = sd(gap_days, na.rm = TRUE),
+    iqr_IAD = IQR(gap_days, na.rm = TRUE),
+    min_IAD = min(gap_days, na.rm = TRUE),
+    max_IAD = max(gap_days, na.rm = TRUE),
+    .groups = "drop"
+  )
+#View(PPI_summary_sex)
+
+# Step 6: Group by age bracket 
+PPI_summary_age_bracket <- PPI_all %>%
+  group_by(age_bracket) %>%
+  summarise(
+    count = sum(!is.na(gap_days)),
+    mean_IAD = mean(gap_days, na.rm = TRUE),
+    median_IAD = median(gap_days, na.rm = TRUE),
+    sd_IAD = sd(gap_days, na.rm = TRUE),
+    iqr_IAD = IQR(gap_days, na.rm = TRUE),
+    min_IAD = min(gap_days, na.rm = TRUE),
+    max_IAD = max(gap_days, na.rm = TRUE),
+    .groups = "drop"
+  )
+#View(PPI_summary_age_bracket)
 
 
 ppisdplot <- ggplot(PPI_summary, aes(x = age_bracket, y = mean_IAD, color = factor(sex), group = sex)) +
