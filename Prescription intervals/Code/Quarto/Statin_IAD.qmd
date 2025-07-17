@@ -207,6 +207,7 @@ statin_summary <- statins_all %>%
     max_IAD = max(gap_days, na.rm = TRUE),
     .groups = "drop"
   )
+kable(statin_summary, caption = "Summary of Stastical Analysis of Prescribing Patterns for Statins")
 
 # Step 6: Group by scheme
 statin_summary_scheme <- statins_all %>%
