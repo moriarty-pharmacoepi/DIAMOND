@@ -18,8 +18,8 @@ statins <- statins %>%
     prescription_year = year(script_date))
 
 statins <- statins %>%
-  arrange(UniquePatientID, script_date) %>%  # Critical for correct ordering
-  group_by(UniquePatientID) %>%             # Essential for patient-specific gaps
+  arrange(UniquePatientID, script_date) %>%
+  group_by(UniquePatientID) %>%
   mutate(
     gap_days = as.numeric(difftime(lead(script_date), script_date, units = "days")),
     gap_days = abs(gap_days)  # Ensures positive values
@@ -75,7 +75,7 @@ plot(graphthree)
 
 ##---Generating Simple Stats on the Histogram----------------------------------------------------------------------------------------------------------------------------------------------------------
 
-summary(statins)
+#summary(statins)
 
 ##---Generating Individual statin histograms-----------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -122,13 +122,6 @@ statins <- statins %>%
     age > 90 ~ "90+",
     TRUE ~ NA_character_
   ))
-
-#Calculate gap_days by patient
-statins <- statins %>%
-  arrange(UniquePatientID, script_date) %>%
-  group_by(UniquePatientID) %>%
-  mutate(gap_days = as.numeric(script_date - lag(script_date))) %>%
-  ungroup()
 
 # Step 6: Group by sex,  scheme, age bracket
 statin_summary <- statins %>%
@@ -239,3 +232,197 @@ boxplot <- ggplot(statins %>% filter(!is.na(gap_days)),
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
 plot(boxplot)
+
+##---Scatterplot -----------------------------------------------------------------------------------
+statins <- statins %>%
+  mutate(prescription_month = factor(prescription_month, 
+                                     levels = month.name,
+                                     ordered = TRUE))
+
+month_scatter <- ggplot(statins %>% filter(!is.na(gap_days)), 
+                        aes(x = prescription_month, y = gap_days)) +
+  geom_jitter(width = 0.2, height = 0, alpha = 0.4, color = "steelblue") +  # Adds slight horizontal spread
+  scale_y_continuous(breaks = seq(0, max(statins$gap_days, na.rm = TRUE), by = 60)) +
+  labs(title = "Prescription Gap Days by Month",
+       subtitle = "Each point represents one prescription interval",
+       x = "Month of Prescription",
+       y = "Days Until Next Prescription") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+plot(month_scatter)
+
+##---Boxplot by month---------------------------------------------------------------------------------
+month_boxplot <- ggplot(statins %>% filter(!is.na(gap_days)), 
+                        aes(x = prescription_month, y = gap_days)) +
+  geom_boxplot(aes(fill = prescription_month), 
+               alpha = 0.7,
+               outlier.shape = NA) +
+  geom_jitter(width = 0.15, 
+              height = 0, 
+              alpha = 0.3, 
+              size = 1,
+              color = "steelblue") + 
+  stat_summary(fun = mean, 
+               geom = "point", 
+               shape = 18, 
+               size = 3, 
+               color = "red") + 
+  scale_fill_viridis_d(option = "plasma", 
+                       guide = "none") + 
+  scale_y_continuous(limits = c(0, 365),
+                     breaks = seq(0, 365, by = 30)) +  
+  labs(title = "Distribution of Days Between Statin Prescriptions by Month",
+       subtitle = "Red diamonds show monthly averages | Boxes show median and IQR",
+       x = "Month",
+       y = "Days Until Next Prescription",
+       caption = "Note: Gaps calculated as time between consecutive prescriptions for each patient") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1, size = 10),
+        plot.title = element_text(face = "bold"),
+        plot.subtitle = element_text(color = "gray40"))
+
+plot(month_boxplot)
+
+##---Sex boxplot----------------------------------------------------------------------------------------
+
+# Convert sex to meaningful labels (1 = Male, 2 = Female)
+statins <- statins %>%
+  mutate(sex_label = case_when(
+    sex == 1 ~ "Male",
+    sex == 2 ~ "Female",
+    TRUE ~ "Unknown"
+  ))
+
+# Create the sex-based boxplot
+sex_boxplot <- ggplot(statins %>% filter(!is.na(gap_days)), 
+                      aes(x = sex_label, y = gap_days)) +
+  geom_boxplot(aes(fill = sex_label), 
+               alpha = 0.7,
+               outlier.shape = NA) +
+  geom_jitter(width = 0.15, 
+              height = 0, 
+              alpha = 0.3, 
+              size = 1,
+              color = "steelblue") +
+  stat_summary(fun = mean, 
+               geom = "point", 
+               shape = 18, 
+               size = 3, 
+               color = "red") +
+  scale_fill_manual(values = c("Male" = "#1f77b4", "Female" = "#ff7f0e")) +
+  scale_y_continuous(limits = c(0, 365),
+                     breaks = seq(0, 365, by = 30)) +
+  labs(title = "Statin Prescription Intervals by Sex",
+       subtitle = "Red diamonds show group averages | Boxes show median and IQR",
+       x = "Sex",
+       y = "Days Until Next Prescription",
+       caption = paste("Total prescriptions:",
+                       nrow(statins %>% filter(!is.na(gap_days))),
+                       "| Male:",
+                       sum(statins$sex == 1, na.rm = TRUE),
+                       "| Female:",
+                       sum(statins$sex == 2, na.rm = TRUE))) +
+  theme_minimal() +
+  theme(legend.position = "none",
+        plot.title = element_text(face = "bold"))
+
+plot(sex_boxplot)
+
+
+
+##---Scheme boxplot-----------------------------------------------------------------------------------------
+scheme_boxplot <- ggplot(statins %>% filter(!is.na(gap_days)), 
+                         aes(x = scheme, y = gap_days)) +
+  geom_boxplot(aes(fill = scheme), 
+               alpha = 0.7,
+               outlier.shape = NA) +
+  geom_jitter(width = 0.2, 
+              alpha = 0.3, 
+              size = 1.5,
+              color = "steelblue") +
+  stat_summary(fun = mean, 
+               geom = "point", 
+               shape = 18, 
+               size = 3, 
+               color = "red") +
+  scale_fill_brewer(palette = "Pastel1") +
+  scale_y_continuous(limits = c(0, 365),
+                     breaks = seq(0, 365, by = 30)) +
+  labs(title = "Statin Prescription Intervals by Insurance Scheme",
+       subtitle = "Red diamonds show group averages | Points represent individual prescriptions",
+       x = "Healthcare Scheme",
+       y = "Days Until Next Prescription") +
+  theme_minimal() +
+  theme(legend.position = "none",
+        plot.title = element_text(face = "bold", size = 14),
+        axis.text = element_text(size = 12))
+
+plot(scheme_boxplot)
+
+
+##---Age Boxplot---------------------------------------------------------------------------------------------
+
+age_boxplot <- ggplot(statins %>% filter(!is.na(gap_days)), 
+                      aes(x = age_bracket, y = gap_days)) +
+  geom_boxplot(aes(fill = age_bracket), 
+               alpha = 0.7,
+               outlier.shape = NA) +
+  geom_jitter(width = 0.2, 
+              alpha = 0.3, 
+              size = 1.5,
+              color = "steelblue") +
+  stat_summary(fun = mean, 
+               geom = "point", 
+               shape = 18, 
+               size = 3, 
+               color = "red") +
+  scale_fill_viridis_d(option = "magma", 
+                       begin = 0.2, 
+                       end = 0.8) +  # Age-appropriate color gradient
+  scale_y_continuous(limits = c(0, 365),
+                     breaks = seq(0, 365, by = 30)) +
+  labs(title = "Statin Prescription Intervals by Age Group",
+       subtitle = "Red diamonds show group averages | Points represent individual prescriptions",
+       x = "Age Bracket",
+       y = "Days Until Next Prescription") +
+  theme_minimal() +
+  theme(legend.position = "none",
+        plot.title = element_text(face = "bold", size = 14),
+        axis.text.x = element_text(angle = 45, hjust = 1, size = 12))
+
+plot(age_boxplot)
+
+##---Linear Regression plots--------------------------------------------------------------------
+# Create the scatter plot
+ggplot(statins %>% filter(!is.na(gap_days)))+
+aes(x = script_date, y = gap_days)+
+  
+  # Add points with transparency
+  geom_point(alpha = 0.5, color = "steelblue") +
+  
+  # Add regression trend line
+  geom_smooth(method = "lm", color = "red", se = TRUE, fill = "pink") +
+  
+  # Format dates on x-axis
+  scale_x_date(date_breaks = "1 year", date_labels = "%Y") +
+  
+  # Set y-axis limits
+  scale_y_continuous(limits = c(0, 365), breaks = seq(0, 365, 60)) +
+  
+  # Labels and title
+  labs(title = "Prescription Gap Days Over Time",
+       subtitle = "Each point represents one prescription interval",
+       x = "Prescription Date",
+       y = "Days Until Next Prescription") +
+  
+  theme_minimal() +
+  theme(plot.title = element_text(face = "bold"))
+
+##---Linear regression-------------------------------------------------------------------------------
+
+
+
+
+
+
