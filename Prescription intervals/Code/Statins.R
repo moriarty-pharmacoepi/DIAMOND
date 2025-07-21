@@ -45,7 +45,7 @@ plot(graph)
 statins_gaps <- statins %>%
   arrange(UniquePatientID, script_date) %>%
   group_by(UniquePatientID) %>%
-  mutate(gap_days = as.numeric(difftime(script_date, lag(script_date), units = "days"))) %>%
+  mutate(gap_days = as.numeric(difftime(lead(script_date), script_date, units = "days"))) %>%
   filter(!is.na(gap_days))  # Remove first prescriptions (no gap)
 
 
@@ -67,26 +67,22 @@ cdf_plot <- ggplot(statins_gaps, aes(x = gap_days)) +
   ) +
   theme_minimal()
 
-plot(cdf_plot)
+#plot(cdf_plot)
 
 ##---## Smoothed Histogram of Average Gap Time Per Patient##--------------------
-density_plot <- ggplot(patient_avg_gaps, aes(x = avg_gap)) +
-  geom_density(fill = "skyblue", alpha = 0.6) +
-  scale_x_continuous(
+box_plot <- ggplot(patient_avg_gaps, aes(x = "", y = avg_gap)) +
+  geom_boxplot(fill = "skyblue", alpha = 0.6) +
+  scale_y_continuous(
     breaks = seq(0, max(patient_avg_gaps$avg_gap, na.rm = TRUE), by = 60)
   ) +
   labs(
-    title = "Smoothed Histogram of Average Gap Time per Patient (Statins)",
-    x = "Average Days Between Prescriptions",
-    y = "Density"
+    title = "Boxplot of Average Gap Time per Patient (Statins)",
+    x = "",
+    y = "Average Days Between Prescriptions"
   ) +
   theme_minimal()
 
-plot(density_plot)
-
-
-
-
+plot(box_plot)
 
 
 
