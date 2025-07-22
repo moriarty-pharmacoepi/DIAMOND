@@ -2,6 +2,8 @@
 title: "Statin IAD for Practice 37"
 format: html
 editor: visual
+editor_options: 
+  chunk_output_type: console
 ---
 
 # **Summary Analysis of the Inter-arrival Density (time between two consecutive prescriptions for a chosen drug to be issued) for Statin prescriptions in GP practice number 37**
@@ -15,7 +17,7 @@ library(ggplot2)
 
 ##---##Isolating Data---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-statins <- read.csv("/Users/padraicdonoghue/Desktop/GitHub/DIAMOND/Prescription intervals/Code/merged_output.csv")
+statins <- read.csv("merged_output.csv")
 
 ##---##Formatting Date and Adding Month/Year Covariates-------------------------------------------------------------------------------
 
@@ -24,16 +26,33 @@ statins <- statins %>%
   mutate(
     script_date = as.Date(as.character(script_date), format = "%d%b%Y"),
     prescription_month = month(script_date, label = TRUE, abbr = FALSE),  # Full month name
-    prescription_year = year(script_date))
+    prescription_year = year(script_date),
+    row_id = row_number())
 
 statins <- statins %>%
   arrange(UniquePatientID, script_date) %>%  # Critical for correct ordering
   group_by(UniquePatientID) %>%             # Essential for patient-specific gaps
   mutate(
     gap_days = as.numeric(difftime(lead(script_date), script_date, units = "days")),
-    gap_days = abs(gap_days)  # Ensures positive values
   ) %>%
   ungroup()
+
+# Remove NA due to missing gap at last prescription (none after end date)
+statins<- statins%>%
+  drop_na(gap_days)
+
+# Filter out duplicate scripts and assign larger number_of_issues, then keep only nonzero gap days
+statin_zeros <- statins %>%
+   arrange(UniquePatientID, script_date)%>%
+  filter(gap_days==0 | lag(gap_days)==0)%>%
+  group_by(UniquePatientID,script_date)%>%
+  mutate(numberofissues = max(numberofissues))%>%
+  ungroup()%>%
+  filter(gap_days!=0)
+
+
+statins <- statins %>%
+  rows_update(statin_zeros, by = "row_id")
 
 ##---Group for number of issues = 1 (30 days)---------------------------------------------
 onemonth <- statins %>% 
