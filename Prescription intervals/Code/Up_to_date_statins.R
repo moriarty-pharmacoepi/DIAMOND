@@ -6,7 +6,7 @@ library(ggplot2)
 
 ##---##Isolating Data---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-statins <- read.csv("/Users/padraicdonoghue/Desktop/GitHub/DIAMOND/Prescription intervals/Code/merged_output.csv")
+statins <- read.csv("/Users/padraicdonoghue/Library/CloudStorage/OneDrive-SharedLibraries-RoyalCollegeofSurgeonsinIreland/Frank Moriarty - RSS 2025/prescriptions_full_sample_140725.csv")
 
 ##---##Formatting Date and Adding Month/Year Covariates-------------------------------------------------------------------------------
 
@@ -495,3 +495,26 @@ LRscheme <- ggplot(statins %>% filter(!is.na(gap_days)),
   )
 plot(LRscheme)
 ##---End-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+#view(statins)
+#library(lme4)
+
+#summary(lmer(gap_days ~ prescription_month + age_bracket + scheme + (1|UniquePatientID), data = statins ))
+
+#summary(statins$numberofissues)
+#table(statins$numberofissues)
+#table(statins$scriptduration)
+#table(statins$scriptquantity)
+
+
+
+
+
+
+
+
+
+
+
+
+
