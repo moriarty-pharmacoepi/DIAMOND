@@ -24,3 +24,5 @@ Each sub-workpackage has a dedicated folder in main named *sub_WP_number_sub_WP_
 
 <img src="assets/imgs/Folder structure.png" width="200"/>
 
+[this subtext](assets)
+
