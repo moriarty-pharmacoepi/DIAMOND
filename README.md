@@ -18,3 +18,8 @@ Website: https://diamond-deprescribing.eu/
 (i) develop and advance novel methods to research deprescribing by harnessing big data, 
 
 (ii) apply these methods to generate knowledge and discoveries that improve our understanding of the benefits and harms of deprescribing.
+
+## Navigating this repository
+Each sub-workpackage has a dedicated folder in main named *sub_WP_number_sub_WP_name*
+<img src="assets/imgs/Folder structure.png" width="600"/>
+
