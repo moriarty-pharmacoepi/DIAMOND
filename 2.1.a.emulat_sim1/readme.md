@@ -2,6 +2,8 @@
 
 This is the official source code repository of the simulation study on immediate deprescribing using Monte Carlo simulation. 
 
+## Protocol ##
+The protocol can be found here: [Protocol](reports/Simulation_Study_Protocol.pdf)
 
 ## Functionality ##
 The following describes the functionality of the code.
