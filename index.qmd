@@ -1,3 +1,22 @@
 ---
 title: "DIAMOND"
 ---
+
+# Overview
+
+The aims of this program are to:
+
+(i) Develop and advance novel methods to research deprescribing by harnessing big data,
+
+(ii) Apply these methods to generate knowledge and discoveries that improve our understanding of the benefits and harms of deprescribing.
+
+This page contains the workpackage outputs of the DIAMOND project.
+
+# Workpackages
+
+1.  Characterising deprescribing
+2.  Target trial emulation
+    i)  Review of simulation studies in pharmacoepidemiology
+    ii) Simulation study of target trial emulation for deprescribing
+3.  Serotonergic burden index
+4.  Cascade reversals

@@ -8,7 +8,10 @@ website:
     left:
       - href: index.qmd
         text: Home
-      - about.qmd
+      - href: Workpackages/WP_1.qmd
+        text: WP1
+      - href: Workpackages/WP_2.qmd
+        text: WP2
 
 format:
   html:
