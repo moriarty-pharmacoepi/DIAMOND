@@ -28,6 +28,7 @@ layout: default
     a:hover {
       text-decoration: underline;
     }
+<<<<<<< HEAD
     .folder {
       font-weight: bold;
       cursor: pointer;
@@ -38,6 +39,15 @@ layout: default
     }
     .active {
       display: block;
+=======
+
+
+    h2, h3 {
+      margin-top: 1.5rem;
+    }
+    hr {
+      margin: 1rem 0;
+>>>>>>> parent of 6d9542d (Update index.html)
     }
   </style>
 </head>
@@ -46,6 +56,7 @@ layout: default
 <h1>📁 Repository Navigation</h1>
 <p>Click folders to expand and view files.</p>
 
+<<<<<<< HEAD
 <ul id="file-tree">
   {% assign folders = site.static_files | sort: 'path' %}
   {% assign current_folder = '' %}
@@ -81,6 +92,45 @@ layout: default
     });
   }
 </script>
+=======
+  <!-- Navigation bar -->
+  <nav>
+    <a href="index.html">🏠 Home</a>
+    <a href="#overview">Overview</a>
+    <a href="#navigation">Repository Structure</a>
+    <a href="#workpackages">Workpackages</a>
+    <a href="https://diamond-deprescribing.eu/">External Website</a>
+  </nav>
+
+  <!-- Extra Home button (if you want one in-page) -->
+  <a href="index.html" class="home-button">🏠 Home</a>
+
+  <hr/>
+
+  <!-- Content -->
+  <p><strong>Code for generating simulated data and performing statistical analysis on data related to deprescribing</strong></p>
+
+  <p>Website: <a href="https://diamond-deprescribing.eu/">https://diamond-deprescribing.eu/</a></p>
+
+  <h2 id="overview">Overview</h2>
+
+  <h3>The aims of this program are to:</h3>
+  <ol>
+    <li>Develop and advance novel methods to research deprescribing by harnessing big data</li>
+    <li>Apply these methods to generate knowledge and discoveries that improve our understanding of the benefits and harms of deprescribing</li>
+  </ol>
+
+  <h2 id="navigation">Navigating this repository</h2>
+  <p>Each sub-workpackage has a dedicated folder in main named <em>sub_WP_number_sub_WP_name</em>. The folder structure for each sub-workpackage is shown below.</p>
+
+  <img src="assets/imgs/Folder structure.png" width="200" alt="Folder structure">
+
+  <h2 id="workpackages">Workpackages</h2>
+  <ul>
+    <li>2.1 <a href="2.1.a.emulat_sim1">Simulation study of target trial emulation in deprescribing</a></li>
+    <li>2.1_a <a href="2.1.a_i.emulat_sim_brief">Simulation study practices in pharmacoepidemiology - a methodological review</a></li>
+  </ul>
+>>>>>>> parent of 6d9542d (Update index.html)
 
 </body>
 </html>
