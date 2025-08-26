@@ -1,5 +1,26 @@
 [
   {
+    "objectID": "Workpackages/WP_4.html",
+    "href": "Workpackages/WP_4.html",
+    "title": "DIAMOND",
+    "section": "",
+    "text": "Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see https://quarto.org."
+  },
+  {
+    "objectID": "Workpackages/WP_4.html#quarto",
+    "href": "Workpackages/WP_4.html#quarto",
+    "title": "DIAMOND",
+    "section": "",
+    "text": "Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see https://quarto.org."
+  },
+  {
+    "objectID": "Workpackages/WP_4.html#running-code",
+    "href": "Workpackages/WP_4.html#running-code",
+    "title": "DIAMOND",
+    "section": "Running Code",
+    "text": "Running Code\nWhen you click the Render button a document will be generated that includes both content and the output of embedded code. You can embed code like this:\n\n1 + 1\n\n[1] 2\n\n\nYou can add options to executable code like this\n\n\n[1] 4\n\n\nThe echo: false option disables the printing of code (only output is displayed)."
+  },
+  {
     "objectID": "Workpackages/WP_2.html",
     "href": "Workpackages/WP_2.html",
     "title": "Pharmacoepidemiology simulation study practices: A review of the literature",
@@ -186,7 +207,7 @@
     "href": "index.html",
     "title": "DIAMOND",
     "section": "",
-    "text": "Overview\nThe aims of this program are to:\n\nDevelop and advance novel methods to research deprescribing by harnessing big data,\nApply these methods to generate knowledge and discoveries that improve our understanding of the benefits and harms of deprescribing.\n\nThis page contains the workpackage outputs of the DIAMOND project.\n\n\nWorkpackages\n\nCharacterising deprescribing\nTarget trial emulation\n\nReview of simulation studies in pharmacoepidemiology\nSimulation study of target trial emulation for deprescribing\n\nSerotonergic burden index\nCascade reversals"
+    "text": "This page contains the workpackage outputs of the DIAMOND project.\n\n\nOverview\nThe aims of this program are to:\n\nDevelop and advance novel methods to research deprescribing by harnessing big data,\nApply these methods to generate knowledge and discoveries that improve our understanding of the benefits and harms of deprescribing.\n\n\n\nWorkpackages\n\nCharacterising deprescribing\nTarget trial emulation\n\nReview of simulation studies in pharmacoepidemiology\nSimulation study of target trial emulation for deprescribing\n\nSerotonergic burden index\nCascade reversals"
   },
   {
     "objectID": "Workpackages/WP_1.html",
@@ -205,6 +226,27 @@
   {
     "objectID": "Workpackages/WP_1.html#running-code",
     "href": "Workpackages/WP_1.html#running-code",
+    "title": "DIAMOND",
+    "section": "Running Code",
+    "text": "Running Code\nWhen you click the Render button a document will be generated that includes both content and the output of embedded code. You can embed code like this:\n\n1 + 1\n\n[1] 2\n\n\nYou can add options to executable code like this\n\n\n[1] 4\n\n\nThe echo: false option disables the printing of code (only output is displayed)."
+  },
+  {
+    "objectID": "Workpackages/WP_3.html",
+    "href": "Workpackages/WP_3.html",
+    "title": "DIAMOND",
+    "section": "",
+    "text": "Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see https://quarto.org."
+  },
+  {
+    "objectID": "Workpackages/WP_3.html#quarto",
+    "href": "Workpackages/WP_3.html#quarto",
+    "title": "DIAMOND",
+    "section": "",
+    "text": "Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see https://quarto.org."
+  },
+  {
+    "objectID": "Workpackages/WP_3.html#running-code",
+    "href": "Workpackages/WP_3.html#running-code",
     "title": "DIAMOND",
     "section": "Running Code",
     "text": "Running Code\nWhen you click the Render button a document will be generated that includes both content and the output of embedded code. You can embed code like this:\n\n1 + 1\n\n[1] 2\n\n\nYou can add options to executable code like this\n\n\n[1] 4\n\n\nThe echo: false option disables the printing of code (only output is displayed)."

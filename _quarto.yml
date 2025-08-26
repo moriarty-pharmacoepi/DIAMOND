@@ -12,6 +12,11 @@ website:
         text: WP1
       - href: Workpackages/WP_2.qmd
         text: WP2
+      - href: Workpackages/WP_3.qmd
+        text: WP3
+      - href: Workpackages/WP_4.qmd
+        text: WP4
+    logo: "assets/imgs/Diamond-Logo.png"
 
 format:
   html:
