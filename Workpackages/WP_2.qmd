@@ -8,7 +8,7 @@ This is the official source code repository of the review of simulation practice
 
 ## Protocol
 
-The protocol of the study can be found here: [Protocol](2.1.a_i.emulat_sim_brief/reports/emulat_sim_protocol.pdf)
+The protocol of the study can be found here: [Protocol](../2.1.a_i.emulat_sim_brief/reports/emulat_sim_protocol.pdf)
 
 ## Functionality
 
