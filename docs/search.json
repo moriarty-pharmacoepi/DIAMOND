@@ -2,49 +2,49 @@
   {
     "objectID": "Workpackages/WP_2.html",
     "href": "Workpackages/WP_2.html",
-    "title": "workpackages",
+    "title": "Pharmacoepidemiology simulation study practices: A review of the literature",
     "section": "",
-    "text": "This is the official source code repository of the review of simulation practices in the Journal Pharmacoepidemiology and Drug Safety.\n\n\nThe protocol of the study can be found here: Protocol\n\n\n\nThe following two scripts were used:\n\nsearch_and_download.R\nmatch_included.R\n\nTo replicate our results, use the following; 1. search_and_download.R should be called first which downloads the metadata for the simulation studies using easyPubMed and stores the data in an XML file for importing to Covidence. It also obtains the extracted data from Tazare et al. and creates another XML file for importing to Covidence. 2. Both XML files are then imported to Covidence for screening. 3. After screening, the metadata from the included articles is exported from Covidence as a CSV file 4. match_included.R should then be called which matches the included PMIDs from screening to the raw metadata files from our search and Tazare et al. 5. A file named included_final.csv then contains the included articles from which we extracted the data.\n\n\n\nIf you use this code in your research, please cite it like this:\n@MISC{muddiman2025,\nauthor =   {authors},\ntitle =    {title},\n}\n\n\n\nTBD"
+    "text": "This is the official source code repository of the review of simulation practices in the Journal Pharmacoepidemiology and Drug Safety.\n\n\nThe protocol of the study can be found here: Protocol\n\n\n\nThe following two scripts were used:\n\nsearch_and_download.R\nmatch_included.R\n\nTo replicate our results, use the following;\n\nsearch_and_download.R should be called first which downloads the metadata for the simulation studies using easyPubMed and stores the data in an XML file for importing to Covidence. It also obtains the extracted data from Tazare et al. and creates another XML file for importing to Covidence.\nBoth XML files are then imported to Covidence for screening.\nAfter screening, the metadata from the included articles is exported from Covidence as a CSV file.\nmatch_included.R should then be called which matches the included PMIDs from screening to the raw metadata files from our search and Tazare et al. \nA file named included_final.csv then contains the included articles from which we extracted the data.\n\n\n\n\nIf you use this code in your research, please cite it like this:\n@article {Muddiman2025.04.30.25326427,\n    author = {Muddiman, Ryan and Aiello Battan, Florencia Ines and Tazare, John and Schultze, Anna and Boland, Fiona and Perez, Teresa and Wei, Li and Walsh, Mary E. and Moriarty, Frank},\n    title = {Pharmacoepidemiology simulation study practices: A methodological review},\n    elocation-id = {2025.04.30.25326427},\n    year = {2025},\n    doi = {10.1101/2025.04.30.25326427},\n    publisher = {Cold Spring Harbor Laboratory Press}\n    URL = {https://www.medrxiv.org/content/early/2025/05/02/2025.04.30.25326427},\n    eprint = {https://www.medrxiv.org/content/early/2025/05/02/2025.04.30.25326427.full.pdf},\n    journal = {medRxiv}\n}\n\n\n\n\nTBD"
   },
   {
     "objectID": "Workpackages/WP_2.html#protocol",
     "href": "Workpackages/WP_2.html#protocol",
-    "title": "workpackages",
+    "title": "Pharmacoepidemiology simulation study practices: A review of the literature",
     "section": "",
     "text": "The protocol of the study can be found here: Protocol"
   },
   {
     "objectID": "Workpackages/WP_2.html#functionality",
     "href": "Workpackages/WP_2.html#functionality",
-    "title": "workpackages",
+    "title": "Pharmacoepidemiology simulation study practices: A review of the literature",
     "section": "",
-    "text": "The following two scripts were used:\n\nsearch_and_download.R\nmatch_included.R\n\nTo replicate our results, use the following; 1. search_and_download.R should be called first which downloads the metadata for the simulation studies using easyPubMed and stores the data in an XML file for importing to Covidence. It also obtains the extracted data from Tazare et al. and creates another XML file for importing to Covidence. 2. Both XML files are then imported to Covidence for screening. 3. After screening, the metadata from the included articles is exported from Covidence as a CSV file 4. match_included.R should then be called which matches the included PMIDs from screening to the raw metadata files from our search and Tazare et al. 5. A file named included_final.csv then contains the included articles from which we extracted the data."
+    "text": "The following two scripts were used:\n\nsearch_and_download.R\nmatch_included.R\n\nTo replicate our results, use the following;\n\nsearch_and_download.R should be called first which downloads the metadata for the simulation studies using easyPubMed and stores the data in an XML file for importing to Covidence. It also obtains the extracted data from Tazare et al. and creates another XML file for importing to Covidence.\nBoth XML files are then imported to Covidence for screening.\nAfter screening, the metadata from the included articles is exported from Covidence as a CSV file.\nmatch_included.R should then be called which matches the included PMIDs from screening to the raw metadata files from our search and Tazare et al. \nA file named included_final.csv then contains the included articles from which we extracted the data."
   },
   {
     "objectID": "Workpackages/WP_2.html#citation",
     "href": "Workpackages/WP_2.html#citation",
-    "title": "workpackages",
+    "title": "Pharmacoepidemiology simulation study practices: A review of the literature",
     "section": "",
-    "text": "If you use this code in your research, please cite it like this:\n@MISC{muddiman2025,\nauthor =   {authors},\ntitle =    {title},\n}"
+    "text": "If you use this code in your research, please cite it like this:\n@article {Muddiman2025.04.30.25326427,\n    author = {Muddiman, Ryan and Aiello Battan, Florencia Ines and Tazare, John and Schultze, Anna and Boland, Fiona and Perez, Teresa and Wei, Li and Walsh, Mary E. and Moriarty, Frank},\n    title = {Pharmacoepidemiology simulation study practices: A methodological review},\n    elocation-id = {2025.04.30.25326427},\n    year = {2025},\n    doi = {10.1101/2025.04.30.25326427},\n    publisher = {Cold Spring Harbor Laboratory Press}\n    URL = {https://www.medrxiv.org/content/early/2025/05/02/2025.04.30.25326427},\n    eprint = {https://www.medrxiv.org/content/early/2025/05/02/2025.04.30.25326427.full.pdf},\n    journal = {medRxiv}\n}"
   },
   {
     "objectID": "Workpackages/WP_2.html#license",
     "href": "Workpackages/WP_2.html#license",
-    "title": "workpackages",
+    "title": "Pharmacoepidemiology simulation study practices: A review of the literature",
     "section": "",
     "text": "TBD"
   },
   {
     "objectID": "Prescription intervals/readme.html",
     "href": "Prescription intervals/readme.html",
-    "title": "today",
+    "title": "DIAMOND",
     "section": "",
     "text": "test"
   },
   {
     "objectID": "assets/imgs/readme.html",
     "href": "assets/imgs/readme.html",
-    "title": "today",
+    "title": "DIAMOND",
     "section": "",
     "text": "project assets can go in here"
   },
@@ -191,21 +191,21 @@
   {
     "objectID": "Workpackages/WP_1.html",
     "href": "Workpackages/WP_1.html",
-    "title": "workpackages",
+    "title": "DIAMOND",
     "section": "",
     "text": "Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see https://quarto.org."
   },
   {
     "objectID": "Workpackages/WP_1.html#quarto",
     "href": "Workpackages/WP_1.html#quarto",
-    "title": "workpackages",
+    "title": "DIAMOND",
     "section": "",
     "text": "Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see https://quarto.org."
   },
   {
     "objectID": "Workpackages/WP_1.html#running-code",
     "href": "Workpackages/WP_1.html#running-code",
-    "title": "workpackages",
+    "title": "DIAMOND",
     "section": "Running Code",
     "text": "Running Code\nWhen you click the Render button a document will be generated that includes both content and the output of embedded code. You can embed code like this:\n\n1 + 1\n\n[1] 2\n\n\nYou can add options to executable code like this\n\n\n[1] 4\n\n\nThe echo: false option disables the printing of code (only output is displayed)."
   }

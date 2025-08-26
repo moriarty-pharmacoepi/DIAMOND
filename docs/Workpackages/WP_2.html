@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>workpackages – today</title>
+<title>wp_2 – DIAMOND</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -79,7 +79,7 @@ ul.task-list li input[type="checkbox"] {
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
     <a class="navbar-brand" href="../index.html">
-    <span class="navbar-title">today</span>
+    <span class="navbar-title">DIAMOND</span>
     </a>
   </div>
             <div id="quarto-search" class="" title="Search"></div>
@@ -129,23 +129,7 @@ ul.task-list li input[type="checkbox"] {
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default">
-<div class="quarto-title">
-<h1 class="title">workpackages</h1>
-</div>
 
-
-
-<div class="quarto-title-meta">
-
-    
-  
-    
-  </div>
-  
-
-
-</header>
 
 
 <section id="pharmacoepidemiology-simulation-study-practices-a-review-of-the-literature" class="level1">
@@ -162,15 +146,30 @@ ul.task-list li input[type="checkbox"] {
 <li>search_and_download.R</li>
 <li>match_included.R</li>
 </ul>
-<p>To replicate our results, use the following; 1. search_and_download.R should be called first which downloads the metadata for the simulation studies using easyPubMed and stores the data in an XML file for importing to Covidence. It also obtains the extracted data from <a href="https://doi.org/10.1002/pds.5856">Tazare et al.</a> and creates another XML file for importing to Covidence. 2. Both XML files are then imported to Covidence for screening. 3. After screening, the metadata from the included articles is exported from Covidence as a CSV file 4. match_included.R should then be called which matches the included PMIDs from screening to the raw metadata files from our search and Tazare et al.&nbsp;5. A file named included_final.csv then contains the included articles from which we extracted the data.</p>
+<p>To replicate our results, use the following;</p>
+<ol type="1">
+<li><p>search_and_download.R should be called first which downloads the metadata for the simulation studies using easyPubMed and stores the data in an XML file for importing to Covidence. It also obtains the extracted data from <a href="https://doi.org/10.1002/pds.5856">Tazare et al.</a> and creates another XML file for importing to Covidence.</p></li>
+<li><p>Both XML files are then imported to Covidence for screening.</p></li>
+<li><p>After screening, the metadata from the included articles is exported from Covidence as a CSV file.</p></li>
+<li><p>match_included.R should then be called which matches the included PMIDs from screening to the raw metadata files from our search and Tazare et al.&nbsp;</p></li>
+<li><p>A file named included_final.csv then contains the included articles from which we extracted the data.</p></li>
+</ol>
 </section>
 <section id="citation" class="level2">
 <h2 class="anchored" data-anchor-id="citation">Citation</h2>
 <p>If you use this code in your research, please cite it like this:</p>
-<pre><code>@MISC{muddiman2025,
-author =   {authors},
-title =    {title},
-}</code></pre>
+<pre><code>@article {Muddiman2025.04.30.25326427,
+    author = {Muddiman, Ryan and Aiello Battan, Florencia Ines and Tazare, John and Schultze, Anna and Boland, Fiona and Perez, Teresa and Wei, Li and Walsh, Mary E. and Moriarty, Frank},
+    title = {Pharmacoepidemiology simulation study practices: A methodological review},
+    elocation-id = {2025.04.30.25326427},
+    year = {2025},
+    doi = {10.1101/2025.04.30.25326427},
+    publisher = {Cold Spring Harbor Laboratory Press}
+    URL = {https://www.medrxiv.org/content/early/2025/05/02/2025.04.30.25326427},
+    eprint = {https://www.medrxiv.org/content/early/2025/05/02/2025.04.30.25326427.full.pdf},
+    journal = {medRxiv}
+}
+</code></pre>
 </section>
 <section id="license" class="level2">
 <h2 class="anchored" data-anchor-id="license">License</h2>
