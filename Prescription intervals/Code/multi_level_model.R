@@ -181,24 +181,24 @@ selected_drugs <- c(
 
 atc_labels <- c(
   "C10AA" = "Statins",
-  "A02BC" = "PPI's",
+  "A02BC" = "Proton pump inhibitors",
   "N02BEX" = "Paracetamol",
-  "C07AB" = "B-blockers",
-  "B01AX" = "DOAC's/Warfarin/vitamin k antagonists",
-  "C08X" = "DHP CCB's +/- Diuretics",
-  "C09XA" = "ACEi's +/- diuretics",
+  "C07AB" = "Beta blockers",
+  "B01AX" = "Oral anticoagulants",
+  "C08X" = "DHP calcium channel blockers +/- diuretics",
+  "C09XA" = "ACE inhibitors +/- diuretics",
   "B01ACX" = "Antiplatelets (incl. low dose aspirin)",
-  "H03AA0" = "Thyroid Hormones (+Derivatives)",
-  "A12AX" = "Calcium +/- Vitamin D Supplements",
+  "H03AA0" = "Thyroid hormones and derivatives",
+  "A12AX" = "Calcium +/- vitamin D",
   "N0X5" = "Benzodiazepines and associated drugs",
   "N02X" = "Opioids",
   "A06AX" = "Laxatives",
-  "M01AX" = "NSAID's",
-  "N06AZ" = "SSRI's & SNRI's",
+  "M01AX" = "NSAIDs",
+  "N06AZ" = "SSRIs and SNRIs",
   "N06AX" = "Other antidepressants",
-  "C09X" = "ARB's +/- diuretics",
+  "C09X" = "Angiotensin receptor blockers +/- diuretics",
   "R03AC" = "Inhaled adrenergics",
-  "R03AX" = "Inhaled adrenergics +/- inhaled corticosteroids/anticholinergics",
+  "R03AX" = "Inhaled adrenergics with corticosteroids and/or anticholinergics",
   "N03AX" = "Gabapentinoids"
 )
 
@@ -367,4 +367,5 @@ ggplot(df_statins, aes(x = gap_days)) +
                  closed = "left",
                  fill = "steelblue",
                  colour = "black")+
+
   xlim(0,400)
