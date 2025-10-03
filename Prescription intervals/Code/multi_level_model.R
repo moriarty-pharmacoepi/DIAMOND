@@ -175,7 +175,7 @@ df_gaps <- df_gaps %>%
 
 selected_drugs <- c(
   "C10AA", "A02BC", "N02BEX", "C07AB", "B01AX", "C08X", "C09XA", "B01ACX",
-  "H03AA0", "A12AX", "N0X5", "N02X", "A06AX", "M01AX", "N06AZ", "N06AX",
+  "H03AA0", "A12AX", "N0X5", "N02X", "A06A", "M01AX", "N06AZ", "N06AX",
   "C09X", "R03AC", "R03AX", "N03AX"
 )
 
@@ -192,7 +192,7 @@ atc_labels <- c(
   "A12AX" = "Calcium +/- vitamin D",
   "N0X5" = "Benzodiazepines and associated drugs",
   "N02X" = "Opioids",
-  "A06AX" = "Laxatives",
+  "A06A" = "Laxatives",
   "M01AX" = "NSAIDs",
   "N06AZ" = "SSRIs and SNRIs",
   "N06AX" = "Other antidepressants",
@@ -369,3 +369,4 @@ ggplot(df_statins, aes(x = gap_days)) +
                  colour = "black")+
 
   xlim(0,400)
+
