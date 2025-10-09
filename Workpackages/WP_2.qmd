@@ -2,7 +2,7 @@
 
 This is the official source code repository of the review of simulation practices in the Journal Pharmacoepidemiology and Drug Safety.
 
-## Protocol - TESTING
+## Protocol -
 
 The protocol of the study can be found here: [Protocol](../2.1.a_i.emulat_sim_brief/reports/emulat_sim_protocol.pdf)
 
