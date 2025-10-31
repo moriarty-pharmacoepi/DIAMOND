@@ -1,20 +1,30 @@
-## Quarto
+# Mapping Definitions of Deprescribing in Studies Using Routine Data: A Scoping Review
 
-Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see <https://quarto.org>.
+This scoping review aims to map existing definitions of deprescribing and how they are operationalised in studies using routinely collected data, including both observational research and pragmatic trials. Deprescribing is an important intervention to address polypharmacy and reduce the risk of adverse drug events. However, in studies leveraging routine data sources—such as electronic health records (EHRs), pharmacy dispensing data, insurance claims databases, hospital discharge records, and administrative datasets—there is a lack of standardisation in how deprescribing is defined and applied.
 
-## Running Code
+Definitions vary widely, from medication discontinuation to dose reduction and therapeutic substitution. The operationalisation of these definitions also differs significantly, using approaches such as medication gaps (e.g., 30–90 day refill gaps), clinical note review, and dispensing data. These inconsistencies may affect the accuracy of identifying deprescribing events and limit the comparability of reported outcomes across studies.
 
-When you click the **Render** button a document will be generated that includes both content and the output of embedded code. You can embed code like this:
+## The objectives of this review are:
 
-```{r}
-1 + 1
-```
+To identify how deprescribing is defined and operationalised in studies using routine data.
 
-You can add options to executable code like this
+To assess the methods used to validate these definitions.
 
-```{r}
-#| echo: false
-2 * 2
-```
+To explore how deprescribing prevalence and incidence are reported and influenced by the applied definitions.
 
-The `echo: false` option disables the printing of code (only output is displayed).
+This review follows the JBI methodology for scoping reviews and adheres to the PRISMA-ScR checklist for reporting. A comprehensive search was conducted across six databases (MEDLINE, EMBASE, CINAHL, CENTRAL, and PsycINFO) from inception to April 25, 2025. Study selection and data extraction are conducted in Covidence by two independent reviewers. Data will be analysed descriptively and presented in tables and figures, grouped by definition type, validation method, and context of deprescribing.
+
+## Protocol
+
+The protocol of the study can be found here: [Protocol](https://osf.io/tpe2d/overview)
+
+## Progress / Current Stage
+
+We are currently in the screening stage of the review. The progress so far is as follows:
+
+| Stage                      | Status      | Number of Studies |
+|----------------------------|-------------|-------------------|
+| Title & Abstract Screening | Completed   | \>1,000           |
+| Full-Text Screening        | In Progress | –                 |
+| Data Extraction            | Pending     | –                 |
+| Validation / Analysis      | Pending     | –                 |
