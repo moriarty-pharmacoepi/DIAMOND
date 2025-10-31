@@ -25,5 +25,6 @@ Each sub-workpackage has a dedicated folder in main named *sub_WP_number_sub_WP_
 <img src="assets/imgs/Folder structure.png" width="200"/>
 
 ## Workpackages
+- 1.1_a 
 - 2.1 [Simulation study of target trial emulation in deprescribing](2.1.a.emulat_sim1)
 - 2.1_a [Simulation study practices in pharmacoepidemiology - a methodological review](2.1.a_i.emulat_sim_brief)
