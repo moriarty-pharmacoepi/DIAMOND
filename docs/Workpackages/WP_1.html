@@ -20,41 +20,6 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
-/* CSS for syntax highlighting */
-html { -webkit-text-size-adjust: 100%; }
-pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
-pre > code.sourceCode > span:empty { height: 1.2em; }
-.sourceCode { overflow: visible; }
-code.sourceCode > span { color: inherit; text-decoration: inherit; }
-div.sourceCode { margin: 1em 0; }
-pre.sourceCode { margin: 0; }
-@media screen {
-div.sourceCode { overflow: auto; }
-}
-@media print {
-pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
-}
-pre.numberSource code
-  { counter-reset: source-line 0; }
-pre.numberSource code > span
-  { position: relative; left: -4em; counter-increment: source-line; }
-pre.numberSource code > span > a:first-child::before
-  { content: counter(source-line);
-    position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; display: inline-block;
-    -webkit-touch-callout: none; -webkit-user-select: none;
-    -khtml-user-select: none; -moz-user-select: none;
-    -ms-user-select: none; user-select: none;
-    padding: 0 4px; width: 4em;
-  }
-pre.numberSource { margin-left: 3em;  padding-left: 4px; }
-div.sourceCode
-  {   }
-@media screen {
-pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
-}
 </style>
 
 
@@ -165,8 +130,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#quarto" id="toc-quarto" class="nav-link active" data-scroll-target="#quarto">Quarto</a></li>
-  <li><a href="#running-code" id="toc-running-code" class="nav-link" data-scroll-target="#running-code">Running Code</a></li>
+  <li><a href="#mapping-definitions-of-deprescribing-in-studies-using-routine-data-a-scoping-review" id="toc-mapping-definitions-of-deprescribing-in-studies-using-routine-data-a-scoping-review" class="nav-link active" data-scroll-target="#mapping-definitions-of-deprescribing-in-studies-using-routine-data-a-scoping-review">Mapping Definitions of Deprescribing in Studies Using Routine Data: A Scoping Review</a>
+  <ul class="collapse">
+  <li><a href="#the-objectives-of-this-review-are" id="toc-the-objectives-of-this-review-are" class="nav-link" data-scroll-target="#the-objectives-of-this-review-are">The objectives of this review are:</a></li>
+  <li><a href="#protocol" id="toc-protocol" class="nav-link" data-scroll-target="#protocol">Protocol</a></li>
+  <li><a href="#progress-current-stage" id="toc-progress-current-stage" class="nav-link" data-scroll-target="#progress-current-stage">Progress / Current Stage</a></li>
+  </ul></li>
   </ul>
 </nav>
     </div>
@@ -176,28 +145,58 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 
 
-<section id="quarto" class="level2">
-<h2 class="anchored" data-anchor-id="quarto">Quarto</h2>
-<p>Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see <a href="https://quarto.org" class="uri">https://quarto.org</a>.</p>
+<section id="mapping-definitions-of-deprescribing-in-studies-using-routine-data-a-scoping-review" class="level1">
+<h1>Mapping Definitions of Deprescribing in Studies Using Routine Data: A Scoping Review</h1>
+<p>This scoping review aims to map existing definitions of deprescribing and how they are operationalised in studies using routinely collected data, including both observational research and pragmatic trials. Deprescribing is an important intervention to address polypharmacy and reduce the risk of adverse drug events. However, in studies leveraging routine data sources—such as electronic health records (EHRs), pharmacy dispensing data, insurance claims databases, hospital discharge records, and administrative datasets—there is a lack of standardisation in how deprescribing is defined and applied.</p>
+<p>Definitions vary widely, from medication discontinuation to dose reduction and therapeutic substitution. The operationalisation of these definitions also differs significantly, using approaches such as medication gaps (e.g., 30–90 day refill gaps), clinical note review, and dispensing data. These inconsistencies may affect the accuracy of identifying deprescribing events and limit the comparability of reported outcomes across studies.</p>
+<section id="the-objectives-of-this-review-are" class="level2">
+<h2 class="anchored" data-anchor-id="the-objectives-of-this-review-are">The objectives of this review are:</h2>
+<p>To identify how deprescribing is defined and operationalised in studies using routine data.</p>
+<p>To assess the methods used to validate these definitions.</p>
+<p>To explore how deprescribing prevalence and incidence are reported and influenced by the applied definitions.</p>
+<p>This review follows the JBI methodology for scoping reviews and adheres to the PRISMA-ScR checklist for reporting. A comprehensive search was conducted across six databases (MEDLINE, EMBASE, CINAHL, CENTRAL, and PsycINFO) from inception to April 25, 2025. Study selection and data extraction are conducted in Covidence by two independent reviewers. Data will be analysed descriptively and presented in tables and figures, grouped by definition type, validation method, and context of deprescribing.</p>
 </section>
-<section id="running-code" class="level2">
-<h2 class="anchored" data-anchor-id="running-code">Running Code</h2>
-<p>When you click the <strong>Render</strong> button a document will be generated that includes both content and the output of embedded code. You can embed code like this:</p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="dv">1</span> <span class="sc">+</span> <span class="dv">1</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] 2</code></pre>
-</div>
-</div>
-<p>You can add options to executable code like this</p>
-<div class="cell">
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] 4</code></pre>
-</div>
-</div>
-<p>The <code>echo: false</code> option disables the printing of code (only output is displayed).</p>
+<section id="protocol" class="level2">
+<h2 class="anchored" data-anchor-id="protocol">Protocol</h2>
+<p>The protocol of the study can be found here: <a href="https://osf.io/tpe2d/overview">Protocol</a></p>
+</section>
+<section id="progress-current-stage" class="level2">
+<h2 class="anchored" data-anchor-id="progress-current-stage">Progress / Current Stage</h2>
+<p>We are currently in the screening stage of the review. The progress so far is as follows:</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Stage</th>
+<th>Status</th>
+<th>Number of Studies</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Title &amp; Abstract Screening</td>
+<td>Completed</td>
+<td>&gt;1,000</td>
+</tr>
+<tr class="even">
+<td>Full-Text Screening</td>
+<td>In Progress</td>
+<td>–</td>
+</tr>
+<tr class="odd">
+<td>Data Extraction</td>
+<td>Pending</td>
+<td>–</td>
+</tr>
+<tr class="even">
+<td>Validation / Analysis</td>
+<td>Pending</td>
+<td>–</td>
+</tr>
+</tbody>
+</table>
 
 
+</section>
 </section>
 
 </main> <!-- /main -->
