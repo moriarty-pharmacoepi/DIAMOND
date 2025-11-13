@@ -1,20 +1,15 @@
-## wp3
+## Medications and individual factors associated with serotonin syndrome: an overview of review
 
-Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see <https://quarto.org>.
+Serotonin syndrome is a potentially lethal adverse drug reaction caused by exposure to one or more serotonin-elevating medications. An excess of serotonin can cause non-specific symptoms ranging from mild (nervousness, diarrhoea, shivering, myoclonus), to severe (high fever, muscle rigidity), and rarely death. Its burden is unknown due to the absence of official diagnostic criteria, under-reporting and symptom overlap with other syndromes. In addition to diagnostic uncertainty, there is also no consensus on which drugs can cause serotonin syndrome.
 
-## Running Code
+In this study, we aim to summarise the published literature on the medications and factors associated with serotonin syndrome. A greater understanding of both the medications and signs and clinical features involved could help healthcare professionals and patients identify mild symptoms earlier, particularly in high-risk groups, and thus allow intervention at an early stage. It could also reduce potential risk as part of medication reviews in patients taking multiple medicines.
 
-When you click the **Render** button a document will be generated that includes both content and the output of embedded code. You can embed code like this:
+## **The objectives of this review are:**
 
-```{r}
-1 + 1
-```
+1.  To summarise published systematic review evidence on prescribed medicines commonly associated with serotonin syndrome and,
+2.  To determine the reported incidence of serotonin syndrome,
+3.  To identify: the secondary drugs or drug classes (through interaction with another drug), the patients characteristics, and other risk factors commonly associated with serotonin syndrome.
 
-You can add options to executable code like this
+## **Protocol**
 
-```{r}
-#| echo: false
-2 * 2
-```
-
-The `echo: false` option disables the printing of code (only output is displayed).
+The published protocol is available [here](https://wellcomeopenresearch.org/articles/10-475) and a live version [here](https://osf.io/4rf86/overview).
