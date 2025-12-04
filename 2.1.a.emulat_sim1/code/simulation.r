@@ -546,7 +546,7 @@ ms_history <- df_history %>%
 class(ms_history) <- c("msdata", class(ms_history))
 attr(ms_history, "trans") <- tmat
 
-#print(events(ms_history))
+
 
 #M<-ms_history
 
