@@ -12,9 +12,9 @@ library(readr)
 # ================================
 # Load data
 # ================================
-analgesic_ind <- read_dta("/Users/padraicdonoghue/Desktop/test.csv")
+analgesic_ind <- read_csv("C:/Users/ryanmuddiman/Downloads/sample_data.csv")
 
-# Preserve equivalent
+# Preserve equivalent.
 subset_dates <- analgesic_ind %>%
   filter(
     (str_detect(atccode, "N06A") & atccode != "N06AA09") |
@@ -22,13 +22,13 @@ subset_dates <- analgesic_ind %>%
       str_detect(atccode, "N03")
   )
 
-analgesic_ind_dates <- read_dta("/Users/padraicdonoghue/Desktop/test.csv")
+analgesic_ind_dates <- analgesic_ind
 
 subset_dates <- bind_rows(subset_dates, analgesic_ind_dates) %>%
   distinct(dateofdispensing, individualidentifiernumber, .keep_all = TRUE)
 
-write_dta(subset_dates,
-          "/Users/padraicdonoghue/Desktop/test.csv")
+write_csv(subset_dates,
+          "C:/Users/ryanmuddiman/Downloads/sample_data.csv")
 
 # Restore equivalent
 analgesic_ind <- analgesic_ind %>%
@@ -38,8 +38,8 @@ analgesic_ind <- analgesic_ind %>%
       str_detect(atccode, "N03")
   ))
 
-analgesic_ind_dates <- read_dta("/Users/padraicdonoghue/Desktop/test.csv")
-analgesic_ind_A <- read_dta("/Users/padraicdonoghue/Desktop/test.csv")
+analgesic_ind_dates <- read_dta("C:/Users/ryanmuddiman/Downloads/sample_data.csv")
+analgesic_ind_A <- read_dta("C:/Users/ryanmuddiman/Downloads/sample_data.csv")
 
 df <- bind_rows(analgesic_ind,
                 analgesic_ind_dates,
@@ -165,5 +165,5 @@ df <- df %>%
   filter(DDD == 1)
 
 write_dta(df,
-          "/Users/padraicdonoghue/Desktop/sample_data copy.csv")
+          "C:/Users/ryanmuddiman/Downloads/sample_data copy.csv")
 
