@@ -12,7 +12,7 @@ library(readr)
 # ================================
 # Load data
 # ================================
-analgesic_ind <- read_csv("C:/Users/ryanmuddiman/Downloads/sample_data.csv")
+analgesic_ind <- read_csv("~/Desktop/test.csv") 
 
 # Preserve equivalent.
 subset_dates <- analgesic_ind %>%
@@ -28,7 +28,7 @@ subset_dates <- bind_rows(subset_dates, analgesic_ind_dates) %>%
   distinct(dateofdispensing, individualidentifiernumber, .keep_all = TRUE)
 
 write_csv(subset_dates,
-          "C:/Users/ryanmuddiman/Downloads/sample_data.csv")
+          "~/Desktop/test.csv")
 
 # Restore equivalent
 analgesic_ind <- analgesic_ind %>%
@@ -38,8 +38,8 @@ analgesic_ind <- analgesic_ind %>%
       str_detect(atccode, "N03")
   ))
 
-analgesic_ind_dates <- read_dta("C:/Users/ryanmuddiman/Downloads/sample_data.csv")
-analgesic_ind_A <- read_dta("C:/Users/ryanmuddiman/Downloads/sample_data.csv")
+analgesic_ind_dates <- read_csv("~/Desktop/test.csv")
+analgesic_ind_A <- read_csv("~/Desktop/test.csv")
 
 df <- bind_rows(analgesic_ind,
                 analgesic_ind_dates,
@@ -132,7 +132,7 @@ df <- df %>%
     )
   )
 
-# ================================seems okay up till here.
+# ================================seems okay up till here=======================================================================
 # OME calculation
 # ================================
 df <- df %>%
@@ -164,6 +164,6 @@ df <- df %>%
   filter(between(dateofdispensing, 19724, 23010)) %>%
   filter(DDD == 1)
 
-write_dta(df,
-          "C:/Users/ryanmuddiman/Downloads/sample_data copy.csv")
+write_csv(df,
+          "C:/Users/padraicdonoghue/Desktop/test.csv")
 
