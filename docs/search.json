@@ -1,145 +1,5 @@
 [
   {
-    "objectID": "Workpackages/WP_2.html",
-    "href": "Workpackages/WP_2.html",
-    "title": "Pharmacoepidemiology simulation study practices: A review of the literature",
-    "section": "",
-    "text": "This is the official source code repository of the review of simulation practices in the Journal Pharmacoepidemiology and Drug Safety.\n\n\nThe protocol of the study can be found here: Protocol\n\n\n\nThe following two scripts were used:\n\nsearch_and_download.R\nmatch_included.R\n\nTo replicate our results, use the following:\n\nsearch_and_download.R should be called first which downloads the metadata for the simulation studies using easyPubMed and stores the data in an XML file for importing to Covidence. It also obtains the extracted data from Tazare et al. and creates another XML file for importing to Covidence.\nBoth XML files are then imported to Covidence for screening.\nAfter screening, the metadata from the included articles is exported from Covidence as a CSV file.\nmatch_included.R should then be called which matches the included PMIDs from screening to the raw metadata files from our search and Tazare et al.\nA file named included_final.csv then contains the included articles from which we extracted the data.\n\n\n\n\nIf you use this code in your research, please cite it like this:\n@article {Muddiman2025.04.30.25326427,\n    author = {Muddiman, Ryan and Aiello Battan, Florencia Ines and Tazare, John and Schultze, Anna and Boland, Fiona and Perez, Teresa and Wei, Li and Walsh, Mary E. and Moriarty, Frank},\n    title = {Pharmacoepidemiology simulation study practices: A methodological review},\n    elocation-id = {2025.04.30.25326427},\n    year = {2025},\n    doi = {10.1101/2025.04.30.25326427},\n    publisher = {Cold Spring Harbor Laboratory Press}\n    URL = {https://www.medrxiv.org/content/early/2025/05/02/2025.04.30.25326427},\n    eprint = {https://www.medrxiv.org/content/early/2025/05/02/2025.04.30.25326427.full.pdf},\n    journal = {medRxiv}\n}\n\n\n\nTBD"
-  },
-  {
-    "objectID": "Workpackages/WP_2.html#protocol",
-    "href": "Workpackages/WP_2.html#protocol",
-    "title": "Pharmacoepidemiology simulation study practices: A review of the literature",
-    "section": "",
-    "text": "The protocol of the study can be found here: Protocol"
-  },
-  {
-    "objectID": "Workpackages/WP_2.html#functionality",
-    "href": "Workpackages/WP_2.html#functionality",
-    "title": "Pharmacoepidemiology simulation study practices: A review of the literature",
-    "section": "",
-    "text": "The following two scripts were used:\n\nsearch_and_download.R\nmatch_included.R\n\nTo replicate our results, use the following:\n\nsearch_and_download.R should be called first which downloads the metadata for the simulation studies using easyPubMed and stores the data in an XML file for importing to Covidence. It also obtains the extracted data from Tazare et al. and creates another XML file for importing to Covidence.\nBoth XML files are then imported to Covidence for screening.\nAfter screening, the metadata from the included articles is exported from Covidence as a CSV file.\nmatch_included.R should then be called which matches the included PMIDs from screening to the raw metadata files from our search and Tazare et al.\nA file named included_final.csv then contains the included articles from which we extracted the data."
-  },
-  {
-    "objectID": "Workpackages/WP_2.html#citation",
-    "href": "Workpackages/WP_2.html#citation",
-    "title": "Pharmacoepidemiology simulation study practices: A review of the literature",
-    "section": "",
-    "text": "If you use this code in your research, please cite it like this:\n@article {Muddiman2025.04.30.25326427,\n    author = {Muddiman, Ryan and Aiello Battan, Florencia Ines and Tazare, John and Schultze, Anna and Boland, Fiona and Perez, Teresa and Wei, Li and Walsh, Mary E. and Moriarty, Frank},\n    title = {Pharmacoepidemiology simulation study practices: A methodological review},\n    elocation-id = {2025.04.30.25326427},\n    year = {2025},\n    doi = {10.1101/2025.04.30.25326427},\n    publisher = {Cold Spring Harbor Laboratory Press}\n    URL = {https://www.medrxiv.org/content/early/2025/05/02/2025.04.30.25326427},\n    eprint = {https://www.medrxiv.org/content/early/2025/05/02/2025.04.30.25326427.full.pdf},\n    journal = {medRxiv}\n}"
-  },
-  {
-    "objectID": "Workpackages/WP_2.html#license",
-    "href": "Workpackages/WP_2.html#license",
-    "title": "Pharmacoepidemiology simulation study practices: A review of the literature",
-    "section": "",
-    "text": "TBD"
-  },
-  {
-    "objectID": "Workpackages/WP_3.html",
-    "href": "Workpackages/WP_3.html",
-    "title": "DIAMOND",
-    "section": "",
-    "text": "Serotonin syndrome is a potentially lethal adverse drug reaction caused by exposure to one or more serotonin-elevating medications. An excess of serotonin can cause non-specific symptoms ranging from mild (nervousness, diarrhoea, shivering, myoclonus), to severe (high fever, muscle rigidity), and rarely death. Its burden is unknown due to the absence of official diagnostic criteria, under-reporting and symptom overlap with other syndromes. In addition to diagnostic uncertainty, there is also no consensus on which drugs can cause serotonin syndrome.\nIn this study, we aim to summarise the published literature on the medications and factors associated with serotonin syndrome. A greater understanding of both the medications and signs and clinical features involved could help healthcare professionals and patients identify mild symptoms earlier, particularly in high-risk groups, and thus allow intervention at an early stage. It could also reduce potential risk as part of medication reviews in patients taking multiple medicines."
-  },
-  {
-    "objectID": "Workpackages/WP_3.html#medications-and-individual-factors-associated-with-serotonin-syndrome-an-overview-of-review",
-    "href": "Workpackages/WP_3.html#medications-and-individual-factors-associated-with-serotonin-syndrome-an-overview-of-review",
-    "title": "DIAMOND",
-    "section": "",
-    "text": "Serotonin syndrome is a potentially lethal adverse drug reaction caused by exposure to one or more serotonin-elevating medications. An excess of serotonin can cause non-specific symptoms ranging from mild (nervousness, diarrhoea, shivering, myoclonus), to severe (high fever, muscle rigidity), and rarely death. Its burden is unknown due to the absence of official diagnostic criteria, under-reporting and symptom overlap with other syndromes. In addition to diagnostic uncertainty, there is also no consensus on which drugs can cause serotonin syndrome.\nIn this study, we aim to summarise the published literature on the medications and factors associated with serotonin syndrome. A greater understanding of both the medications and signs and clinical features involved could help healthcare professionals and patients identify mild symptoms earlier, particularly in high-risk groups, and thus allow intervention at an early stage. It could also reduce potential risk as part of medication reviews in patients taking multiple medicines."
-  },
-  {
-    "objectID": "Workpackages/WP_3.html#the-objectives-of-this-review-are",
-    "href": "Workpackages/WP_3.html#the-objectives-of-this-review-are",
-    "title": "DIAMOND",
-    "section": "The objectives of this review are:",
-    "text": "The objectives of this review are:\n\nTo summarise published systematic review evidence on prescribed medicines commonly associated with serotonin syndrome and,\nTo determine the reported incidence of serotonin syndrome,\nTo identify: the secondary drugs or drug classes (through interaction with another drug), the patients characteristics, and other risk factors commonly associated with serotonin syndrome."
-  },
-  {
-    "objectID": "Workpackages/WP_3.html#protocol",
-    "href": "Workpackages/WP_3.html#protocol",
-    "title": "DIAMOND",
-    "section": "Protocol",
-    "text": "Protocol\nThe published protocol is available here and a live version here."
-  },
-  {
-    "objectID": "2.1.a.emulat_sim1/readme.html",
-    "href": "2.1.a.emulat_sim1/readme.html",
-    "title": "Simulation of EHR data for a deprescribing trial",
-    "section": "",
-    "text": "This is the official source code repository of the simulation study on immediate deprescribing using Monte Carlo simulation.\n\n\nThe protocol can be found here: Protocol\n\n\n\nThe following describes the functionality of the code.\n\n\n\nIf you use this code in your research, please cite it like this:\n@MISC{muddiman2025,\nauthor =   {authors},\ntitle =    {title},\n}\n\n\n\nTBD\n\n\n\nusage goes here"
-  },
-  {
-    "objectID": "2.1.a.emulat_sim1/readme.html#protocol",
-    "href": "2.1.a.emulat_sim1/readme.html#protocol",
-    "title": "Simulation of EHR data for a deprescribing trial",
-    "section": "",
-    "text": "The protocol can be found here: Protocol"
-  },
-  {
-    "objectID": "2.1.a.emulat_sim1/readme.html#functionality",
-    "href": "2.1.a.emulat_sim1/readme.html#functionality",
-    "title": "Simulation of EHR data for a deprescribing trial",
-    "section": "",
-    "text": "The following describes the functionality of the code."
-  },
-  {
-    "objectID": "2.1.a.emulat_sim1/readme.html#citation",
-    "href": "2.1.a.emulat_sim1/readme.html#citation",
-    "title": "Simulation of EHR data for a deprescribing trial",
-    "section": "",
-    "text": "If you use this code in your research, please cite it like this:\n@MISC{muddiman2025,\nauthor =   {authors},\ntitle =    {title},\n}"
-  },
-  {
-    "objectID": "2.1.a.emulat_sim1/readme.html#license",
-    "href": "2.1.a.emulat_sim1/readme.html#license",
-    "title": "Simulation of EHR data for a deprescribing trial",
-    "section": "",
-    "text": "TBD"
-  },
-  {
-    "objectID": "2.1.a.emulat_sim1/readme.html#usage",
-    "href": "2.1.a.emulat_sim1/readme.html#usage",
-    "title": "Simulation of EHR data for a deprescribing trial",
-    "section": "",
-    "text": "usage goes here"
-  },
-  {
-    "objectID": "index.html",
-    "href": "index.html",
-    "title": "DIAMOND",
-    "section": "",
-    "text": "This page contains the workpackage outputs of the DIAMOND project.\n\n\nOverview\nThe aims of this program are to:\n\nDevelop and advance novel methods to research deprescribing by harnessing big data,\nApply these methods to generate knowledge and discoveries that improve our understanding of the benefits and harms of deprescribing.\n\n\n\nWorkpackages\n\nCharacterising deprescribing\nTarget trial emulation\n\nReview of simulation studies in pharmacoepidemiology\nSimulation study of target trial emulation for deprescribing\n\nSerotonergic burden index\nCascade reversals"
-  },
-  {
-    "objectID": "2.1.a_i.emulat_sim_brief/code/readme.html",
-    "href": "2.1.a_i.emulat_sim_brief/code/readme.html",
-    "title": "Pharmacoepidemiology simulation study practices: A review of the literature",
-    "section": "",
-    "text": "This is the official source code repository of the review of simulation practices in the Journal Pharmacoepidemiology and Drug Safety.\n\n\nThe following two scripts were used:\n\nsearch_and_download.R\nmatch_included.R\n\nTo replicate our results, use the following; 1. search_and_download.R should be called first which downloads the metadata for the simulation studies using easyPubMed and stores the data in an XML file for importing to Covidence. It also obtains the extracted data from Tazare et al. and creates another XML file for importing to Covidence. 2. Both XML files are then imported to Covidence for screening. 3. After screening, the metadata from the included articles is exported from Covidence as a CSV file 4. match_included.R should then be called which matches the included PMIDs from screening to the raw metadata files from our search and Tazare et al. 5. A file named included_final.csv then contains the included articles from which we extracted the data.\n\n\n\nIf you use this code in your research, please cite it like this:\n@MISC{muddiman2025,\nauthor =   {authors},\ntitle =    {title},\n}\n\n\n\nTBD"
-  },
-  {
-    "objectID": "2.1.a_i.emulat_sim_brief/code/readme.html#functionality",
-    "href": "2.1.a_i.emulat_sim_brief/code/readme.html#functionality",
-    "title": "Pharmacoepidemiology simulation study practices: A review of the literature",
-    "section": "",
-    "text": "The following two scripts were used:\n\nsearch_and_download.R\nmatch_included.R\n\nTo replicate our results, use the following; 1. search_and_download.R should be called first which downloads the metadata for the simulation studies using easyPubMed and stores the data in an XML file for importing to Covidence. It also obtains the extracted data from Tazare et al. and creates another XML file for importing to Covidence. 2. Both XML files are then imported to Covidence for screening. 3. After screening, the metadata from the included articles is exported from Covidence as a CSV file 4. match_included.R should then be called which matches the included PMIDs from screening to the raw metadata files from our search and Tazare et al. 5. A file named included_final.csv then contains the included articles from which we extracted the data."
-  },
-  {
-    "objectID": "2.1.a_i.emulat_sim_brief/code/readme.html#citation",
-    "href": "2.1.a_i.emulat_sim_brief/code/readme.html#citation",
-    "title": "Pharmacoepidemiology simulation study practices: A review of the literature",
-    "section": "",
-    "text": "If you use this code in your research, please cite it like this:\n@MISC{muddiman2025,\nauthor =   {authors},\ntitle =    {title},\n}"
-  },
-  {
-    "objectID": "2.1.a_i.emulat_sim_brief/code/readme.html#license",
-    "href": "2.1.a_i.emulat_sim_brief/code/readme.html#license",
-    "title": "Pharmacoepidemiology simulation study practices: A review of the literature",
-    "section": "",
-    "text": "TBD"
-  },
-  {
     "objectID": "Prescription intervals/readme.html",
     "href": "Prescription intervals/readme.html",
     "title": "DIAMOND",
@@ -175,36 +35,64 @@
     "text": "TBD"
   },
   {
-    "objectID": "2.1.a_i.emulat_sim_brief/readme.html",
-    "href": "2.1.a_i.emulat_sim_brief/readme.html",
-    "title": "Pharmacoepidemiology simulation study practices: A review of the literature",
+    "objectID": "Workpackages/WP_3.html",
+    "href": "Workpackages/WP_3.html",
+    "title": "DIAMOND",
     "section": "",
-    "text": "This is the official source code repository of the review of simulation practices in the Journal Pharmacoepidemiology and Drug Safety.\n\n\nThe protocol of the study can be found here: Protocol\n\n\n\nThe following two scripts were used:\n\nsearch_and_download.R\nmatch_included.R\n\nTo replicate our results, use the following; 1. search_and_download.R should be called first which downloads the metadata for the simulation studies using easyPubMed and stores the data in an XML file for importing to Covidence. It also obtains the extracted data from Tazare et al. and creates another XML file for importing to Covidence. 2. Both XML files are then imported to Covidence for screening. 3. After screening, the metadata from the included articles is exported from Covidence as a CSV file 4. match_included.R should then be called which matches the included PMIDs from screening to the raw metadata files from our search and Tazare et al. 5. A file named included_final.csv then contains the included articles from which we extracted the data.\n\n\n\nIf you use this code in your research, please cite it like this:\n@MISC{muddiman2025,\nauthor =   {authors},\ntitle =    {title},\n}\n\n\n\nTBD"
+    "text": "Serotonin syndrome is a potentially lethal adverse drug reaction caused by exposure to one or more serotonin-elevating medications. An excess of serotonin can cause non-specific symptoms ranging from mild (nervousness, diarrhoea, shivering, myoclonus), to severe (high fever, muscle rigidity), and rarely death. Its burden is unknown due to the absence of official diagnostic criteria, under-reporting and symptom overlap with other syndromes. In addition to diagnostic uncertainty, there is also no consensus on which drugs can cause serotonin syndrome.\nIn this study, we aim to summarise the published literature on the medications and factors associated with serotonin syndrome. A greater understanding of both the medications and signs and clinical features involved could help healthcare professionals and patients identify mild symptoms earlier, particularly in high-risk groups, and thus allow intervention at an early stage. It could also reduce potential risk as part of medication reviews in patients taking multiple medicines."
   },
   {
-    "objectID": "2.1.a_i.emulat_sim_brief/readme.html#protocol",
-    "href": "2.1.a_i.emulat_sim_brief/readme.html#protocol",
+    "objectID": "Workpackages/WP_3.html#medications-and-individual-factors-associated-with-serotonin-syndrome-an-overview-of-review",
+    "href": "Workpackages/WP_3.html#medications-and-individual-factors-associated-with-serotonin-syndrome-an-overview-of-review",
+    "title": "DIAMOND",
+    "section": "",
+    "text": "Serotonin syndrome is a potentially lethal adverse drug reaction caused by exposure to one or more serotonin-elevating medications. An excess of serotonin can cause non-specific symptoms ranging from mild (nervousness, diarrhoea, shivering, myoclonus), to severe (high fever, muscle rigidity), and rarely death. Its burden is unknown due to the absence of official diagnostic criteria, under-reporting and symptom overlap with other syndromes. In addition to diagnostic uncertainty, there is also no consensus on which drugs can cause serotonin syndrome.\nIn this study, we aim to summarise the published literature on the medications and factors associated with serotonin syndrome. A greater understanding of both the medications and signs and clinical features involved could help healthcare professionals and patients identify mild symptoms earlier, particularly in high-risk groups, and thus allow intervention at an early stage. It could also reduce potential risk as part of medication reviews in patients taking multiple medicines."
+  },
+  {
+    "objectID": "Workpackages/WP_3.html#the-objectives-of-this-review-are",
+    "href": "Workpackages/WP_3.html#the-objectives-of-this-review-are",
+    "title": "DIAMOND",
+    "section": "The objectives of this review are:",
+    "text": "The objectives of this review are:\n\nTo summarise published systematic review evidence on prescribed medicines commonly associated with serotonin syndrome and,\nTo determine the reported incidence of serotonin syndrome,\nTo identify: the secondary drugs or drug classes (through interaction with another drug), the patients characteristics, and other risk factors commonly associated with serotonin syndrome."
+  },
+  {
+    "objectID": "Workpackages/WP_3.html#protocol",
+    "href": "Workpackages/WP_3.html#protocol",
+    "title": "DIAMOND",
+    "section": "Protocol",
+    "text": "Protocol\nThe published protocol is available here and a live version here."
+  },
+  {
+    "objectID": "Workpackages/WP_2.html",
+    "href": "Workpackages/WP_2.html",
+    "title": "Pharmacoepidemiology simulation study practices: A review of the literature",
+    "section": "",
+    "text": "This is the official source code repository of the review of simulation practices in the Journal Pharmacoepidemiology and Drug Safety.\n\n\nThe protocol of the study can be found here: Protocol\n\n\n\nThe following two scripts were used:\n\nsearch_and_download.R\nmatch_included.R\n\nTo replicate our results, use the following:\n\nsearch_and_download.R should be called first which downloads the metadata for the simulation studies using easyPubMed and stores the data in an XML file for importing to Covidence. It also obtains the extracted data from Tazare et al. and creates another XML file for importing to Covidence.\nBoth XML files are then imported to Covidence for screening.\nAfter screening, the metadata from the included articles is exported from Covidence as a CSV file.\nmatch_included.R should then be called which matches the included PMIDs from screening to the raw metadata files from our search and Tazare et al.\nA file named included_final.csv then contains the included articles from which we extracted the data.\n\n\n\n\nIf you use this code in your research, please cite it like this:\n@article {Muddiman2025.04.30.25326427,\n    author = {Muddiman, Ryan and Aiello Battan, Florencia Ines and Tazare, John and Schultze, Anna and Boland, Fiona and Perez, Teresa and Wei, Li and Walsh, Mary E. and Moriarty, Frank},\n    title = {Pharmacoepidemiology simulation study practices: A methodological review},\n    elocation-id = {2025.04.30.25326427},\n    year = {2025},\n    doi = {10.1101/2025.04.30.25326427},\n    publisher = {Cold Spring Harbor Laboratory Press}\n    URL = {https://www.medrxiv.org/content/early/2025/05/02/2025.04.30.25326427},\n    eprint = {https://www.medrxiv.org/content/early/2025/05/02/2025.04.30.25326427.full.pdf},\n    journal = {medRxiv}\n}\n\n\n\nTBD"
+  },
+  {
+    "objectID": "Workpackages/WP_2.html#protocol",
+    "href": "Workpackages/WP_2.html#protocol",
     "title": "Pharmacoepidemiology simulation study practices: A review of the literature",
     "section": "",
     "text": "The protocol of the study can be found here: Protocol"
   },
   {
-    "objectID": "2.1.a_i.emulat_sim_brief/readme.html#functionality",
-    "href": "2.1.a_i.emulat_sim_brief/readme.html#functionality",
+    "objectID": "Workpackages/WP_2.html#functionality",
+    "href": "Workpackages/WP_2.html#functionality",
     "title": "Pharmacoepidemiology simulation study practices: A review of the literature",
     "section": "",
-    "text": "The following two scripts were used:\n\nsearch_and_download.R\nmatch_included.R\n\nTo replicate our results, use the following; 1. search_and_download.R should be called first which downloads the metadata for the simulation studies using easyPubMed and stores the data in an XML file for importing to Covidence. It also obtains the extracted data from Tazare et al. and creates another XML file for importing to Covidence. 2. Both XML files are then imported to Covidence for screening. 3. After screening, the metadata from the included articles is exported from Covidence as a CSV file 4. match_included.R should then be called which matches the included PMIDs from screening to the raw metadata files from our search and Tazare et al. 5. A file named included_final.csv then contains the included articles from which we extracted the data."
+    "text": "The following two scripts were used:\n\nsearch_and_download.R\nmatch_included.R\n\nTo replicate our results, use the following:\n\nsearch_and_download.R should be called first which downloads the metadata for the simulation studies using easyPubMed and stores the data in an XML file for importing to Covidence. It also obtains the extracted data from Tazare et al. and creates another XML file for importing to Covidence.\nBoth XML files are then imported to Covidence for screening.\nAfter screening, the metadata from the included articles is exported from Covidence as a CSV file.\nmatch_included.R should then be called which matches the included PMIDs from screening to the raw metadata files from our search and Tazare et al.\nA file named included_final.csv then contains the included articles from which we extracted the data."
   },
   {
-    "objectID": "2.1.a_i.emulat_sim_brief/readme.html#citation",
-    "href": "2.1.a_i.emulat_sim_brief/readme.html#citation",
+    "objectID": "Workpackages/WP_2.html#citation",
+    "href": "Workpackages/WP_2.html#citation",
     "title": "Pharmacoepidemiology simulation study practices: A review of the literature",
     "section": "",
-    "text": "If you use this code in your research, please cite it like this:\n@MISC{muddiman2025,\nauthor =   {authors},\ntitle =    {title},\n}"
+    "text": "If you use this code in your research, please cite it like this:\n@article {Muddiman2025.04.30.25326427,\n    author = {Muddiman, Ryan and Aiello Battan, Florencia Ines and Tazare, John and Schultze, Anna and Boland, Fiona and Perez, Teresa and Wei, Li and Walsh, Mary E. and Moriarty, Frank},\n    title = {Pharmacoepidemiology simulation study practices: A methodological review},\n    elocation-id = {2025.04.30.25326427},\n    year = {2025},\n    doi = {10.1101/2025.04.30.25326427},\n    publisher = {Cold Spring Harbor Laboratory Press}\n    URL = {https://www.medrxiv.org/content/early/2025/05/02/2025.04.30.25326427},\n    eprint = {https://www.medrxiv.org/content/early/2025/05/02/2025.04.30.25326427.full.pdf},\n    journal = {medRxiv}\n}"
   },
   {
-    "objectID": "2.1.a_i.emulat_sim_brief/readme.html#license",
-    "href": "2.1.a_i.emulat_sim_brief/readme.html#license",
+    "objectID": "Workpackages/WP_2.html#license",
+    "href": "Workpackages/WP_2.html#license",
     "title": "Pharmacoepidemiology simulation study practices: A review of the literature",
     "section": "",
     "text": "TBD"
@@ -217,11 +105,11 @@
     "text": "project assets can go in here"
   },
   {
-    "objectID": "2.1.a.emulat_sim1/code/readme.html",
-    "href": "2.1.a.emulat_sim1/code/readme.html",
+    "objectID": "index.html",
+    "href": "index.html",
     "title": "DIAMOND",
     "section": "",
-    "text": "test"
+    "text": "This page contains the workpackage outputs of the DIAMOND project.\n\n\nOverview\nThe aims of this program are to:\n\nDevelop and advance novel methods to research deprescribing by harnessing big data,\nApply these methods to generate knowledge and discoveries that improve our understanding of the benefits and harms of deprescribing.\n\n\n\nWorkpackages\n\nCharacterising deprescribing\nTarget trial emulation\n\nReview of simulation studies in pharmacoepidemiology\nSimulation study of target trial emulation for deprescribing\n\nSerotonergic burden index\nCascade reversals"
   },
   {
     "objectID": "Workpackages/WP_4.html",
@@ -271,5 +159,117 @@
     "title": "Mapping Definitions of Deprescribing in Studies Using Routine Data: A Scoping Review",
     "section": "",
     "text": "We are currently in the screening stage of the review. The progress so far is as follows:\n\n\n\nStage\nStatus\nNumber of Studies\n\n\n\n\nTitle & Abstract Screening\nCompleted\n&gt;1,000\n\n\nFull-Text Screening\nIn Progress\n–\n\n\nData Extraction\nPending\n–\n\n\nValidation / Analysis\nPending\n–"
+  },
+  {
+    "objectID": "2.1.a_i.emulat_sim_brief/readme.html",
+    "href": "2.1.a_i.emulat_sim_brief/readme.html",
+    "title": "Pharmacoepidemiology simulation study practices: A review of the literature",
+    "section": "",
+    "text": "This is the official source code repository of the review of simulation practices in the Journal Pharmacoepidemiology and Drug Safety.\n\n\nThe protocol of the study can be found here: Protocol\n\n\n\nThe following two scripts were used:\n\nsearch_and_download.R\nmatch_included.R\n\nTo replicate our results, use the following; 1. search_and_download.R should be called first which downloads the metadata for the simulation studies using easyPubMed and stores the data in an XML file for importing to Covidence. It also obtains the extracted data from Tazare et al. and creates another XML file for importing to Covidence. 2. Both XML files are then imported to Covidence for screening. 3. After screening, the metadata from the included articles is exported from Covidence as a CSV file 4. match_included.R should then be called which matches the included PMIDs from screening to the raw metadata files from our search and Tazare et al. 5. A file named included_final.csv then contains the included articles from which we extracted the data.\n\n\n\nIf you use this code in your research, please cite it like this:\n@MISC{muddiman2025,\nauthor =   {authors},\ntitle =    {title},\n}\n\n\n\nTBD"
+  },
+  {
+    "objectID": "2.1.a_i.emulat_sim_brief/readme.html#protocol",
+    "href": "2.1.a_i.emulat_sim_brief/readme.html#protocol",
+    "title": "Pharmacoepidemiology simulation study practices: A review of the literature",
+    "section": "",
+    "text": "The protocol of the study can be found here: Protocol"
+  },
+  {
+    "objectID": "2.1.a_i.emulat_sim_brief/readme.html#functionality",
+    "href": "2.1.a_i.emulat_sim_brief/readme.html#functionality",
+    "title": "Pharmacoepidemiology simulation study practices: A review of the literature",
+    "section": "",
+    "text": "The following two scripts were used:\n\nsearch_and_download.R\nmatch_included.R\n\nTo replicate our results, use the following; 1. search_and_download.R should be called first which downloads the metadata for the simulation studies using easyPubMed and stores the data in an XML file for importing to Covidence. It also obtains the extracted data from Tazare et al. and creates another XML file for importing to Covidence. 2. Both XML files are then imported to Covidence for screening. 3. After screening, the metadata from the included articles is exported from Covidence as a CSV file 4. match_included.R should then be called which matches the included PMIDs from screening to the raw metadata files from our search and Tazare et al. 5. A file named included_final.csv then contains the included articles from which we extracted the data."
+  },
+  {
+    "objectID": "2.1.a_i.emulat_sim_brief/readme.html#citation",
+    "href": "2.1.a_i.emulat_sim_brief/readme.html#citation",
+    "title": "Pharmacoepidemiology simulation study practices: A review of the literature",
+    "section": "",
+    "text": "If you use this code in your research, please cite it like this:\n@MISC{muddiman2025,\nauthor =   {authors},\ntitle =    {title},\n}"
+  },
+  {
+    "objectID": "2.1.a_i.emulat_sim_brief/readme.html#license",
+    "href": "2.1.a_i.emulat_sim_brief/readme.html#license",
+    "title": "Pharmacoepidemiology simulation study practices: A review of the literature",
+    "section": "",
+    "text": "TBD"
+  },
+  {
+    "objectID": "2.1.a_i.emulat_sim_brief/code/readme.html",
+    "href": "2.1.a_i.emulat_sim_brief/code/readme.html",
+    "title": "Pharmacoepidemiology simulation study practices: A review of the literature",
+    "section": "",
+    "text": "This is the official source code repository of the review of simulation practices in the Journal Pharmacoepidemiology and Drug Safety.\n\n\nThe following two scripts were used:\n\nsearch_and_download.R\nmatch_included.R\n\nTo replicate our results, use the following; 1. search_and_download.R should be called first which downloads the metadata for the simulation studies using easyPubMed and stores the data in an XML file for importing to Covidence. It also obtains the extracted data from Tazare et al. and creates another XML file for importing to Covidence. 2. Both XML files are then imported to Covidence for screening. 3. After screening, the metadata from the included articles is exported from Covidence as a CSV file 4. match_included.R should then be called which matches the included PMIDs from screening to the raw metadata files from our search and Tazare et al. 5. A file named included_final.csv then contains the included articles from which we extracted the data.\n\n\n\nIf you use this code in your research, please cite it like this:\n@MISC{muddiman2025,\nauthor =   {authors},\ntitle =    {title},\n}\n\n\n\nTBD"
+  },
+  {
+    "objectID": "2.1.a_i.emulat_sim_brief/code/readme.html#functionality",
+    "href": "2.1.a_i.emulat_sim_brief/code/readme.html#functionality",
+    "title": "Pharmacoepidemiology simulation study practices: A review of the literature",
+    "section": "",
+    "text": "The following two scripts were used:\n\nsearch_and_download.R\nmatch_included.R\n\nTo replicate our results, use the following; 1. search_and_download.R should be called first which downloads the metadata for the simulation studies using easyPubMed and stores the data in an XML file for importing to Covidence. It also obtains the extracted data from Tazare et al. and creates another XML file for importing to Covidence. 2. Both XML files are then imported to Covidence for screening. 3. After screening, the metadata from the included articles is exported from Covidence as a CSV file 4. match_included.R should then be called which matches the included PMIDs from screening to the raw metadata files from our search and Tazare et al. 5. A file named included_final.csv then contains the included articles from which we extracted the data."
+  },
+  {
+    "objectID": "2.1.a_i.emulat_sim_brief/code/readme.html#citation",
+    "href": "2.1.a_i.emulat_sim_brief/code/readme.html#citation",
+    "title": "Pharmacoepidemiology simulation study practices: A review of the literature",
+    "section": "",
+    "text": "If you use this code in your research, please cite it like this:\n@MISC{muddiman2025,\nauthor =   {authors},\ntitle =    {title},\n}"
+  },
+  {
+    "objectID": "2.1.a_i.emulat_sim_brief/code/readme.html#license",
+    "href": "2.1.a_i.emulat_sim_brief/code/readme.html#license",
+    "title": "Pharmacoepidemiology simulation study practices: A review of the literature",
+    "section": "",
+    "text": "TBD"
+  },
+  {
+    "objectID": "2.1.a.emulat_sim1/readme.html",
+    "href": "2.1.a.emulat_sim1/readme.html",
+    "title": "Simulation of EHR data for a deprescribing trial",
+    "section": "",
+    "text": "This is the official source code repository of the simulation study on immediate deprescribing using Monte Carlo simulation.\n\n\nThe protocol can be found here: Protocol\n\n\n\nThe following describes the functionality of the code.\n\n\n\nIf you use this code in your research, please cite it like this:\n@MISC{muddiman2025,\nauthor =   {authors},\ntitle =    {title},\n}\n\n\n\nTBD\n\n\n\nusage goes here"
+  },
+  {
+    "objectID": "2.1.a.emulat_sim1/readme.html#protocol",
+    "href": "2.1.a.emulat_sim1/readme.html#protocol",
+    "title": "Simulation of EHR data for a deprescribing trial",
+    "section": "",
+    "text": "The protocol can be found here: Protocol"
+  },
+  {
+    "objectID": "2.1.a.emulat_sim1/readme.html#functionality",
+    "href": "2.1.a.emulat_sim1/readme.html#functionality",
+    "title": "Simulation of EHR data for a deprescribing trial",
+    "section": "",
+    "text": "The following describes the functionality of the code."
+  },
+  {
+    "objectID": "2.1.a.emulat_sim1/readme.html#citation",
+    "href": "2.1.a.emulat_sim1/readme.html#citation",
+    "title": "Simulation of EHR data for a deprescribing trial",
+    "section": "",
+    "text": "If you use this code in your research, please cite it like this:\n@MISC{muddiman2025,\nauthor =   {authors},\ntitle =    {title},\n}"
+  },
+  {
+    "objectID": "2.1.a.emulat_sim1/readme.html#license",
+    "href": "2.1.a.emulat_sim1/readme.html#license",
+    "title": "Simulation of EHR data for a deprescribing trial",
+    "section": "",
+    "text": "TBD"
+  },
+  {
+    "objectID": "2.1.a.emulat_sim1/readme.html#usage",
+    "href": "2.1.a.emulat_sim1/readme.html#usage",
+    "title": "Simulation of EHR data for a deprescribing trial",
+    "section": "",
+    "text": "usage goes here"
+  },
+  {
+    "objectID": "2.1.a.emulat_sim1/code/readme.html",
+    "href": "2.1.a.emulat_sim1/code/readme.html",
+    "title": "DIAMOND",
+    "section": "",
+    "text": "test"
   }
 ]
