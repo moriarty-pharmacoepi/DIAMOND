@@ -132,7 +132,6 @@ df <- df %>%
     )
   )
 
-# ================================seems okay up till here, be worth isolating opioids to test DDD and OME easily?=======================================================================
 # OME calculation
 # ================================
 df <- df %>%
@@ -146,12 +145,12 @@ df <- df %>%
       TRUE ~ NA_real_
     )
   )
-###---------------need to do something about NA here##
+##======================looks good up to here, next line reduces data set to 12 observations=========================================================================================
 # ================================
 # Rolling 30-day OME (asrol equivalent)
 # ================================
 setDT(df)
-setorder(df, indID, date)
+setorder(df, indID, dateofdispensing)
 
 df[, sum30_ome := frollsum(ome, n = 30, align = "right"), by = indID]
 df[, avg30ome := sum30_ome/30]
