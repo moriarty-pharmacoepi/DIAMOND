@@ -8,6 +8,7 @@ library(data.table)
 library(lubridate)
 library(tidyverse)
 library(readr)
+library(ggplot2)
 
 # ================================
 # Load data
@@ -163,6 +164,34 @@ df <- df %>%
   filter(between(dateofdispensing, 19724, 23010)) %>%
   filter(DDD == 1)
 
-write_csv(df,
+#write_csv(df,
           "C:/Users/padraicdonoghue/Desktop/test.csv")
+
+
+
+
+##-------------- PADRAIC generating graphs 
+# 1) Ensure date is a real Date (dd/mm/yyyy)
+df <- df %>%
+  mutate(
+    dateofdispensing = as.Date(dateofdispensing, format = "%d/%m/%Y"),
+    ome = as.numeric(ome)  # just in case it's character
+  )
+
+# 2) Monthly total OME (exclude NA ome and NA dates)
+monthly_ome <- df %>%
+  filter(!is.na(.data$ome), !is.na(.data$dateofdispensing)) %>%
+  mutate(month = floor_date(.data$dateofdispensing, unit = "month")) %>%
+  group_by(month) %>%
+  summarise(
+    total_ome = sum(.data$ome, na.rm = TRUE),
+    .groups = "drop"
+  )
+
+# 3) Plot: OME quantity on Y axis
+ggplot(monthly_ome, aes(x = month, y = total_ome)) +
+  geom_line() +
+  scale_y_continuous(labels = scales::label_number()) +
+  theme_minimal()
+
 
