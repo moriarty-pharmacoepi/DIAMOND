@@ -194,4 +194,7 @@ ggplot(monthly_ome, aes(x = month, y = total_ome)) +
   scale_y_continuous(labels = scales::label_number()) +
   theme_minimal()
 
-
+##=======testing figures to see if happy with them=========##
+top_20 <- monthly_ome %>%
+  filter(monthly_ome$total_ome >= quantile(total_ome, 0.8, na.rm = TRUE)) %>%
+  arrange(desc(total_ome))
