@@ -230,12 +230,14 @@ monthly_ome <- df %>%
    filter(!is.na(ome), !is.na(dateofdispensing)) %>%
    mutate(month = floor_date(dateofdispensing, "month")) %>%
    group_by(month) %>%
-   summarise(total_ome = sum(ome, na.rm = TRUE))
+   summarise(total_ome = sum(ome, na.rm = TRUE), 
+             total_rx = n(),
+             normrx = total_ome/total_rx)
  
 # =================================================================================================================================================================================
 # Graphing Codeine OME's per month
 # =================================================================================================================================================================================
- ggplot(monthly_ome_codeine, aes(x = month, y = total_ome)) +
+ ggplot(monthly_ome_codeine, aes(x = month, y = normrx)) +
    geom_line() +
    labs(
      title = "Total Codeine OME Over Time",
@@ -246,7 +248,7 @@ monthly_ome <- df %>%
   
  ggplot(monthly_ome_codeine, aes(x = month, y = total_ome)) +
    geom_col(fill = "#4C78A8", width = 25) + # clean blue
-   geom_line(color = "#E63946", linewidth = 1.2) +
+   geom_smooth(color = "#E63946", linewidth = 1.2) + #can also use geom_line for a direct overlay#
    scale_y_continuous(labels = comma) +       # remove scientific notation
    labs(
      title = "Average Codeine OME per Prescription Over Time",
@@ -260,3 +262,77 @@ monthly_ome <- df %>%
      panel.grid.minor = element_blank(),
      panel.grid.major.x = element_blank()
    )
+ 
+ # =================================================================================================================================================================================
+ # Graphing Codeine OME's by sex
+ # =================================================================================================================================================================================
+ ome_by_sex <- df %>%
+   filter(!is.na(ome)) %>%
+   group_by(sex) %>%
+   summarise(avg_ome = mean(ome, na.rm = TRUE))
+ 
+ ggplot(ome_by_sex, aes(x = sex, y = avg_ome)) +
+   geom_col(fill = "#2A9D8F", alpha = 0.8) +
+   labs(
+     title = "Average Codeine OME per Prescription by Sex",
+     x = "Sex",
+     y = "Average OME"
+   ) +
+   theme_minimal(base_size = 14)
+ # =================================================================================================================================================================================
+ # Graphing Codeine OME's by medication name
+ # =================================================================================================================================================================================
+ ome_by_med <- df %>%
+   filter(!is.na(ome)) %>%
+   group_by(medicationname) %>%
+   summarise(avg_ome = mean(ome, na.rm = TRUE)) %>%
+   arrange(desc(avg_ome))
+ 
+ ggplot(ome_by_med, aes(x = reorder(medicationname, avg_ome), y = avg_ome)) +
+   geom_col(fill = "#4C78A8", alpha = 0.8) +
+   coord_flip() +
+   labs(
+     title = "Average Codeine OME per Prescription by Product",
+     x = "Medication",
+     y = "Average OME"
+   ) +
+   theme_minimal(base_size = 14)
+ # =================================================================================================================================================================================
+ # Graphing Codeine OME's by GP practice
+ # =================================================================================================================================================================================
+ ome_by_gp <- df %>%
+   filter(!is.na(ome)) %>%
+   group_by(gpidentifiernumber) %>%
+   summarise(avg_ome = mean(ome, na.rm = TRUE)) %>%
+   arrange(desc(avg_ome))%>%
+   slice_head(n = 80)
+ 
+ ggplot(ome_by_gp, aes(x = reorder(gpidentifiernumber, avg_ome), y = avg_ome)) +
+   geom_col(fill = "#E63946", alpha = 0.8) +
+   coord_flip() +
+   labs(
+     title = "Average Codeine OME per Prescription by GP (Top 20)",
+     x = "GP Identifier",
+     y = "Average OME"
+   ) +
+   theme_minimal(base_size = 14)
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
