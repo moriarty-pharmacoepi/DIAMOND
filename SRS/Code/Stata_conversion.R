@@ -9,6 +9,7 @@ library(lubridate)
 library(tidyverse)
 library(readr)
 library(ggplot2)
+library(scales)
 
 # =================================================================================================================================================================================
 # Load data
@@ -243,3 +244,19 @@ monthly_ome <- df %>%
    ) +
    theme_minimal()
   
+ ggplot(monthly_ome_codeine, aes(x = month, y = total_ome)) +
+   geom_col(fill = "#4C78A8", width = 25) + # clean blue
+   geom_line(color = "#E63946", linewidth = 1.2) +
+   scale_y_continuous(labels = comma) +       # remove scientific notation
+   labs(
+     title = "Average Codeine OME per Prescription Over Time",
+     x = "Month",
+     y = "Average OME per Prescription"
+   ) +
+   theme_minimal(base_size = 14) +
+   theme(
+     plot.title = element_text(face = "bold", size = 16),
+     axis.text.x = element_text(angle = 45, hjust = 1),
+     panel.grid.minor = element_blank(),
+     panel.grid.major.x = element_blank()
+   )
