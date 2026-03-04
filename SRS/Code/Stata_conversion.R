@@ -14,7 +14,7 @@ library(scales)
 # =================================================================================================================================================================================
 # Load data
 # =================================================================================================================================================================================
-data_file_path<- "C:/Users/ryanmuddiman/Royal College of Surgeons in Ireland/Frank Moriarty - RSS 2025/SRS/sample_data.csv"
+data_file_path<- "/Users/padraicdonoghue/Desktop/test.csv"
 
 analgesic_ind <- read_csv(data_file_path) 
 
@@ -232,6 +232,18 @@ print(p4)
    summarise(total_ome = sum(ome, na.rm = TRUE), 
              total_rx = n(),
              normrx = total_ome/total_rx)
+ # =================================================================================================================================================================================
+ # Grading codeine OME's as high or low
+ # =================================================================================================================================================================================
+ 
+ df <- df %>%
+   mutate(
+     codeine_ranking = case_when(
+       codeine_dose <= 15 ~ "Low",
+       codeine_dose > 15 ~ "High",
+       TRUE ~ NA_character_
+     )
+   )
  
 # =================================================================================================================================================================================
 # Graphing Codeine OME's per month
@@ -247,9 +259,9 @@ p6<- ggplot(monthly_ome_codeine, aes(x = month, y = normrx)) +
  
  print(p6)
   
- ggplot(monthly_ome_codeine, aes(x = month, y = total_ome)) +
-   geom_col(fill = "#4C78A8", width = 25) + # clean blue
-   geom_smooth(color = "#E63946", linewidth = 1.2) + #can also use geom_line for a direct overlay#
+ ome_over_time <- ggplot(monthly_ome_codeine, aes(x = month, y = total_ome)) +
+   geom_col(fill = "blue", width = 25) + # clean blue
+   geom_smooth(color = "red", linewidth = 1.2) + #can also use geom_line for a direct overlay#
    scale_y_continuous(labels = comma) +       # remove scientific notation
    labs(
      title = "Average Codeine OME per Prescription Over Time",
@@ -263,7 +275,37 @@ p6<- ggplot(monthly_ome_codeine, aes(x = month, y = normrx)) +
      panel.grid.minor = element_blank(),
      panel.grid.major.x = element_blank()
    )
+ print(ome_over_time)
  
+ # =================================================================================================================================================================================
+ # Graphing Codeine OME's per month and subplotting based on HIGH or LOW dose preparations
+ # ================================================================================================================================================================================
+ monthly_total_ome_by_dose <- df %>%
+   filter(!is.na(ome), !is.na(codeine_ranking), !is.na(dateofdispensing)) %>%
+   mutate(month = as.Date(format(dateofdispensing, "%Y-%m-01"))) %>%
+   group_by(month, codeine_ranking) %>%
+   summarise(total_ome = sum(ome, na.rm = TRUE), .groups = "drop")
+ 
+ 
+ ranking_graph <- ggplot(monthly_total_ome_by_dose,
+             aes(x = month, y = total_ome, color = codeine_ranking, group = codeine_ranking)) +
+   geom_line(linewidth = 1.3) +
+   scale_color_manual(values = c("Low" = "blue", "High" = "red")) +
+   scale_y_continuous(labels = comma) +
+   labs(
+     title = "Total Codeine OME per Month: High vs Low Dose",
+     x = "Month",
+     y = "Total OME",
+     color = "Codeine Dose"
+   ) +
+   theme_minimal(base_size = 14) +
+   theme(
+     plot.title = element_text(face = "bold", size = 16),
+     axis.text.x = element_text(angle = 45, hjust = 1),
+     panel.grid.minor = element_blank(),
+     panel.grid.major.x = element_blank()
+   )
+ print(ranking_graph)
  # =================================================================================================================================================================================
  # Graphing Codeine OME's by sex
  # =================================================================================================================================================================================
@@ -272,14 +314,15 @@ p6<- ggplot(monthly_ome_codeine, aes(x = month, y = normrx)) +
    group_by(sex) %>%
    summarise(avg_ome = mean(ome, na.rm = TRUE))
  
- ggplot(ome_by_sex, aes(x = sex, y = avg_ome)) +
-   geom_col(fill = "#2A9D8F", alpha = 0.8) +
+ ome_by_sex <- ggplot(ome_by_sex, aes(x = sex, y = avg_ome)) +
+   geom_col(fill = "blue", alpha = 0.8) +
    labs(
      title = "Average Codeine OME per Prescription by Sex",
      x = "Sex",
      y = "Average OME"
    ) +
    theme_minimal(base_size = 14)
+ print(ome_by_sex)
  # =================================================================================================================================================================================
  # Graphing Codeine OME's by medication name
  # =================================================================================================================================================================================
@@ -289,8 +332,8 @@ p6<- ggplot(monthly_ome_codeine, aes(x = month, y = normrx)) +
    summarise(avg_ome = mean(ome, na.rm = TRUE)) %>%
    arrange(desc(avg_ome))
  
- ggplot(ome_by_med, aes(x = reorder(medicationname, avg_ome), y = avg_ome)) +
-   geom_col(fill = "#4C78A8", alpha = 0.8) +
+ ome_by_product <- ggplot(ome_by_med, aes(x = reorder(medicationname, avg_ome), y = avg_ome)) +
+   geom_col(fill = "blue", alpha = 0.8) +
    coord_flip() +
    labs(
      title = "Average Codeine OME per Prescription by Product",
@@ -298,6 +341,7 @@ p6<- ggplot(monthly_ome_codeine, aes(x = month, y = normrx)) +
      y = "Average OME"
    ) +
    theme_minimal(base_size = 14)
+ print(ome_by_product)
  # =================================================================================================================================================================================
  # Graphing Codeine OME's by GP practice
  # =================================================================================================================================================================================
@@ -306,10 +350,10 @@ p6<- ggplot(monthly_ome_codeine, aes(x = month, y = normrx)) +
    group_by(gpidentifiernumber) %>%
    summarise(avg_ome = mean(ome, na.rm = TRUE)) %>%
    arrange(desc(avg_ome))%>%
-   slice_head(n = 80)
+   slice_head(n = 20)
  
- ggplot(ome_by_gp, aes(x = reorder(gpidentifiernumber, avg_ome), y = avg_ome)) +
-   geom_col(fill = "#E63946", alpha = 0.8) +
+ ome_by_gp <- ggplot(ome_by_gp, aes(x = reorder(gpidentifiernumber, avg_ome), y = avg_ome)) +
+   geom_col(fill = "red", alpha = 0.8) +
    coord_flip() +
    labs(
      title = "Average Codeine OME per Prescription by GP (Top 20)",
@@ -317,15 +361,86 @@ p6<- ggplot(monthly_ome_codeine, aes(x = month, y = normrx)) +
      y = "Average OME"
    ) +
    theme_minimal(base_size = 14)
+ print(ome_by_gp)
+ # =================================================================================================================================================================================
+ # Boxplot of total OME proportions by sex in high vs low dose
+ # ================================================================================================================================================================================= 
+ # non-normalised
+  ome_by_sex_dose <- df %>%
+    filter(!is.na(ome), !is.na(codeine_ranking), !is.na(sex)) %>%
+    group_by(codeine_ranking, sex) %>%
+    summarise(total_ome = sum(ome, na.rm = TRUE), .groups = "drop")
  
+ # Stacked bar chart
+ ome_by_sex_barchart <- ggplot(ome_by_sex_dose, aes(x = codeine_ranking, y = total_ome, fill = sex)) +
+   geom_col(width = 0.6) +
+   scale_y_continuous(labels = comma) +
+   labs(
+     title = "Total Codeine OME by Dose Category and Sex",
+     x = "Codeine Dose Category",
+     y = "Total OME",
+     fill = "Sex"
+   ) +
+   theme_minimal(base_size = 14) +
+   theme(
+     plot.title = element_text(face = "bold", size = 16),
+     panel.grid.minor = element_blank(),
+     panel.grid.major.x = element_blank()
+   )
+
+ print(ome_by_sex_barchart)
  
+#normalised
+ # Stacked proportional bar chart
+ proportional_sex_bar <- ggplot(ome_by_sex_dose,
+             aes(x = codeine_ranking, y = total_ome, fill = sex)) +
+   geom_col(position = "fill", width = 0.6) +
+   scale_y_continuous(labels = percent_format()) +
+   labs(
+     title = "Proportion of Codeine OME by Dose Category and Sex",
+     x = "Codeine Dose Category",
+     y = "Proportion of Total OME",
+     fill = "Sex"
+   ) +
+   theme_minimal(base_size = 14) +
+   theme(
+     plot.title = element_text(face = "bold", size = 16),
+     panel.grid.minor = element_blank(),
+     panel.grid.major.x = element_blank()
+   )
  
+ print(proportional_sex_bar)
  
+ # =================================================================================================================================================================================
+ # Boxplot and violin of total OME proportions by age in high vs low dose
+ # ================================================================================================================================================================================= 
  
+ boxplot_data <- df %>%
+   filter(!is.na(ome), !is.na(age), !is.na(codeine_ranking))
  
+ violin_box_plot <- ggplot(boxplot_data,
+                           aes(x = ome, y = age, fill = codeine_ranking)) +
+   geom_violin(alpha = 0.4, trim = FALSE) + 
+   geom_boxplot(width = 0.2, outlier.alpha = 0.3) + 
+   scale_y_continuous(breaks = seq(0, max(boxplot_data$ome, na.rm = TRUE), by = 10)) +
+   labs(
+     title = "Distribution of Codeine OME by Age and Dose Category",
+     x = "OME",
+     y = "Age",
+     fill = "Codeine Dose"
+   ) +
+   scale_fill_manual(values = c(
+     "Low" = "blue",
+     "High" = "red"
+   )) +
+   theme_minimal(base_size = 14) +
+   theme(
+     plot.title = element_text(face = "bold", size = 16),
+     axis.text.x = element_text(angle = 45, hjust = 1),
+     panel.grid.minor = element_blank()
+   )
  
- 
- 
+ print(violin_box_plot)
  
  
  
