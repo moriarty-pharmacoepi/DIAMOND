@@ -14,7 +14,9 @@ library(scales)
 # =================================================================================================================================================================================
 # Load data
 # =================================================================================================================================================================================
-analgesic_ind <- read_csv("~/Desktop/test.csv") 
+data_file_path<- "C:/Users/ryanmuddiman/Royal College of Surgeons in Ireland/Frank Moriarty - RSS 2025/SRS/sample_data.csv"
+
+analgesic_ind <- read_csv(data_file_path) 
 
 # Preserve equivalent.
 subset_dates <- analgesic_ind %>%
@@ -29,23 +31,21 @@ analgesic_ind_dates <- analgesic_ind
 subset_dates <- bind_rows(subset_dates, analgesic_ind_dates) %>%
   distinct(dateofdispensing, individualidentifiernumber, .keep_all = TRUE)
 
-write_csv(subset_dates,
-          "~/Desktop/test.csv")
+#write_csv(subset_dates,
+#          "~/Desktop/test.csv")
 
 # Restore equivalent
-analgesic_ind <- analgesic_ind %>%
+analgesic_ind <- subset_dates %>%
   filter(!(
     (str_detect(atccode, "N06A") & atccode != "N06AA09") |
       str_detect(atccode, "N05") |
       str_detect(atccode, "N03")
   ))
 
-analgesic_ind_dates <- read_csv("~/Desktop/test.csv")
-analgesic_ind_A <- read_csv("~/Desktop/test.csv")
+analgesic_ind_dates <- analgesic_ind
+analgesic_ind_A <- analgesic_ind_dates
 
-df <- bind_rows(analgesic_ind,
-                analgesic_ind_dates,
-                analgesic_ind_A)
+df <- analgesic_ind
 
 df <- df %>%
   rename(indID = individualidentifiernumber)
@@ -163,8 +163,7 @@ df[, high_risk_ome := avg30ome > 90 & opioid == TRUE]
 # Keep final analytic sample
 # =================================================================================================================================================================================
 df <- df %>%
-  filter(between(dateofdispensing, 19724, 23010)) %>%
-  filter(DDD == 1)
+  filter(between(dateofdispensing, 19724, 23010))
 
 
 # =================================================================================================================================================================================
@@ -188,18 +187,18 @@ monthly_ome <- df %>%
   )
 
 # 3) Plot: OME quantity on Y axis
-#ggplot(monthly_ome, aes(x = month, y = total_ome)) +
+p4<-ggplot(monthly_ome, aes(x = month, y = total_ome)) +
   geom_line() +
   scale_y_continuous(labels = scales::label_number()) +
   theme_minimal()
+print(p4)
 
 # ================================================================================================================================================================================
 # Hard coding codeine content to drug names
 # =================================================================================================================================================================================
    codeine_products <-  df %>%
                       filter(str_detect(atccode, "N02AJ0")) %>%
-                        arrange(medicationname) %>% 
-                         count(medicationname, sort = TRUE)
+                        arrange(medicationname) 
  #view(codeine_products)
  
  df <- df %>%
@@ -237,7 +236,7 @@ monthly_ome <- df %>%
 # =================================================================================================================================================================================
 # Graphing Codeine OME's per month
 # =================================================================================================================================================================================
- ggplot(monthly_ome_codeine, aes(x = month, y = normrx)) +
+p6<- ggplot(monthly_ome_codeine, aes(x = month, y = normrx)) +
    geom_line() +
    labs(
      title = "Total Codeine OME Over Time",
@@ -245,6 +244,8 @@ monthly_ome <- df %>%
      y = "Total OME"
    ) +
    theme_minimal()
+ 
+ print(p6)
   
  ggplot(monthly_ome_codeine, aes(x = month, y = total_ome)) +
    geom_col(fill = "#4C78A8", width = 25) + # clean blue
