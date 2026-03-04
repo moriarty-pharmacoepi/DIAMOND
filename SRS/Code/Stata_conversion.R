@@ -189,12 +189,12 @@ monthly_ome <- df %>%
   )
 
 # 3) Plot: OME quantity on Y axis
-ggplot(monthly_ome, aes(x = month, y = total_ome)) +
+#ggplot(monthly_ome, aes(x = month, y = total_ome)) +
   geom_line() +
   scale_y_continuous(labels = scales::label_number()) +
   theme_minimal()
 
 ##=======testing figures to see if happy with them=========##
-top_20 <- monthly_ome %>%
-  filter(monthly_ome$total_ome >= quantile(total_ome, 0.8, na.rm = TRUE)) %>%
-  arrange(desc(total_ome))
+#top_20 <- monthly_ome %>%
+ # filter(monthly_ome$total_ome >= quantile(total_ome, 0.8, na.rm = TRUE)) %>%
+  #arrange(desc(total_ome))
