@@ -445,23 +445,28 @@ p6<- ggplot(monthly_ome_codeine, aes(x = month, y = normrx)) +
  # =================================================================================================================================================================================
  # Creating new data frame to perform chi squared test on sex vs codeine consumption
  # ================================================================================================================================================================================= 
- chisq_data <- df %>%
-   filter(!is.na(codeine_ranking)) %>%
-   #select(sex, codeine_ranking) %>%
-   mutate(high = as.numeric(if_else((codeine_ranking == "High") & (sex=="M"),1,0)),
-          low = as.numeric(1-high)) %>% 
-   rowSums()
+ dose_by_sex <- df %>%
+   filter(!is.na(codeine_ranking), sex %in% c("M","F"), codeine_ranking %in% c("High","Low")) %>%
+   count(sex, codeine_ranking) %>%
+   tidyr::pivot_wider(names_from = codeine_ranking, values_from = n, values_fill = 0) %>%
+   tibble::column_to_rownames("sex") %>%
+   as.matrix()
+ 
+ 
+ chisq.test(dose_by_sex)  
  
  # =================================================================================================================================================================================
- # Chi-Squared test for porportional bar chart for codeine dose and sex
+ # t-test
  # ================================================================================================================================================================================= 
- chisq_result <- chisq.test(#x= first column of frame corresponding to high dose (1 for males, 0 for females) y is same for low dose)
- 
- 
- 
- 
- 
- 
+ ttest_df <- df %>%
+   filter(sex %in% c("M","F"),
+          codeine_ranking %in% c("High","Low"),
+          !is.na(sex), !is.na(codeine_ranking)) %>%
+   mutate(
+     sex01  = if_else(sex == "M", 1L, 0L),                 # M=1, F=0
+     high01 = if_else(codeine_ranking == "High", 1L, 0L)   # High=1, Low=0
+   )
+ t.test(high01 ~ sex01, data = ttest_df)
  
  
  
