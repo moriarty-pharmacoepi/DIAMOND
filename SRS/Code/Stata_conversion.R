@@ -395,7 +395,6 @@ p6<- ggplot(monthly_ome_codeine, aes(x = month, y = normrx)) +
  proportional_sex_bar <- ggplot(ome_by_sex_dose,
              aes(x = codeine_ranking, y = total_ome, fill = sex)) +
    geom_col(position = "fill", width = 0.6) +
-   scale_y_continuous(labels = percent_format()) +
    labs(
      title = "Proportion of Codeine OME by Dose Category and Sex",
      x = "Codeine Dose Category",
@@ -419,8 +418,8 @@ p6<- ggplot(monthly_ome_codeine, aes(x = month, y = normrx)) +
    filter(!is.na(ome), !is.na(age), !is.na(codeine_ranking))
  
  violin_box_plot <- ggplot(boxplot_data,
-                           aes(x = ome, y = age, fill = codeine_ranking)) +
-   geom_violin(alpha = 0.4, trim = FALSE) + 
+                           aes(x = codeine_ranking, y = age, fill = codeine_ranking)) +
+   geom_violin(alpha = 0.4, trim = FALSE, scale = "width") + 
    geom_boxplot(width = 0.2, outlier.alpha = 0.3) + 
    scale_y_continuous(breaks = seq(0, max(boxplot_data$ome, na.rm = TRUE), by = 10)) +
    labs(
@@ -443,6 +442,20 @@ p6<- ggplot(monthly_ome_codeine, aes(x = month, y = normrx)) +
  print(violin_box_plot)
  
  
+ # =================================================================================================================================================================================
+ # Creating new data frame to perform chi squared test on sex vs codeine consumption
+ # ================================================================================================================================================================================= 
+ chisq_data <- df %>%
+   filter(!is.na(codeine_ranking)) %>%
+   #select(sex, codeine_ranking) %>%
+   mutate(high = as.numeric(if_else((codeine_ranking == "High") & (sex=="M"),1,0)),
+          low = as.numeric(1-high)) %>% 
+   rowSums()
+ 
+ # =================================================================================================================================================================================
+ # Chi-Squared test for porportional bar chart for codeine dose and sex
+ # ================================================================================================================================================================================= 
+ chisq_result <- chisq.test(#x= first column of frame corresponding to high dose (1 for males, 0 for females) y is same for low dose)
  
  
  
