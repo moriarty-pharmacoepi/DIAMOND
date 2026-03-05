@@ -11,6 +11,7 @@ library(readr)
 library(ggplot2)
 library(scales)
 library(viridis)
+library(here)
 
 
 
@@ -540,5 +541,68 @@ print(test2)
      y = "Average OME"
    ) +
    theme_minimal()
- 
  print(p)
+ 
+ # =================================================================================================================================================================================
+ # Generating Objective 2 Table (05/03/26)
+ # =================================================================================================================================================================================  
+ 
+ objective_two <- df %>%
+   filter(
+     codeine == TRUE,
+     year(ymd(dateofdispensing)) == 2022,
+     !is.na(codeine_ranking),
+     codeine_ranking %in% c("High", "Low")
+   ) %>%
+   transmute(
+     dateofdispensing = ymd(dateofdispensing),   # keep full YYYY-MM-DD date (as Date type)
+     indID,
+     age,
+     sex,
+     patientlho,
+     medicationname,
+     atccode,                                  
+     codeine_dose = if_else(codeine_ranking == "High", 1L, 0L)  # High=1, Low=0
+   )
+ 
+ 
+ # =================================================================================================================================================================================
+ # Hard-Coding all analgesics, sedatives, gabapentinoids and triptans
+ # =================================================================================================================================================================================  
+ atc_codes <- c(
+   "H02AB01", #betamethasone
+   "H02AB02", #Dexamethasone
+   "H02AB04", #methylprednisolone
+   "H02AB06", #prednisolone
+   "H02AB07", #prednisone
+   "H02AB08", #triamcinolone
+   "H02AB09", #hydrocortisone
+   "H02BA10", #Cortisone
+   "H02BX01", #methylprednisolone combos
+   
+   
+ ) #add in however many atc codes needed followed by a comma and a comment for what the drug is
+ 
+ atc_flags_2022 <- df %>%
+   mutate(dateofdispensing = ymd(dateofdispensing)) %>%
+   filter(year(dateofdispensing) == 2022, atccode %in% atc_codes) %>%
+   distinct(indID, atccode) %>%                 # patient had ≥1 dispensing of that ATC in 2022
+   mutate(flag = 1L) %>%
+   pivot_wider(
+     names_from  = atccode,
+     values_from = flag,
+     values_fill = 0L
+   )
+ 
+ objective_two <- objective_two %>%
+   left_join(atc_flags_2022, by = "indID") %>%
+   mutate(across(all_of(atc_codes), ~ replace_na(., 0L)))
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
