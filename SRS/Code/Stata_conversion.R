@@ -12,10 +12,15 @@ library(ggplot2)
 library(scales)
 library(viridis)
 
+
+
+here::i_am("SRS project/DIAMOND/SRS/Code/Stata_conversion.r")
+
+library(here)
 # =================================================================================================================================================================================
 # Load data
 # =================================================================================================================================================================================
-data_file_path<- "C:/Users/ryanmuddiman/Downloads/sample_data.csv"
+data_file_path<- here("SRS project/Data/sample_data.csv")
 
 analgesic_ind <- read_csv(data_file_path) 
 
