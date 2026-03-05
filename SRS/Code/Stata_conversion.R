@@ -10,6 +10,7 @@ library(tidyverse)
 library(readr)
 library(ggplot2)
 library(scales)
+library(viridis)
 
 # =================================================================================================================================================================================
 # Load data
@@ -467,8 +468,72 @@ test2<-t.test(age ~ codeine_ranking,data = ttest_df)
 print(test2)
 
  # =================================================================================================================================================================================
- # 
+ # Graphing average Codeine OME by age (10 year brackets)
  # =================================================================================================================================================================================  
-
  
+ ome_by_ageband_10_codeine <- df %>%
+   filter(
+     codeine == TRUE,
+     !is.na(age), !is.na(ome),
+     age >= 0, age <= 107
+   ) %>%
+   mutate(
+     age_band = cut(
+       age,
+       breaks = seq(0, 110, by = 10),   # 0–9, 10–19, ... 100–109
+       right = FALSE,
+       include.lowest = TRUE
+     )
+   ) %>%
+   group_by(age_band) %>%
+   summarise(
+     avg_ome = mean(ome, na.rm = TRUE),
+     n = n(),
+     .groups = "drop"
+   ) %>%
+   mutate(age_band = factor(age_band, levels = unique(age_band)))  # keep order
  
+ ome_by_age_graph <- ggplot(ome_by_ageband_10_codeine, aes(x = age_band, y = avg_ome, fill = avg_ome)) +
+   geom_col() +
+   scale_fill_gradient(low = "lightblue", high = "blue") +
+   labs(
+     title = "Average OME by Age Band (10-year brackets) — Codeine only",
+     x = "Age band (years)",
+     y = "Average OME",
+     fill = "Avg OME"
+   ) +
+   theme_minimal(base_size = 12) +
+   theme(axis.text.x = element_text(angle = 45, hjust = 1))
+ print(ome_by_age_graph)
+ 
+ # =================================================================================================================================================================================
+ # Graphing average Codeine OME by age for males and females (10 year brackets)
+ # =================================================================================================================================================================================  
+ # Summarise avg OME per 10-year window (midpoints) for codeine-only, split by sex
+ ome_age_sex <- df %>%
+   filter(codeine == TRUE, !is.na(age), !is.na(ome), age >= 0, age <= 107, sex %in% c("M","F")) %>%
+   mutate(
+     age_band = cut(age, breaks = seq(0, 110, by = 10), right = FALSE, include.lowest = TRUE),
+     age_mid  = as.numeric(sub("\\[(\\d+),.*", "\\1", as.character(age_band))) + 5
+   ) %>%
+   group_by(sex, age_mid) %>%
+   summarise(avg_ome = mean(ome, na.rm = TRUE), .groups = "drop")
+ 
+ # Plot with legend: Male = blue, Female = red
+ p <- ggplot(ome_age_sex, aes(x = age_mid, y = avg_ome, color = sex, group = sex)) +
+   geom_point(size = 2) +
+   geom_line(linewidth = 1) +
+   scale_color_manual(
+     values = c("M" = "blue", "F" = "red"),
+     labels = c("M" = "Male", "F" = "Female"),
+     name = "Sex"
+   ) +
+   scale_x_continuous(breaks = seq(5, 105, by = 10)) +
+   labs(
+     title = "Average OME by Age Band (10-year) — Codeine only",
+     x = "Age (10-year band midpoint)",
+     y = "Average OME"
+   ) +
+   theme_minimal()
+ 
+ print(p)
