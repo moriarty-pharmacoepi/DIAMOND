@@ -14,7 +14,7 @@ library(scales)
 # =================================================================================================================================================================================
 # Load data
 # =================================================================================================================================================================================
-data_file_path<- "/Users/padraicdonoghue/Desktop/test.csv"
+data_file_path<- "C:/Users/ryanmuddiman/Downloads/sample_data.csv"
 
 analgesic_ind <- read_csv(data_file_path) 
 
@@ -447,26 +447,24 @@ p6<- ggplot(monthly_ome_codeine, aes(x = month, y = normrx)) +
  # ================================================================================================================================================================================= 
  dose_by_sex <- df %>%
    filter(!is.na(codeine_ranking), sex %in% c("M","F"), codeine_ranking %in% c("High","Low")) %>%
-   count(sex, codeine_ranking) %>%
-   tidyr::pivot_wider(names_from = codeine_ranking, values_from = n, values_fill = 0) %>%
-   tibble::column_to_rownames("sex") %>%
-   as.matrix()
+   select(sex,codeine_ranking)%>%
+  table()
  
  
- chisq.test(dose_by_sex)  
+ test1<-chisq.test(dose_by_sex)  
+ print(test1)
  
  # =================================================================================================================================================================================
  # t-test
  # ================================================================================================================================================================================= 
  ttest_df <- df %>%
-   filter(sex %in% c("M","F"),
-          codeine_ranking %in% c("High","Low"),
-          !is.na(sex), !is.na(codeine_ranking)) %>%
-   mutate(
-     sex01  = if_else(sex == "M", 1L, 0L),                 # M=1, F=0
-     high01 = if_else(codeine_ranking == "High", 1L, 0L)   # High=1, Low=0
-   )
- t.test(high01 ~ sex01, data = ttest_df)
+   filter(!is.na(codeine_ranking), sex %in% c("M","F"), codeine_ranking %in% c("High","Low")) %>%
+   mutate(codeine_ranking = as.factor(codeine_ranking))%>%
+   select(age,codeine_ranking)
+ 
+  
+test2<-t.test(age ~ codeine_ranking,data = ttest_df)
+print(test2)
 
  # =================================================================================================================================================================================
  # 
