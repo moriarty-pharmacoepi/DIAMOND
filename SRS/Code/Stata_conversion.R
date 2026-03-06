@@ -555,49 +555,94 @@ print(test2)
      codeine_ranking %in% c("High", "Low")
    ) %>%
    transmute(
-     dateofdispensing = ymd(dateofdispensing),   # keep full YYYY-MM-DD date (as Date type)
+     dateofdispensing = ymd(dateofdispensing),
      indID,
      age,
      sex,
      patientlho,
      medicationname,
-     atccode,                                  
-     codeine_dose = if_else(codeine_ranking == "High", 1L, 0L)  # High=1, Low=0
+     atccode,
+     codeine_dose = if_else(codeine_ranking == "High", 1L, 0L)
    )
- 
  
  # =================================================================================================================================================================================
  # Hard-Coding all analgesics, sedatives, gabapentinoids and triptans
  # =================================================================================================================================================================================  
  atc_codes <- c(
-   "H02AB01", #betamethasone
-   "H02AB02", #Dexamethasone
-   "H02AB04", #methylprednisolone
-   "H02AB06", #prednisolone
-   "H02AB07", #prednisone
-   "H02AB08", #triamcinolone
-   "H02AB09", #hydrocortisone
-   "H02BA10", #Cortisone
-   "H02BX01", #methylprednisolone combos
-   
-   
- ) #add in however many atc codes needed followed by a comma and a comment for what the drug is
+   "N02AA01", #morphine
+   "N02AA51", #morphine combos
+   "N02AA03", #hydromorphone
+   "N02AA05", #oxycodone
+   "N02AA55", #oxycodeone combos
+   "N02AA08", #dihydrocodine
+   "N02AJ01", #dihydrocodeine and paracetamol
+   "N02AB02", #pethidine
+   "N02AB03", #fentanyl
+   "N02AE01", #buprenorphine
+   "N02AX02", #tramadol
+   "N02AJ13", #tramadol and paracetamol
+   "N02AJ14", #tramadol and dexketoprofen
+   "N02AX05", #mepatiznol
+   "N02AX06", #tapentadol
+   "N02BE51", #paracetamol and combos
+   "N05BA01", #diazepam
+   "N05BA02", #chlordiazepoxide
+   "N05BA05", #potassium clordiazpate
+   "N05BA06", #lorazepam
+   "N05BA08", #bromazepam
+   "N05BA09", #clobazam
+   "N05BA11", #prazepam
+   "N05BA12", #alprazolam
+   "N05CD01", #flurazepam
+   "N05CD02", #nitrazepam
+   "N05CD03", #flunitrazepam
+   "N05CD05", #Triazolam
+   "N05CD06", #lormetazepam
+   "N05CD07", #temazepam
+   "N05CD08", #midazolam
+   "N05CF01", #zopiclone
+   "N05CF02", #zolpidem
+   "N05AE01", #clonazepam
+   "M01AB01", #indometacin
+   "M01AB05", #diclofenac
+   "M01AB55", #diclofenac and combos
+   'M01AB16', #acelofenac
+   "M01AC06", #meloxicam
+   "M01AE01", #ibuprofen
+   "M01AE02", #naproxen
+   "M01AE52", #naproxen and combos
+   "M01AE03", #ketoprofen
+   "M01AE09", #flurbiprofen
+   "M01AE17", #dexketoprofen
+   "M01AG01", #mefenamic acid
+   "M01AH01", #celecoxib
+   "M01AH05", #etoricoxib
+   "M01AX01", #nabumetone
+   "N01BB02" #topical lidocaine plasters
+   ) #add in however many atc codes needed followed by a comma and a comment for what the drug is
  
  atc_flags_2022 <- df %>%
-   mutate(dateofdispensing = ymd(dateofdispensing)) %>%
-   filter(year(dateofdispensing) == 2022, atccode %in% atc_codes) %>%
-   distinct(indID, atccode) %>%                 # patient had ≥1 dispensing of that ATC in 2022
+   mutate(
+     dateofdispensing = ymd(dateofdispensing),
+     atccode = factor(atccode, levels = atc_codes)
+   ) %>%
+   filter(
+     year(dateofdispensing) == 2022,
+     atccode %in% atc_codes
+   ) %>%
+   distinct(indID, atccode) %>%
    mutate(flag = 1L) %>%
    pivot_wider(
-     names_from  = atccode,
+     id_cols = indID,
+     names_from = atccode,
      values_from = flag,
-     values_fill = 0L
+     values_fill = 0L,
+     names_expand = TRUE
    )
  
  objective_two <- objective_two %>%
    left_join(atc_flags_2022, by = "indID") %>%
-   mutate(across(all_of(atc_codes), ~ replace_na(., 0L)))
- 
+   mutate(across(any_of(atc_codes), ~ tidyr::replace_na(., 0L)))
  
  
  
