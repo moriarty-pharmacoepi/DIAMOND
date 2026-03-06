@@ -644,7 +644,107 @@ print(test2)
    left_join(atc_flags_2022, by = "indID") %>%
    mutate(across(any_of(atc_codes), ~ tidyr::replace_na(., 0L)))
  
+ # ================================================================================================================================================================================
+ # Making anticholinergic groups
+ # ================================================================================================================================================================================
+ achb1_codes <- c(
+   "C01BD01", #amiodarone
+   "N05AX12", #aripiprazole
+   "bromocriptine",
+   "N03AF01", #carbamazepine
+   "N06AB04", #citalopram
+   "N05BA01", #diazepam
+   "A03FA03", #domperidone
+   "N02AB03l", #fentanyl as analgesic
+   "N06AB03", #fluoxetine
+   "N05BB01", #hydroxyzine
+   "N05AN01", #lithium
+   "N06AX11", #mirtazapine
+   "prednisolone",
+   "C01BA01", #quinidine
+   "N06AB06", #sertraline
+   "G04BD08", #solifenacin
+   "N05CD07" #temazepam
+ )
  
+ achb2_codes <- c(
+   "N04BB01", #amantadine
+   "R06AB04", #chlorphenamine
+   "A03AA07", #dicycloverine
+   "R06AA11", #dimenhydrinate
+   "diphenhydramine",
+   "C01BA03", #disopyramide
+   "N05AA02", #levopromazine
+   "N05AH03", #olanzapine
+   "N06AB05", #paroxetine
+   "N06AB02", #pethidine
+   "N05AB04", #prochlorperazine
+   "N05AH04", #quetiapine
+   "G04BD07", #tolterodine
+   "N05Ab06" #trifluoperazine
+ )
+ 
+ achb3_codes <- c(
+   "N06AA09", #amitriptyline
+   "atropine",
+   "N04AC01", #benzatropine
+   "N05AA01", #chlorpromazine
+   "N06AA04", #clomipramine
+   "N05AH02", #clozapine
+   "N06AA16", #dosulepin
+   "A03BA03", #hyoscine
+   "N06AA07", #lofepramine
+   "N06AA10", #nortriptyline
+   "G04BD04", #oxybutynin
+   "N04AA04", #procyclidine
+   "promethazine",
+   "N06AA06" #trimipramine
+ )
+ 
+ all_ach_codes <- c(achb1_codes, achb2_codes, achb3_codes)
+ 
+ # ================================================================================================================================================================================
+ # Generating ACh Burden scores
+ # ================================================================================================================================================================================
+ ach_scores_2022 <- df %>%
+   mutate(dateofdispensing = ymd(dateofdispensing)) %>%
+   filter(
+     year(dateofdispensing) == 2022,
+     atccode %in% all_ach_codes
+   ) %>%
+   distinct(indID, atccode) %>%
+   mutate(
+     ach_group = case_when(
+       atccode %in% achb1_codes ~ "achb1",
+       atccode %in% achb2_codes ~ "achb2",
+       atccode %in% achb3_codes ~ "achb3"
+     )
+   ) %>%
+   count(indID, ach_group, name = "score") %>%
+   pivot_wider(
+     names_from = ach_group,
+     values_from = score,
+     values_fill = 0L
+   ) %>%
+   mutate(
+     ach1 = coalesce(ach1, 0L),
+     ach2 = coalesce(ach2, 0L),
+     ach3 = coalesce(ach3, 0L),
+     total_ach_score = ach1 + ach2 + ach3
+   )
+ 
+ # ================================================================================================================================================================================
+ # Joining Datasets
+ # ================================================================================================================================================================================
+ objective_two <- objective_two %>%
+   select(-any_of(c("ach1", "ach2", "ach3", "total_ach_score"))) %>%
+   left_join(ach_scores_2022, by = "indID") %>%
+   mutate(
+     ach1 = coalesce(ach1, 0L),
+     ach2 = coalesce(ach2, 0L),
+     ach3 = coalesce(ach3, 0L),
+     total_ach_score = coalesce(total_ach_score, 0L)
+   )
  
  
  
