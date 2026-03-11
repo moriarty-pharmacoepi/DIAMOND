@@ -703,6 +703,9 @@ print(test2)
  
  all_ach_codes <- c(ach1_codes, ach2_codes, ach3_codes)
  
+ # =========================================================
+ # Create patient-level ACH burden scores from df
+ # =========================================================
  ach_scores_2022 <- df %>%
    mutate(dateofdispensing = ymd(dateofdispensing)) %>%
    filter(
@@ -719,8 +722,16 @@ print(test2)
      .groups = "drop"
    )
  
-#have been applying achb code to objective_two but sure they wont be on 'other' meds because that set is just codeine, shold be adding to df#
- 
- 
- 
+ # =========================================================
+ # Join ACH scores into objective_two
+ # =========================================================
+ objective_two <- objective_two %>%
+   select(-any_of(c("ach1", "ach2", "ach3", "total_ach_score"))) %>%
+   left_join(ach_scores_2022, by = "indID") %>%
+   mutate(
+     ach1 = coalesce(ach1, 0L),
+     ach2 = coalesce(ach2, 0L),
+     ach3 = coalesce(ach3, 0L),
+     total_ach_score = coalesce(total_ach_score, 0L)
+   )
  
