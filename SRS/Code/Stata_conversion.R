@@ -473,44 +473,47 @@ p6<- ggplot(monthly_ome_codeine, aes(x = month, y = normrx)) +
 test2<-t.test(age ~ codeine_ranking,data = ttest_df)
 print(test2)
 
- # =================================================================================================================================================================================
- # Graphing average Codeine OME by age (10 year brackets)
- # =================================================================================================================================================================================  
- 
- ome_by_ageband_10_codeine <- df %>%
-   filter(
-     codeine == TRUE,
-     !is.na(age), !is.na(ome),
-     age >= 0, age <= 107
-   ) %>%
-   mutate(
-     age_band = cut(
-       age,
-       breaks = seq(0, 110, by = 10),   # 0–9, 10–19, ... 100–109
-       right = FALSE,
-       include.lowest = TRUE
-     )
-   ) %>%
-   group_by(age_band) %>%
-   summarise(
-     avg_ome = mean(ome, na.rm = TRUE),
-     n = n(),
-     .groups = "drop"
-   ) %>%
-   mutate(age_band = factor(age_band, levels = unique(age_band)))  # keep order
- 
- ome_by_age_graph <- ggplot(ome_by_ageband_10_codeine, aes(x = age_band, y = avg_ome, fill = avg_ome)) +
-   geom_col() +
-   scale_fill_gradient(low = "lightblue", high = "blue") +
-   labs(
-     title = "Average OME by Age Band (10-year brackets) — Codeine only",
-     x = "Age band (years)",
-     y = "Average OME",
-     fill = "Avg OME"
-   ) +
-   theme_minimal(base_size = 12) +
-   theme(axis.text.x = element_text(angle = 45, hjust = 1))
- print(ome_by_age_graph)
+# =================================================================================================================================================================================
+# Graphing average Codeine OME by age (10-year brackets from 18–80, then 5-year brackets from 80–110)
+# =================================================================================================================================================================================
+
+ome_by_ageband_codeine <- df %>%
+  filter(
+    codeine == TRUE,
+    !is.na(age), !is.na(ome),
+    age >= 18, age <= 110
+  ) %>%
+  mutate(
+    age_band = cut(
+      age,
+      breaks = c(18, 30, 40, 50, 60, 70, 80, 85, 90, 95, 100, 105, 110),
+      labels = c("18-29", "30-39", "40-49", "50-59", "60-69", "70-79",
+                 "80-84", "85-89", "90-94", "95-99", "100-104", "105-109"),
+      right = FALSE,
+      include.lowest = TRUE
+    )
+  ) %>%
+  group_by(age_band) %>%
+  summarise(
+    avg_ome = mean(ome, na.rm = TRUE),
+    n = n(),
+    .groups = "drop"
+  ) %>%
+  mutate(age_band = factor(age_band, levels = levels(age_band)))
+
+ome_by_age_graph <- ggplot(ome_by_ageband_codeine, aes(x = age_band, y = avg_ome, fill = avg_ome)) +
+  geom_col() +
+  scale_fill_gradient(low = "lightblue", high = "blue") +
+  labs(
+    title = "Average OME by Age Band (18–80 in 10-year brackets, 80–110 in 5-year brackets) — Codeine only",
+    x = "Age band (years)",
+    y = "Average OME",
+    fill = "Avg OME"
+  ) +
+  theme_minimal(base_size = 12) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+print(ome_by_age_graph)
  
  # =================================================================================================================================================================================
  # Graphing average Codeine OME by age for males and females (10 year brackets)
@@ -648,58 +651,144 @@ print(test2)
  # Making anticholinergic groups
  # ================================================================================================================================================================================
  ach1_codes <- c(
-   "C01BD01", #amiodarone
-   "N05AX12", #aripiprazole
-   "N04BC01", #bromocriptine - need to confirm
-   "N03AF01", #carbamazepine
-   "N06AB04", #citalopram
-   "N05BA01", #diazepam
-   "A03FA03", #domperidone
-   "N02AB03", #fentanyl as analgesic need to confirm
-   "N06AB03", #fluoxetine
-   "N05BB01", #hydroxyzine
-   "N05AN01", #lithium
-   "N06AX11", #mirtazapine
-   "H02AB06", #prednisolone - need to confirm
-   "C01BA01", #quinidine
-   "N06AB06", #sertraline
-   "G04BD08", #solifenacin
-   "N05CD07" #temazepam
+   "R06AD01", 
+   "A03AX08",
+   "A03AX58",
+   "C07AB03",
+   "C07FB03",
+   "C07CB03",
+   "C07CB53",
+   "C07BB03",
+   "C07DB01",
+   "R06AB01",
+   "R06AB51",
+   "N06AX12",
+   "A08AA62",
+   "C09AA01",
+   "C09BA01",
+   "C03BA04",
+   "C03BB04",
+   "C03EA06",
+   "A02BA01",
+   "A02BA51",
+   "M04AC01",
+   "C01AA05",
+   "B01AC07",
+   "C01BA03",
+   "N02AB03",
+   "C03CA01",
+   "C03CB01",
+   "C03EB01",
+   "N06AB08",
+   "N05AD01",
+   "C02DB02",
+   "C02LG02",
+   "H02AB09",
+   "C01DA08",
+   "C01DA58",
+   "C05AE02",
+   "C01DA14",
+   "A07DA03",
+   "A07DA05",
+   "A07DA53",
+   "C07AB02",
+   "C07FX03",
+   "C07FB13",
+   "C07FB02",
+   "C07FX05",
+   "C07CB02",
+   "C07BB02",
+   "C07BB52",
+   "R05DA05",
+   "C08CA05",
+   "C07FB03",
+   "C08GA01",
+   "C08CA55",
+   "H02AB07",
+   "A07EA03",
+   "C01BA01",
+   "C01BA51",
+   "C01BA71",
+   "A02BA02",
+   "A02BA07",
+   "R03DA04",
+   "R03DB04",
+   "R03DA54",
+   "R03DA74",
+   "C03DB02",
+   "B01AA03"
  )
  
  ach2_codes <- c(
-   "N04BB01", #amantadine
-   "R06AB04", #chlorphenamine
-   "A03AA07", #dicycloverine
-   "R06AA11", #dimenhydrinate
-   "R06AA02", #diphenhydramine - need to confirm
-   "C01BA03", #disopyramide
-   "N05AA02", #levopromazine
-   "N05AH03", #olanzapine
-   "N06AB05", #paroxetine
-   "N06AB02", #pethidine
-   "N05AB04", #prochlorperazine
-   "N05AH04", #quetiapine
-   "G04BD07", #tolterodine
-   "N05AB06" #trifluoperazine
+   "N04BB01",
+   "A03BA01",
+   "A03BA04",
+   "A03BB01",
+   "A03BB02",
+   "A03BB03",
+   "A03BB04",
+   "A03BB05",
+   "A03BB06",
+   "A06AB30",
+   "N03AF01",
+   "M03BX08",
+   "R06AX02",
+   "N05AA02",
+   "N05AH01",
+   "N05AE02",
+   "N03AF02",
+   "N05AG02"
  )
  
  ach3_codes <- c(
-   "N06AA09", #amitriptyline
-   "A03BA01", #atropine - need to confirm
-   "N04AC01", #benzatropine
-   "N05AA01", #chlorpromazine
-   "N06AA04", #clomipramine
-   "N05AH02", #clozapine
-   "N06AA16", #dosulepin
-   "A03BA03", #hyoscine
-   "N06AA07", #lofepramine
-   "N06AA10", #nortriptyline
-   "G04BD04", #oxybutynin
-   "N04AA04", #procyclidine
-   "D04AA10", #promethazine - need to confirm
-   "N06AA06" #trimipramine
- )
+   "N06AA09",
+   "N06AA17",
+   "A03CB03",
+   "N04AC01",
+   "R06AA08",
+   "R06AB04",
+   "R06AB54",
+   "N05AA01",
+   "R06AA04",
+   "R06AA54",
+   "N06AA04",
+   "N05AH02",
+   "G04BD10",
+   "N06AA01",
+   "A03AA07",
+   "R06AA11",
+   "R06AA02",
+   "R06AA52",
+   "G04BD02",
+   "N05BB01",
+   "N05BB51",
+   "A03BA03",
+   "A03CB31",
+   "N06AA02",
+   "N06AA03",
+   "R06AC01",
+   "R03DA12",
+   "R06AE05",
+   "R06AE55",
+   "N06AA10",
+   "N04AB02",
+   "M03BC01",
+   "M03BC51",
+   "G04BD04",
+   "N06AB05",
+   "N05AB03",
+   "N04AA04",
+   "N05AA03",
+   "A03CA34",
+   "A04AD01",
+   "A04AD51",
+   "N05CM05",
+   "N05AC02",
+   "G04BD07",
+   "N05AB06",
+   "N04AA01",
+   "N06AA06"
+   )
  
  all_ach_codes <- c(ach1_codes, ach2_codes, ach3_codes)
  
