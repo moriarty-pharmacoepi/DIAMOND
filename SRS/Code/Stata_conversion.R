@@ -569,84 +569,155 @@ print(ome_by_age_graph)
    )
  
  # =================================================================================================================================================================================
- # Hard-Coding all analgesics, sedatives, gabapentinoids and triptans
+ # Hard-Coding oral NSAID's,topical NSAID's, sedatives, gabapentinoids and anti-migraines
  # =================================================================================================================================================================================  
- atc_codes <- c(
-   "N02AA01", #morphine
-   "N02AA51", #morphine combos
-   "N02AA03", #hydromorphone
-   "N02AA05", #oxycodone
-   "N02AA55", #oxycodeone combos
-   "N02AA08", #dihydrocodine
-   "N02AJ01", #dihydrocodeine and paracetamol
-   "N02AB02", #pethidine
-   "N02AB03", #fentanyl
-   "N02AE01", #buprenorphine
-   "N02AX02", #tramadol
-   "N02AJ13", #tramadol and paracetamol
-   "N02AJ14", #tramadol and dexketoprofen
-   "N02AX05", #mepatiznol
-   "N02AX06", #tapentadol
-   "N02BE51", #paracetamol and combos
-   "N05BA01", #diazepam
-   "N05BA02", #chlordiazepoxide
-   "N05BA05", #potassium clordiazpate
-   "N05BA06", #lorazepam
-   "N05BA08", #bromazepam
-   "N05BA09", #clobazam
-   "N05BA11", #prazepam
-   "N05BA12", #alprazolam
-   "N05CD01", #flurazepam
-   "N05CD02", #nitrazepam
-   "N05CD03", #flunitrazepam
-   "N05CD05", #Triazolam
-   "N05CD06", #lormetazepam
-   "N05CD07", #temazepam
-   "N05CD08", #midazolam
-   "N05CF01", #zopiclone
-   "N05CF02", #zolpidem
-   "N05AE01", #clonazepam
-   "M01AB01", #indometacin
-   "M01AB05", #diclofenac
-   "M01AB55", #diclofenac and combos
-   'M01AB16', #acelofenac
-   "M01AC06", #meloxicam
-   "M01AE01", #ibuprofen
-   "M01AE02", #naproxen
-   "M01AE52", #naproxen and combos
-   "M01AE03", #ketoprofen
-   "M01AE09", #flurbiprofen
-   "M01AE17", #dexketoprofen
-   "M01AG01", #mefenamic acid
-   "M01AH01", #celecoxib
-   "M01AH05", #etoricoxib
-   "M01AX01", #nabumetone
-   "N01BB02" #topical lidocaine plasters
-   ) #add in however many atc codes needed followed by a comma and a comment for what the drug is
+ oral_nsaids_codes <- c(
+   "M01AB01",
+   "M01AB05",
+   "M01AB55",
+   "M01AB16",
+   "M01AC06",
+   "M01AE01",
+   "M01AE02",
+   "M01AE52",
+   "M01AE03",
+   "M01AE09",
+   "M01AE17",
+   "M01AG01",
+   "M01AH01",
+   "M01AH05",
+   "M01AX01"
+ )
  
- atc_flags_2022 <- df %>%
+ topical_nsaids_codes <- c(
+   "M02AA05",
+   "M02AA06",
+   "M02AA07",
+   "M02AA10",
+   "M02AA13",
+   "M02AA15",
+   "M02AB01"
+ )
+ 
+ gabapentinoids_codes <- c(
+   "N02BF01",
+   "N02BF02"
+ )
+ 
+ benzodiazepines_sedatives_codes <- c(
+   "N05BA01",
+   "N05BA02",
+   "N05BA05",
+   "N05BA06",
+   "N05BA08",
+   "N05BA09",
+   "N05BA11",
+   "N05BA12",
+   "N05CD01",
+   "N05CD02",
+   "N05CD03",
+   "N05CD05",
+   "N05CD06",
+   "N05CD07",
+   "N05CD08",
+   "N05CF01",
+   "N05CF02",
+   "N03AE01",
+   "N06AA09"
+ )
+ 
+ anti_migraine_codes <- c(
+    "N02CC01",
+    "N02CC02",
+    "N02CC03",
+    "N02CC04",
+    "N02CC05",
+    "N02CC06",
+    "N02CC07",
+    "N02CX02"
+ )
+ 
+ Other_Opioids_codes <- c(
+  "N02AA01",
+  "N02AA51",
+  "N02AA03",
+  "N02AA05",
+  "N02AA55",
+  "N02AA08",
+  "N02AJ01",
+  "N02AB02",
+  "N02AB03",
+  "N02AE01",
+  "N02AX02",
+  "N02AJ13",
+  "N02AJ14",
+  "N02AX05",
+  "N02AX06"
+ )
+ 
+ # ================================================================================================================================================================================
+ # CREATE PATIENT-LEVEL FLAGS FROM df FOR DISPENSINGS IN 2022
+ # ================================================================================================================================================================================
+ 
+ other_analgesic_flags_2022 <- df %>%
    mutate(
      dateofdispensing = ymd(dateofdispensing),
-     atccode = factor(atccode, levels = atc_codes)
+     atccode = as.character(atccode)
    ) %>%
-   filter(
-     year(dateofdispensing) == 2022,
-     atccode %in% atc_codes
+   filter(year(dateofdispensing) == 2022) %>%
+   group_by(indID) %>%
+   summarise(
+     Oral_NSAIDs = as.integer(any(atccode %in% oral_nsaids_codes)),
+     Topical_NSAIDs = as.integer(any(atccode %in% topical_nsaids_codes)),
+     Gabapentinoids = as.integer(any(atccode %in% gabapentinoids_codes)),
+     Benzodiazepines_sedatives = as.integer(any(atccode %in% benzodiazepines_sedatives_codes)),
+     Anti_migraines = as.integer(any(atccode %in% anti_migraine_codes)),
+     Other_Opioids = as.integer(any(atccode %in% Other_Opioids_codes)),
+     .groups = "drop"
    ) %>%
-   distinct(indID, atccode) %>%
-   mutate(flag = 1L) %>%
-   pivot_wider(
-     id_cols = indID,
-     names_from = atccode,
-     values_from = flag,
-     values_fill = 0L,
-     names_expand = TRUE
+   mutate(
+     other_analgesic_total = Oral_NSAIDs +
+       Topical_NSAIDs +
+       Gabapentinoids +
+       Benzodiazepines_sedatives +
+       Anti_migraines +
+       Other_Opioids,
+     other_analgesic_y_n = as.integer(other_analgesic_total > 0)
    )
  
- objective_two <- objective_two %>%
-   left_join(atc_flags_2022, by = "indID") %>%
-   mutate(across(any_of(atc_codes), ~ tidyr::replace_na(., 0L)))
+ # ================================================================================================================================================================================
+ # JOIN BACK TO objective_two AND FILL MISSING WITH 0
+ # ================================================================================================================================================================================
  
+ objective_two <- objective_two %>%
+   select(
+     -any_of(c(
+       "Oral_NSAIDs",
+       "Topical_NSAIDs",
+       "Gabapentinoids",
+       "Benzodiazepines_sedatives",
+       "Anti_migraines",
+       "Other_Opioids",
+       "other_analgesic_total",
+       "other_analgesic_y_n"
+     ))
+   ) %>%
+   left_join(other_analgesic_flags_2022, by = "indID") %>%
+   mutate(
+     across(
+       c(
+         Oral_NSAIDs,
+         Topical_NSAIDs,
+         Gabapentinoids,
+         Benzodiazepines_sedatives,
+         Anti_migraines,
+         Other_Opioids,
+         other_analgesic_total,
+         other_analgesic_y_n
+       ),
+       ~ tidyr::replace_na(., 0L)
+     )
+   )
  # ================================================================================================================================================================================
  # Making anticholinergic groups
  # ================================================================================================================================================================================
@@ -792,9 +863,9 @@ print(ome_by_age_graph)
  
  all_ach_codes <- c(ach1_codes, ach2_codes, ach3_codes)
  
- # =========================================================
+ # ================================================================================================================================================================================
  # Create patient-level ACH burden scores from df
- # =========================================================
+ # ================================================================================================================================================================================
  ach_scores_2022 <- df %>%
    mutate(dateofdispensing = ymd(dateofdispensing)) %>%
    filter(
@@ -811,9 +882,9 @@ print(ome_by_age_graph)
      .groups = "drop"
    )
  
- # =========================================================
+ # ================================================================================================================================================================================
  # Join ACH scores into objective_two
- # =========================================================
+ # ================================================================================================================================================================================
  objective_two <- objective_two %>%
    select(-any_of(c("ach1", "ach2", "ach3", "total_ach_score"))) %>%
    left_join(ach_scores_2022, by = "indID") %>%
@@ -823,4 +894,13 @@ print(ome_by_age_graph)
      ach3 = coalesce(ach3, 0L),
      total_ach_score = coalesce(total_ach_score, 0L)
    )
+ # ================================================================================================================================================================================
+ # 
+ # ================================================================================================================================================================================
+ 
+ 
+ 
+ 
+ 
+ 
  
