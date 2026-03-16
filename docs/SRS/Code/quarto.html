@@ -1,0 +1,1708 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.5.57">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Untitled – DIAMOND</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+
+<link rel="stylesheet" href="styles.css">
+</head>
+
+<body class="nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a href="../../index.html" class="navbar-brand navbar-brand-logo">
+    <img src="../../assets/imgs/Diamond-Logo.png" alt="" class="navbar-logo">
+    </a>
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">DIAMOND</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../index.html"> 
+<span class="menu-text">Home</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../Workpackages/WP_1.html"> 
+<span class="menu-text">WP1</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../Workpackages/WP_2.html"> 
+<span class="menu-text">WP2</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../Workpackages/WP_3.html"> 
+<span class="menu-text">WP3</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../Workpackages/WP_4.html"> 
+<span class="menu-text">WP4</span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
+        
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Untitled</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># =================================================================================================================================================================================</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Libraries</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co"># =================================================================================================================================================================================</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(haven)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>
+Attaching package: 'dplyr'</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following objects are masked from 'package:stats':
+
+    filter, lag</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following objects are masked from 'package:base':
+
+    intersect, setdiff, setequal, union</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(stringr)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(data.table)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>
+Attaching package: 'data.table'</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following objects are masked from 'package:dplyr':
+
+    between, first, last</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lubridate)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>
+Attaching package: 'lubridate'</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following objects are masked from 'package:data.table':
+
+    hour, isoweek, isoyear, mday, minute, month, quarter, second, wday,
+    week, yday, year</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following objects are masked from 'package:base':
+
+    date, intersect, setdiff, union</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
+✔ forcats 1.0.1     ✔ readr   2.2.0
+✔ ggplot2 4.0.2     ✔ tibble  3.3.1
+✔ purrr   1.2.1     ✔ tidyr   1.3.2</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+✖ data.table::between() masks dplyr::between()
+✖ dplyr::filter()       masks stats::filter()
+✖ data.table::first()   masks dplyr::first()
+✖ lubridate::hour()     masks data.table::hour()
+✖ lubridate::isoweek()  masks data.table::isoweek()
+✖ lubridate::isoyear()  masks data.table::isoyear()
+✖ dplyr::lag()          masks stats::lag()
+✖ data.table::last()    masks dplyr::last()
+✖ lubridate::mday()     masks data.table::mday()
+✖ lubridate::minute()   masks data.table::minute()
+✖ lubridate::month()    masks data.table::month()
+✖ lubridate::quarter()  masks data.table::quarter()
+✖ lubridate::second()   masks data.table::second()
+✖ purrr::transpose()    masks data.table::transpose()
+✖ lubridate::wday()     masks data.table::wday()
+✖ lubridate::week()     masks data.table::week()
+✖ lubridate::yday()     masks data.table::yday()
+✖ lubridate::year()     masks data.table::year()
+ℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(readr)</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(scales)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>
+Attaching package: 'scales'
+
+The following object is masked from 'package:purrr':
+
+    discard
+
+The following object is masked from 'package:readr':
+
+    col_factor</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(viridis)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Loading required package: viridisLite
+
+Attaching package: 'viridis'
+
+The following object is masked from 'package:scales':
+
+    viridis_pal</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(here)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>here() starts at C:/Users/ryanmuddiman/OneDrive - Royal College of Surgeons in Ireland/Documents/Supervision/SRS project/DIAMOND</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>here<span class="sc">::</span><span class="fu">i_am</span>(<span class="st">"SRS project/DIAMOND/SRS/Code/Stata_conversion.r"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>here() starts at C:/Users/ryanmuddiman/OneDrive - Royal College of Surgeons in Ireland/Documents/Supervision</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(here)</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a><span class="co"># =================================================================================================================================================================================</span></span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Load data</span></span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a><span class="co"># =================================================================================================================================================================================</span></span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>data_file_path<span class="ot">&lt;-</span> <span class="fu">here</span>(<span class="st">"SRS project/Data/sample_data.csv"</span>)</span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>analgesic_ind <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(data_file_path) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Rows: 356125 Columns: 11
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: ","
+chr (4): dateofdispensing, sex, medicationname, atccode
+dbl (7): individualidentifiernumber, gpidentifiernumber, patientlho, age, co...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Preserve equivalent.</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>subset_dates <span class="ot">&lt;-</span> analgesic_ind <span class="sc">%&gt;%</span></span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(</span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>    (<span class="fu">str_detect</span>(atccode, <span class="st">"N06A"</span>) <span class="sc">&amp;</span> atccode <span class="sc">!=</span> <span class="st">"N06AA09"</span>) <span class="sc">|</span></span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>      <span class="fu">str_detect</span>(atccode, <span class="st">"N05"</span>) <span class="sc">|</span></span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>      <span class="fu">str_detect</span>(atccode, <span class="st">"N03"</span>)</span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a>analgesic_ind_dates <span class="ot">&lt;-</span> analgesic_ind</span>
+<span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-11"><a href="#cb25-11" aria-hidden="true" tabindex="-1"></a>subset_dates <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(subset_dates, analgesic_ind_dates) <span class="sc">%&gt;%</span></span>
+<span id="cb25-12"><a href="#cb25-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">distinct</span>(dateofdispensing, individualidentifiernumber, <span class="at">.keep_all =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb25-13"><a href="#cb25-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-14"><a href="#cb25-14" aria-hidden="true" tabindex="-1"></a><span class="co">#write_csv(subset_dates,</span></span>
+<span id="cb25-15"><a href="#cb25-15" aria-hidden="true" tabindex="-1"></a><span class="co">#          "~/Desktop/test.csv")</span></span>
+<span id="cb25-16"><a href="#cb25-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-17"><a href="#cb25-17" aria-hidden="true" tabindex="-1"></a><span class="co"># Restore equivalent</span></span>
+<span id="cb25-18"><a href="#cb25-18" aria-hidden="true" tabindex="-1"></a>analgesic_ind <span class="ot">&lt;-</span> subset_dates <span class="sc">%&gt;%</span></span>
+<span id="cb25-19"><a href="#cb25-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span>(</span>
+<span id="cb25-20"><a href="#cb25-20" aria-hidden="true" tabindex="-1"></a>    (<span class="fu">str_detect</span>(atccode, <span class="st">"N06A"</span>) <span class="sc">&amp;</span> atccode <span class="sc">!=</span> <span class="st">"N06AA09"</span>) <span class="sc">|</span></span>
+<span id="cb25-21"><a href="#cb25-21" aria-hidden="true" tabindex="-1"></a>      <span class="fu">str_detect</span>(atccode, <span class="st">"N05"</span>) <span class="sc">|</span></span>
+<span id="cb25-22"><a href="#cb25-22" aria-hidden="true" tabindex="-1"></a>      <span class="fu">str_detect</span>(atccode, <span class="st">"N03"</span>)</span>
+<span id="cb25-23"><a href="#cb25-23" aria-hidden="true" tabindex="-1"></a>  ))</span>
+<span id="cb25-24"><a href="#cb25-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-25"><a href="#cb25-25" aria-hidden="true" tabindex="-1"></a>analgesic_ind_dates <span class="ot">&lt;-</span> analgesic_ind</span>
+<span id="cb25-26"><a href="#cb25-26" aria-hidden="true" tabindex="-1"></a>analgesic_ind_A <span class="ot">&lt;-</span> analgesic_ind_dates</span>
+<span id="cb25-27"><a href="#cb25-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-28"><a href="#cb25-28" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> analgesic_ind</span>
+<span id="cb25-29"><a href="#cb25-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-30"><a href="#cb25-30" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> df <span class="sc">%&gt;%</span></span>
+<span id="cb25-31"><a href="#cb25-31" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">indID =</span> individualidentifiernumber)</span>
+<span id="cb25-32"><a href="#cb25-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-33"><a href="#cb25-33" aria-hidden="true" tabindex="-1"></a><span class="co"># =================================================================================================================================================================================</span></span>
+<span id="cb25-34"><a href="#cb25-34" aria-hidden="true" tabindex="-1"></a><span class="co"># Create 30 quantiles (xtile)</span></span>
+<span id="cb25-35"><a href="#cb25-35" aria-hidden="true" tabindex="-1"></a><span class="co"># =================================================================================================================================================================================</span></span>
+<span id="cb25-36"><a href="#cb25-36" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> df <span class="sc">%&gt;%</span></span>
+<span id="cb25-37"><a href="#cb25-37" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">ID_d =</span> <span class="fu">ntile</span>(indID, <span class="dv">30</span>))</span>
+<span id="cb25-38"><a href="#cb25-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-39"><a href="#cb25-39" aria-hidden="true" tabindex="-1"></a><span class="co"># =================================================================================================================================================================================</span></span>
+<span id="cb25-40"><a href="#cb25-40" aria-hidden="true" tabindex="-1"></a><span class="co"># Drug categorisation</span></span>
+<span id="cb25-41"><a href="#cb25-41" aria-hidden="true" tabindex="-1"></a><span class="co"># =================================================================================================================================================================================</span></span>
+<span id="cb25-42"><a href="#cb25-42" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> df <span class="sc">%&gt;%</span></span>
+<span id="cb25-43"><a href="#cb25-43" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb25-44"><a href="#cb25-44" aria-hidden="true" tabindex="-1"></a>    <span class="at">opioid =</span> <span class="fu">str_sub</span>(atccode,<span class="dv">1</span>,<span class="dv">4</span>)<span class="sc">==</span><span class="st">"N02A"</span> <span class="sc">|</span> atccode<span class="sc">==</span><span class="st">"R05DA04"</span>,</span>
+<span id="cb25-45"><a href="#cb25-45" aria-hidden="true" tabindex="-1"></a>    <span class="at">morphine =</span> atccode <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"N02AA01"</span>,<span class="st">"N02AA51"</span>),</span>
+<span id="cb25-46"><a href="#cb25-46" aria-hidden="true" tabindex="-1"></a>    <span class="at">hydromorphone =</span> atccode<span class="sc">==</span><span class="st">"N02AA03"</span>,</span>
+<span id="cb25-47"><a href="#cb25-47" aria-hidden="true" tabindex="-1"></a>    <span class="at">oxycodone =</span> atccode <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"N02AA05"</span>,<span class="st">"N02AA55"</span>),</span>
+<span id="cb25-48"><a href="#cb25-48" aria-hidden="true" tabindex="-1"></a>    <span class="at">pethidine =</span> atccode<span class="sc">==</span><span class="st">"N02AB02"</span>,</span>
+<span id="cb25-49"><a href="#cb25-49" aria-hidden="true" tabindex="-1"></a>    <span class="at">codeine =</span> atccode <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"N02AJ06"</span>,<span class="st">"R05DA04"</span>),</span>
+<span id="cb25-50"><a href="#cb25-50" aria-hidden="true" tabindex="-1"></a>    <span class="at">dihydrocodeine =</span> atccode <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"N02AA08"</span>,<span class="st">"N02AJ01"</span>),</span>
+<span id="cb25-51"><a href="#cb25-51" aria-hidden="true" tabindex="-1"></a>    <span class="at">fentanyl =</span> atccode<span class="sc">==</span><span class="st">"N02AB03"</span>,</span>
+<span id="cb25-52"><a href="#cb25-52" aria-hidden="true" tabindex="-1"></a>    <span class="at">buprenorphine =</span> atccode<span class="sc">==</span><span class="st">"N02AE01"</span>,</span>
+<span id="cb25-53"><a href="#cb25-53" aria-hidden="true" tabindex="-1"></a>    <span class="at">tramadol =</span> atccode <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"N02AX02"</span>,<span class="st">"N02AJ13"</span>,<span class="st">"N02AJ14"</span>),</span>
+<span id="cb25-54"><a href="#cb25-54" aria-hidden="true" tabindex="-1"></a>    <span class="at">tapentadol =</span> atccode<span class="sc">==</span><span class="st">"N02AX06"</span>,</span>
+<span id="cb25-55"><a href="#cb25-55" aria-hidden="true" tabindex="-1"></a>    <span class="at">meptazinol =</span> atccode<span class="sc">==</span><span class="st">"N02AX05"</span></span>
+<span id="cb25-56"><a href="#cb25-56" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb25-57"><a href="#cb25-57" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-58"><a href="#cb25-58" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> df <span class="sc">%&gt;%</span></span>
+<span id="cb25-59"><a href="#cb25-59" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb25-60"><a href="#cb25-60" aria-hidden="true" tabindex="-1"></a>    <span class="at">strongop =</span> morphine <span class="sc">|</span> hydromorphone <span class="sc">|</span> oxycodone <span class="sc">|</span></span>
+<span id="cb25-61"><a href="#cb25-61" aria-hidden="true" tabindex="-1"></a>      pethidine <span class="sc">|</span> fentanyl <span class="sc">|</span> buprenorphine <span class="sc">|</span></span>
+<span id="cb25-62"><a href="#cb25-62" aria-hidden="true" tabindex="-1"></a>      tapentadol <span class="sc">|</span> tramadol,</span>
+<span id="cb25-63"><a href="#cb25-63" aria-hidden="true" tabindex="-1"></a>    <span class="at">strongop =</span> <span class="fu">ifelse</span>(<span class="sc">!</span>opioid, <span class="cn">NA</span>, strongop)</span>
+<span id="cb25-64"><a href="#cb25-64" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb25-65"><a href="#cb25-65" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-66"><a href="#cb25-66" aria-hidden="true" tabindex="-1"></a><span class="co"># =================================================================================================================================================================================</span></span>
+<span id="cb25-67"><a href="#cb25-67" aria-hidden="true" tabindex="-1"></a><span class="co"># Systemic NSAIDs</span></span>
+<span id="cb25-68"><a href="#cb25-68" aria-hidden="true" tabindex="-1"></a><span class="co"># =================================================================================================================================================================================</span></span>
+<span id="cb25-69"><a href="#cb25-69" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> df <span class="sc">%&gt;%</span></span>
+<span id="cb25-70"><a href="#cb25-70" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb25-71"><a href="#cb25-71" aria-hidden="true" tabindex="-1"></a>    <span class="at">sysnsaid =</span> <span class="fu">str_sub</span>(atccode,<span class="dv">1</span>,<span class="dv">4</span>)<span class="sc">==</span><span class="st">"M01A"</span> <span class="sc">|</span> atccode<span class="sc">==</span><span class="st">"N02AJ14"</span>,</span>
+<span id="cb25-72"><a href="#cb25-72" aria-hidden="true" tabindex="-1"></a>    <span class="at">coxib =</span> <span class="fu">str_sub</span>(atccode,<span class="dv">1</span>,<span class="dv">5</span>)<span class="sc">==</span><span class="st">"M01AH"</span>,</span>
+<span id="cb25-73"><a href="#cb25-73" aria-hidden="true" tabindex="-1"></a>    <span class="at">nsnsaid =</span> sysnsaid <span class="sc">&amp;</span> <span class="sc">!</span>coxib</span>
+<span id="cb25-74"><a href="#cb25-74" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb25-75"><a href="#cb25-75" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-76"><a href="#cb25-76" aria-hidden="true" tabindex="-1"></a><span class="co"># =================================================================================================================================================================================</span></span>
+<span id="cb25-77"><a href="#cb25-77" aria-hidden="true" tabindex="-1"></a><span class="co"># Paracetamol</span></span>
+<span id="cb25-78"><a href="#cb25-78" aria-hidden="true" tabindex="-1"></a><span class="co"># =================================================================================================================================================================================</span></span>
+<span id="cb25-79"><a href="#cb25-79" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> df <span class="sc">%&gt;%</span></span>
+<span id="cb25-80"><a href="#cb25-80" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb25-81"><a href="#cb25-81" aria-hidden="true" tabindex="-1"></a>    <span class="at">paracetamol =</span> atccode <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"N02BE01"</span>,<span class="st">"N02BE51"</span>,<span class="st">"N02AJ01"</span>,<span class="st">"N02AJ06"</span>,<span class="st">"N02AJ13"</span>),</span>
+<span id="cb25-82"><a href="#cb25-82" aria-hidden="true" tabindex="-1"></a>    <span class="at">paraonly =</span> atccode <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"N02BE01"</span>,<span class="st">"N02BE51"</span>)</span>
+<span id="cb25-83"><a href="#cb25-83" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb25-84"><a href="#cb25-84" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-85"><a href="#cb25-85" aria-hidden="true" tabindex="-1"></a><span class="co"># =================================================================================================================================================================================</span></span>
+<span id="cb25-86"><a href="#cb25-86" aria-hidden="true" tabindex="-1"></a><span class="co"># Strength extraction</span></span>
+<span id="cb25-87"><a href="#cb25-87" aria-hidden="true" tabindex="-1"></a><span class="co"># =================================================================================================================================================================================</span></span>
+<span id="cb25-88"><a href="#cb25-88" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> df <span class="sc">%&gt;%</span></span>
+<span id="cb25-89"><a href="#cb25-89" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">strength =</span> <span class="fu">as.numeric</span>(<span class="fu">str_extract</span>(medicationname, <span class="st">"</span><span class="sc">\\</span><span class="st">d+</span><span class="sc">\\</span><span class="st">.?</span><span class="sc">\\</span><span class="st">d*(?= Mg)"</span>)))</span>
+<span id="cb25-90"><a href="#cb25-90" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-91"><a href="#cb25-91" aria-hidden="true" tabindex="-1"></a><span class="co"># Fentanyl mcg conversion</span></span>
+<span id="cb25-92"><a href="#cb25-92" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> df <span class="sc">%&gt;%</span></span>
+<span id="cb25-93"><a href="#cb25-93" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb25-94"><a href="#cb25-94" aria-hidden="true" tabindex="-1"></a>    <span class="at">strength =</span> <span class="fu">case_when</span>(</span>
+<span id="cb25-95"><a href="#cb25-95" aria-hidden="true" tabindex="-1"></a>      <span class="fu">str_detect</span>(medicationname,<span class="st">"50 Mcg"</span>) <span class="sc">~</span> <span class="fl">0.05</span>,</span>
+<span id="cb25-96"><a href="#cb25-96" aria-hidden="true" tabindex="-1"></a>      <span class="fu">str_detect</span>(medicationname,<span class="st">"100 Mcg"</span>) <span class="sc">~</span> <span class="fl">0.1</span>,</span>
+<span id="cb25-97"><a href="#cb25-97" aria-hidden="true" tabindex="-1"></a>      <span class="cn">TRUE</span> <span class="sc">~</span> strength</span>
+<span id="cb25-98"><a href="#cb25-98" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb25-99"><a href="#cb25-99" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb25-100"><a href="#cb25-100" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-101"><a href="#cb25-101" aria-hidden="true" tabindex="-1"></a><span class="co"># =================================================================================================================================================================================</span></span>
+<span id="cb25-102"><a href="#cb25-102" aria-hidden="true" tabindex="-1"></a><span class="co"># DDD calculation</span></span>
+<span id="cb25-103"><a href="#cb25-103" aria-hidden="true" tabindex="-1"></a><span class="co"># =================================================================================================================================================================================</span></span>
+<span id="cb25-104"><a href="#cb25-104" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> df <span class="sc">%&gt;%</span></span>
+<span id="cb25-105"><a href="#cb25-105" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">DDD =</span> <span class="cn">NA_real_</span>)</span>
+<span id="cb25-106"><a href="#cb25-106" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-107"><a href="#cb25-107" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> df <span class="sc">%&gt;%</span></span>
+<span id="cb25-108"><a href="#cb25-108" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb25-109"><a href="#cb25-109" aria-hidden="true" tabindex="-1"></a>    <span class="at">DDD =</span> <span class="fu">case_when</span>(</span>
+<span id="cb25-110"><a href="#cb25-110" aria-hidden="true" tabindex="-1"></a>      atccode<span class="sc">==</span><span class="st">"N02BE01"</span> <span class="sc">~</span> quantity<span class="sc">*</span>strength<span class="sc">/</span><span class="dv">3000</span>,</span>
+<span id="cb25-111"><a href="#cb25-111" aria-hidden="true" tabindex="-1"></a>      atccode<span class="sc">==</span><span class="st">"N02AX02"</span> <span class="sc">~</span> quantity<span class="sc">*</span>strength<span class="sc">/</span><span class="dv">300</span>,</span>
+<span id="cb25-112"><a href="#cb25-112" aria-hidden="true" tabindex="-1"></a>      atccode<span class="sc">==</span><span class="st">"N02BF01"</span> <span class="sc">~</span> quantity<span class="sc">*</span>strength<span class="sc">/</span><span class="dv">1800</span>,</span>
+<span id="cb25-113"><a href="#cb25-113" aria-hidden="true" tabindex="-1"></a>      <span class="cn">TRUE</span> <span class="sc">~</span> DDD</span>
+<span id="cb25-114"><a href="#cb25-114" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb25-115"><a href="#cb25-115" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb25-116"><a href="#cb25-116" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-117"><a href="#cb25-117" aria-hidden="true" tabindex="-1"></a><span class="co"># =================================================================================================================================================================================</span></span>
+<span id="cb25-118"><a href="#cb25-118" aria-hidden="true" tabindex="-1"></a><span class="co"># Old OME calculation, new one below for codeine specifically</span></span>
+<span id="cb25-119"><a href="#cb25-119" aria-hidden="true" tabindex="-1"></a><span class="co"># =================================================================================================================================================================================</span></span>
+<span id="cb25-120"><a href="#cb25-120" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> df <span class="sc">%&gt;%</span></span>
+<span id="cb25-121"><a href="#cb25-121" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb25-122"><a href="#cb25-122" aria-hidden="true" tabindex="-1"></a>    <span class="at">ome =</span> <span class="fu">case_when</span>(</span>
+<span id="cb25-123"><a href="#cb25-123" aria-hidden="true" tabindex="-1"></a>      (codeine <span class="sc">==</span> <span class="dv">1</span> <span class="sc">|</span> dihydrocodeine <span class="sc">==</span> <span class="dv">1</span>) <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(quantity) <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(strength) <span class="sc">~</span> quantity <span class="sc">*</span> strength <span class="sc">*</span> <span class="fl">0.1</span>,</span>
+<span id="cb25-124"><a href="#cb25-124" aria-hidden="true" tabindex="-1"></a>      hydromorphone <span class="sc">==</span> <span class="dv">1</span> <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(quantity) <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(strength) <span class="sc">~</span> quantity <span class="sc">*</span> strength <span class="sc">*</span> <span class="dv">5</span>,</span>
+<span id="cb25-125"><a href="#cb25-125" aria-hidden="true" tabindex="-1"></a>      oxycodone <span class="sc">==</span> <span class="dv">1</span> <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(quantity) <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(strength) <span class="sc">~</span> quantity <span class="sc">*</span> strength <span class="sc">*</span> <span class="fl">1.5</span>,</span>
+<span id="cb25-126"><a href="#cb25-126" aria-hidden="true" tabindex="-1"></a>      tramadol <span class="sc">==</span> <span class="dv">1</span> <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(quantity) <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(strength) <span class="sc">~</span> quantity <span class="sc">*</span> strength <span class="sc">*</span> <span class="fl">0.2</span>,</span>
+<span id="cb25-127"><a href="#cb25-127" aria-hidden="true" tabindex="-1"></a>      morphine <span class="sc">==</span> <span class="dv">1</span> <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(quantity) <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(strength) <span class="sc">~</span> quantity <span class="sc">*</span> strength <span class="sc">*</span> <span class="dv">1</span>,</span>
+<span id="cb25-128"><a href="#cb25-128" aria-hidden="true" tabindex="-1"></a>      <span class="cn">TRUE</span> <span class="sc">~</span> <span class="cn">NA_real_</span></span>
+<span id="cb25-129"><a href="#cb25-129" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb25-130"><a href="#cb25-130" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb25-131"><a href="#cb25-131" aria-hidden="true" tabindex="-1"></a><span class="do">##---looks good up to here, next line reduces data set to 12 observations----------------------------------------------------------------------------------------------------------</span></span>
+<span id="cb25-132"><a href="#cb25-132" aria-hidden="true" tabindex="-1"></a><span class="co"># =================================================================================================================================================================================</span></span>
+<span id="cb25-133"><a href="#cb25-133" aria-hidden="true" tabindex="-1"></a><span class="co"># Rolling 30-day OME (asrol equivalent)</span></span>
+<span id="cb25-134"><a href="#cb25-134" aria-hidden="true" tabindex="-1"></a><span class="co"># =================================================================================================================================================================================</span></span>
+<span id="cb25-135"><a href="#cb25-135" aria-hidden="true" tabindex="-1"></a><span class="fu">setDT</span>(df)</span>
+<span id="cb25-136"><a href="#cb25-136" aria-hidden="true" tabindex="-1"></a><span class="fu">setorder</span>(df, indID, dateofdispensing)</span>
+<span id="cb25-137"><a href="#cb25-137" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-138"><a href="#cb25-138" aria-hidden="true" tabindex="-1"></a>df[, sum30_ome <span class="sc">:</span><span class="er">=</span> <span class="fu">frollsum</span>(ome, <span class="at">n =</span> <span class="dv">30</span>, <span class="at">align =</span> <span class="st">"right"</span>), by <span class="ot">=</span> indID]</span>
+<span id="cb25-139"><a href="#cb25-139" aria-hidden="true" tabindex="-1"></a>df[, avg30ome <span class="sc">:</span><span class="er">=</span> sum30_ome<span class="sc">/</span><span class="dv">30</span>]</span>
+<span id="cb25-140"><a href="#cb25-140" aria-hidden="true" tabindex="-1"></a>df[, high_risk_ome <span class="sc">:</span><span class="er">=</span> avg30ome <span class="sc">&gt;</span> <span class="dv">90</span> <span class="sc">&amp;</span> opioid <span class="sc">==</span> <span class="cn">TRUE</span>]</span>
+<span id="cb25-141"><a href="#cb25-141" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-142"><a href="#cb25-142" aria-hidden="true" tabindex="-1"></a><span class="co"># =================================================================================================================================================================================</span></span>
+<span id="cb25-143"><a href="#cb25-143" aria-hidden="true" tabindex="-1"></a><span class="co"># Keep final analytic sample</span></span>
+<span id="cb25-144"><a href="#cb25-144" aria-hidden="true" tabindex="-1"></a><span class="co"># =================================================================================================================================================================================</span></span>
+<span id="cb25-145"><a href="#cb25-145" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> df <span class="sc">%&gt;%</span></span>
+<span id="cb25-146"><a href="#cb25-146" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">between</span>(dateofdispensing, <span class="dv">19724</span>, <span class="dv">23010</span>))</span>
+<span id="cb25-147"><a href="#cb25-147" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-148"><a href="#cb25-148" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-149"><a href="#cb25-149" aria-hidden="true" tabindex="-1"></a><span class="co"># =================================================================================================================================================================================</span></span>
+<span id="cb25-150"><a href="#cb25-150" aria-hidden="true" tabindex="-1"></a><span class="do">##PADRAIC generating graphs(outdated now i reckon)</span></span>
+<span id="cb25-151"><a href="#cb25-151" aria-hidden="true" tabindex="-1"></a><span class="co"># =================================================================================================================================================================================</span></span>
+<span id="cb25-152"><a href="#cb25-152" aria-hidden="true" tabindex="-1"></a><span class="co"># 1) Ensure date is a real Date (dd/mm/yyyy)</span></span>
+<span id="cb25-153"><a href="#cb25-153" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> df <span class="sc">%&gt;%</span></span>
+<span id="cb25-154"><a href="#cb25-154" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb25-155"><a href="#cb25-155" aria-hidden="true" tabindex="-1"></a>    <span class="at">dateofdispensing =</span> <span class="fu">as.Date</span>(dateofdispensing, <span class="at">format =</span> <span class="st">"%d/%m/%Y"</span>),</span>
+<span id="cb25-156"><a href="#cb25-156" aria-hidden="true" tabindex="-1"></a>    <span class="at">ome =</span> <span class="fu">as.numeric</span>(ome)  <span class="co"># just in case it's character</span></span>
+<span id="cb25-157"><a href="#cb25-157" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb25-158"><a href="#cb25-158" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-159"><a href="#cb25-159" aria-hidden="true" tabindex="-1"></a><span class="co"># 2) Monthly total OME (exclude NA ome and NA dates)</span></span>
+<span id="cb25-160"><a href="#cb25-160" aria-hidden="true" tabindex="-1"></a>monthly_ome <span class="ot">&lt;-</span> df <span class="sc">%&gt;%</span></span>
+<span id="cb25-161"><a href="#cb25-161" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(.data<span class="sc">$</span>ome), <span class="sc">!</span><span class="fu">is.na</span>(.data<span class="sc">$</span>dateofdispensing)) <span class="sc">%&gt;%</span></span>
+<span id="cb25-162"><a href="#cb25-162" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">month =</span> <span class="fu">floor_date</span>(.data<span class="sc">$</span>dateofdispensing, <span class="at">unit =</span> <span class="st">"month"</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb25-163"><a href="#cb25-163" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(month) <span class="sc">%&gt;%</span></span>
+<span id="cb25-164"><a href="#cb25-164" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb25-165"><a href="#cb25-165" aria-hidden="true" tabindex="-1"></a>    <span class="at">total_ome =</span> <span class="fu">sum</span>(.data<span class="sc">$</span>ome, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb25-166"><a href="#cb25-166" aria-hidden="true" tabindex="-1"></a>    <span class="at">.groups =</span> <span class="st">"drop"</span></span>
+<span id="cb25-167"><a href="#cb25-167" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb25-168"><a href="#cb25-168" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-169"><a href="#cb25-169" aria-hidden="true" tabindex="-1"></a><span class="co"># 3) Plot: OME quantity on Y axis</span></span>
+<span id="cb25-170"><a href="#cb25-170" aria-hidden="true" tabindex="-1"></a>p4<span class="ot">&lt;-</span><span class="fu">ggplot</span>(monthly_ome, <span class="fu">aes</span>(<span class="at">x =</span> month, <span class="at">y =</span> total_ome)) <span class="sc">+</span></span>
+<span id="cb25-171"><a href="#cb25-171" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>() <span class="sc">+</span></span>
+<span id="cb25-172"><a href="#cb25-172" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">labels =</span> scales<span class="sc">::</span><span class="fu">label_number</span>()) <span class="sc">+</span></span>
+<span id="cb25-173"><a href="#cb25-173" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span>
+<span id="cb25-174"><a href="#cb25-174" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(p4)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="quarto_files/figure-html/unnamed-chunk-1-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ================================================================================================================================================================================</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Hard coding codeine content to drug names</span></span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a><span class="co"># =================================================================================================================================================================================</span></span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>   codeine_products <span class="ot">&lt;-</span>  df <span class="sc">%&gt;%</span></span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>                      <span class="fu">filter</span>(<span class="fu">str_detect</span>(atccode, <span class="st">"N02AJ0"</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a>                        <span class="fu">arrange</span>(medicationname) </span>
+<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a> <span class="co">#view(codeine_products)</span></span>
+<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a> </span>
+<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a> df <span class="ot">&lt;-</span> df <span class="sc">%&gt;%</span></span>
+<span id="cb26-10"><a href="#cb26-10" aria-hidden="true" tabindex="-1"></a>   <span class="fu">mutate</span>(<span class="at">codeine_dose =</span> <span class="fu">case_when</span>(</span>
+<span id="cb26-11"><a href="#cb26-11" aria-hidden="true" tabindex="-1"></a>     medicationname <span class="sc">==</span> <span class="st">"Tylex Caps"</span> <span class="sc">~</span> <span class="dv">30</span>,</span>
+<span id="cb26-12"><a href="#cb26-12" aria-hidden="true" tabindex="-1"></a>     medicationname <span class="sc">==</span> <span class="st">"Solpadeine Caps"</span> <span class="sc">~</span> <span class="dv">8</span>,</span>
+<span id="cb26-13"><a href="#cb26-13" aria-hidden="true" tabindex="-1"></a>     medicationname <span class="sc">==</span> <span class="st">"Solpadol Eff Tabs"</span> <span class="sc">~</span> <span class="dv">30</span>,</span>
+<span id="cb26-14"><a href="#cb26-14" aria-hidden="true" tabindex="-1"></a>     medicationname <span class="sc">==</span> <span class="st">"Solpadeine Sol. Tabs"</span> <span class="sc">~</span> <span class="dv">8</span>,</span>
+<span id="cb26-15"><a href="#cb26-15" aria-hidden="true" tabindex="-1"></a>     medicationname <span class="sc">==</span> <span class="st">"Solpadol Caplets"</span> <span class="sc">~</span> <span class="dv">30</span>,</span>
+<span id="cb26-16"><a href="#cb26-16" aria-hidden="true" tabindex="-1"></a>     medicationname <span class="sc">==</span> <span class="st">"Codipar Caps 15/500 Mg"</span> <span class="sc">~</span> <span class="dv">15</span>,</span>
+<span id="cb26-17"><a href="#cb26-17" aria-hidden="true" tabindex="-1"></a>     medicationname <span class="sc">==</span> <span class="st">"Kapake Tabs 30/500 Mg"</span> <span class="sc">~</span> <span class="dv">30</span>,</span>
+<span id="cb26-18"><a href="#cb26-18" aria-hidden="true" tabindex="-1"></a>     medicationname <span class="sc">==</span> <span class="st">"Maxilief Eff Tabs"</span> <span class="sc">~</span> <span class="dv">8</span>,</span>
+<span id="cb26-19"><a href="#cb26-19" aria-hidden="true" tabindex="-1"></a>     medicationname <span class="sc">==</span> <span class="st">"Kapake Tabs 15/500 Mg"</span> <span class="sc">~</span> <span class="dv">15</span>,</span>
+<span id="cb26-20"><a href="#cb26-20" aria-hidden="true" tabindex="-1"></a>     medicationname <span class="sc">==</span> <span class="st">"Kapake (Imbat Ltd.) Tabs 30/500 Mg"</span> <span class="sc">~</span> <span class="dv">30</span>,</span>
+<span id="cb26-21"><a href="#cb26-21" aria-hidden="true" tabindex="-1"></a>     medicationname <span class="sc">==</span> <span class="st">"Codipar  Eff Tabs 15/500 Mg"</span> <span class="sc">~</span> <span class="dv">15</span>,</span>
+<span id="cb26-22"><a href="#cb26-22" aria-hidden="true" tabindex="-1"></a>     medicationname <span class="sc">==</span> <span class="st">"Tylex Effervescent  Tabs 30/500 Mg"</span> <span class="sc">~</span> <span class="dv">30</span>,</span>
+<span id="cb26-23"><a href="#cb26-23" aria-hidden="true" tabindex="-1"></a>     </span>
+<span id="cb26-24"><a href="#cb26-24" aria-hidden="true" tabindex="-1"></a>     <span class="cn">TRUE</span> <span class="sc">~</span> <span class="cn">NA_real_</span></span>
+<span id="cb26-25"><a href="#cb26-25" aria-hidden="true" tabindex="-1"></a>   ))</span>
+<span id="cb26-26"><a href="#cb26-26" aria-hidden="true" tabindex="-1"></a> </span>
+<span id="cb26-27"><a href="#cb26-27" aria-hidden="true" tabindex="-1"></a><span class="co"># =================================================================================================================================================================================</span></span>
+<span id="cb26-28"><a href="#cb26-28" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculating OME's for codeine specifically</span></span>
+<span id="cb26-29"><a href="#cb26-29" aria-hidden="true" tabindex="-1"></a><span class="co"># =================================================================================================================================================================================</span></span>
+<span id="cb26-30"><a href="#cb26-30" aria-hidden="true" tabindex="-1"></a> df <span class="ot">&lt;-</span> df <span class="sc">%&gt;%</span></span>
+<span id="cb26-31"><a href="#cb26-31" aria-hidden="true" tabindex="-1"></a>   <span class="fu">mutate</span>(<span class="at">ome =</span> <span class="fu">ifelse</span>(<span class="sc">!</span><span class="fu">is.na</span>(codeine_dose), quantity <span class="sc">*</span> codeine_dose <span class="sc">*</span> <span class="fl">0.1</span>, <span class="cn">NA</span>))</span>
+<span id="cb26-32"><a href="#cb26-32" aria-hidden="true" tabindex="-1"></a> </span>
+<span id="cb26-33"><a href="#cb26-33" aria-hidden="true" tabindex="-1"></a> monthly_ome_codeine <span class="ot">&lt;-</span> df <span class="sc">%&gt;%</span></span>
+<span id="cb26-34"><a href="#cb26-34" aria-hidden="true" tabindex="-1"></a>   <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(ome), <span class="sc">!</span><span class="fu">is.na</span>(dateofdispensing)) <span class="sc">%&gt;%</span></span>
+<span id="cb26-35"><a href="#cb26-35" aria-hidden="true" tabindex="-1"></a>   <span class="fu">mutate</span>(<span class="at">month =</span> <span class="fu">floor_date</span>(dateofdispensing, <span class="st">"month"</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb26-36"><a href="#cb26-36" aria-hidden="true" tabindex="-1"></a>   <span class="fu">group_by</span>(month) <span class="sc">%&gt;%</span></span>
+<span id="cb26-37"><a href="#cb26-37" aria-hidden="true" tabindex="-1"></a>   <span class="fu">summarise</span>(<span class="at">total_ome =</span> <span class="fu">sum</span>(ome, <span class="at">na.rm =</span> <span class="cn">TRUE</span>), </span>
+<span id="cb26-38"><a href="#cb26-38" aria-hidden="true" tabindex="-1"></a>             <span class="at">total_rx =</span> <span class="fu">n</span>(),</span>
+<span id="cb26-39"><a href="#cb26-39" aria-hidden="true" tabindex="-1"></a>             <span class="at">normrx =</span> total_ome<span class="sc">/</span>total_rx)</span>
+<span id="cb26-40"><a href="#cb26-40" aria-hidden="true" tabindex="-1"></a> <span class="co"># =================================================================================================================================================================================</span></span>
+<span id="cb26-41"><a href="#cb26-41" aria-hidden="true" tabindex="-1"></a> <span class="co"># Grading codeine OME's as high or low</span></span>
+<span id="cb26-42"><a href="#cb26-42" aria-hidden="true" tabindex="-1"></a> <span class="co"># =================================================================================================================================================================================</span></span>
+<span id="cb26-43"><a href="#cb26-43" aria-hidden="true" tabindex="-1"></a> </span>
+<span id="cb26-44"><a href="#cb26-44" aria-hidden="true" tabindex="-1"></a> df <span class="ot">&lt;-</span> df <span class="sc">%&gt;%</span></span>
+<span id="cb26-45"><a href="#cb26-45" aria-hidden="true" tabindex="-1"></a>   <span class="fu">mutate</span>(</span>
+<span id="cb26-46"><a href="#cb26-46" aria-hidden="true" tabindex="-1"></a>     <span class="at">codeine_ranking =</span> <span class="fu">case_when</span>(</span>
+<span id="cb26-47"><a href="#cb26-47" aria-hidden="true" tabindex="-1"></a>       codeine_dose <span class="sc">&lt;=</span> <span class="dv">15</span> <span class="sc">~</span> <span class="st">"Low"</span>,</span>
+<span id="cb26-48"><a href="#cb26-48" aria-hidden="true" tabindex="-1"></a>       codeine_dose <span class="sc">&gt;</span> <span class="dv">15</span> <span class="sc">~</span> <span class="st">"High"</span>,</span>
+<span id="cb26-49"><a href="#cb26-49" aria-hidden="true" tabindex="-1"></a>       <span class="cn">TRUE</span> <span class="sc">~</span> <span class="cn">NA_character_</span></span>
+<span id="cb26-50"><a href="#cb26-50" aria-hidden="true" tabindex="-1"></a>     )</span>
+<span id="cb26-51"><a href="#cb26-51" aria-hidden="true" tabindex="-1"></a>   )</span>
+<span id="cb26-52"><a href="#cb26-52" aria-hidden="true" tabindex="-1"></a> </span>
+<span id="cb26-53"><a href="#cb26-53" aria-hidden="true" tabindex="-1"></a><span class="co"># =================================================================================================================================================================================</span></span>
+<span id="cb26-54"><a href="#cb26-54" aria-hidden="true" tabindex="-1"></a><span class="co"># Graphing Codeine OME's per month</span></span>
+<span id="cb26-55"><a href="#cb26-55" aria-hidden="true" tabindex="-1"></a><span class="co"># =================================================================================================================================================================================</span></span>
+<span id="cb26-56"><a href="#cb26-56" aria-hidden="true" tabindex="-1"></a>p6<span class="ot">&lt;-</span> <span class="fu">ggplot</span>(monthly_ome_codeine, <span class="fu">aes</span>(<span class="at">x =</span> month, <span class="at">y =</span> normrx)) <span class="sc">+</span></span>
+<span id="cb26-57"><a href="#cb26-57" aria-hidden="true" tabindex="-1"></a>   <span class="fu">geom_line</span>() <span class="sc">+</span></span>
+<span id="cb26-58"><a href="#cb26-58" aria-hidden="true" tabindex="-1"></a>   <span class="fu">labs</span>(</span>
+<span id="cb26-59"><a href="#cb26-59" aria-hidden="true" tabindex="-1"></a>     <span class="at">title =</span> <span class="st">"Total Codeine OME Over Time"</span>,</span>
+<span id="cb26-60"><a href="#cb26-60" aria-hidden="true" tabindex="-1"></a>     <span class="at">x =</span> <span class="st">"Month"</span>,</span>
+<span id="cb26-61"><a href="#cb26-61" aria-hidden="true" tabindex="-1"></a>     <span class="at">y =</span> <span class="st">"Total OME"</span></span>
+<span id="cb26-62"><a href="#cb26-62" aria-hidden="true" tabindex="-1"></a>   ) <span class="sc">+</span></span>
+<span id="cb26-63"><a href="#cb26-63" aria-hidden="true" tabindex="-1"></a>   <span class="fu">theme_minimal</span>()</span>
+<span id="cb26-64"><a href="#cb26-64" aria-hidden="true" tabindex="-1"></a> </span>
+<span id="cb26-65"><a href="#cb26-65" aria-hidden="true" tabindex="-1"></a> <span class="fu">print</span>(p6)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="quarto_files/figure-html/unnamed-chunk-1-2.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a> ome_over_time <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(monthly_ome_codeine, <span class="fu">aes</span>(<span class="at">x =</span> month, <span class="at">y =</span> total_ome)) <span class="sc">+</span></span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>   <span class="fu">geom_col</span>(<span class="at">fill =</span> <span class="st">"blue"</span>, <span class="at">width =</span> <span class="dv">25</span>) <span class="sc">+</span> <span class="co"># clean blue</span></span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>   <span class="fu">geom_smooth</span>(<span class="at">color =</span> <span class="st">"red"</span>, <span class="at">linewidth =</span> <span class="fl">1.2</span>) <span class="sc">+</span> <span class="co">#can also use geom_line for a direct overlay#</span></span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>   <span class="fu">scale_y_continuous</span>(<span class="at">labels =</span> comma) <span class="sc">+</span>       <span class="co"># remove scientific notation</span></span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>   <span class="fu">labs</span>(</span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>     <span class="at">title =</span> <span class="st">"Average Codeine OME per Prescription Over Time"</span>,</span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a>     <span class="at">x =</span> <span class="st">"Month"</span>,</span>
+<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a>     <span class="at">y =</span> <span class="st">"Average OME per Prescription"</span></span>
+<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a>   ) <span class="sc">+</span></span>
+<span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a>   <span class="fu">theme_minimal</span>(<span class="at">base_size =</span> <span class="dv">14</span>) <span class="sc">+</span></span>
+<span id="cb27-11"><a href="#cb27-11" aria-hidden="true" tabindex="-1"></a>   <span class="fu">theme</span>(</span>
+<span id="cb27-12"><a href="#cb27-12" aria-hidden="true" tabindex="-1"></a>     <span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">face =</span> <span class="st">"bold"</span>, <span class="at">size =</span> <span class="dv">16</span>),</span>
+<span id="cb27-13"><a href="#cb27-13" aria-hidden="true" tabindex="-1"></a>     <span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">45</span>, <span class="at">hjust =</span> <span class="dv">1</span>),</span>
+<span id="cb27-14"><a href="#cb27-14" aria-hidden="true" tabindex="-1"></a>     <span class="at">panel.grid.minor =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb27-15"><a href="#cb27-15" aria-hidden="true" tabindex="-1"></a>     <span class="at">panel.grid.major.x =</span> <span class="fu">element_blank</span>()</span>
+<span id="cb27-16"><a href="#cb27-16" aria-hidden="true" tabindex="-1"></a>   )</span>
+<span id="cb27-17"><a href="#cb27-17" aria-hidden="true" tabindex="-1"></a> <span class="fu">print</span>(ome_over_time)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>`geom_smooth()` using method = 'loess' and formula = 'y ~ x'</code></pre>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="quarto_files/figure-html/unnamed-chunk-1-3.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a> <span class="co"># =================================================================================================================================================================================</span></span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a> <span class="co"># Graphing Codeine OME's per month and subplotting based on HIGH or LOW dose preparations</span></span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a> <span class="co"># ================================================================================================================================================================================</span></span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a> monthly_total_ome_by_dose <span class="ot">&lt;-</span> df <span class="sc">%&gt;%</span></span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>   <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(ome), <span class="sc">!</span><span class="fu">is.na</span>(codeine_ranking), <span class="sc">!</span><span class="fu">is.na</span>(dateofdispensing)) <span class="sc">%&gt;%</span></span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a>   <span class="fu">mutate</span>(<span class="at">month =</span> <span class="fu">as.Date</span>(<span class="fu">format</span>(dateofdispensing, <span class="st">"%Y-%m-01"</span>))) <span class="sc">%&gt;%</span></span>
+<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a>   <span class="fu">group_by</span>(month, codeine_ranking) <span class="sc">%&gt;%</span></span>
+<span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a>   <span class="fu">summarise</span>(<span class="at">total_ome =</span> <span class="fu">sum</span>(ome, <span class="at">na.rm =</span> <span class="cn">TRUE</span>), <span class="at">.groups =</span> <span class="st">"drop"</span>)</span>
+<span id="cb29-9"><a href="#cb29-9" aria-hidden="true" tabindex="-1"></a> </span>
+<span id="cb29-10"><a href="#cb29-10" aria-hidden="true" tabindex="-1"></a> </span>
+<span id="cb29-11"><a href="#cb29-11" aria-hidden="true" tabindex="-1"></a> ranking_graph <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(monthly_total_ome_by_dose,</span>
+<span id="cb29-12"><a href="#cb29-12" aria-hidden="true" tabindex="-1"></a>             <span class="fu">aes</span>(<span class="at">x =</span> month, <span class="at">y =</span> total_ome, <span class="at">color =</span> codeine_ranking, <span class="at">group =</span> codeine_ranking)) <span class="sc">+</span></span>
+<span id="cb29-13"><a href="#cb29-13" aria-hidden="true" tabindex="-1"></a>   <span class="fu">geom_line</span>(<span class="at">linewidth =</span> <span class="fl">1.3</span>) <span class="sc">+</span></span>
+<span id="cb29-14"><a href="#cb29-14" aria-hidden="true" tabindex="-1"></a>   <span class="fu">scale_color_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"Low"</span> <span class="ot">=</span> <span class="st">"blue"</span>, <span class="st">"High"</span> <span class="ot">=</span> <span class="st">"red"</span>)) <span class="sc">+</span></span>
+<span id="cb29-15"><a href="#cb29-15" aria-hidden="true" tabindex="-1"></a>   <span class="fu">scale_y_continuous</span>(<span class="at">labels =</span> comma) <span class="sc">+</span></span>
+<span id="cb29-16"><a href="#cb29-16" aria-hidden="true" tabindex="-1"></a>   <span class="fu">labs</span>(</span>
+<span id="cb29-17"><a href="#cb29-17" aria-hidden="true" tabindex="-1"></a>     <span class="at">title =</span> <span class="st">"Total Codeine OME per Month: High vs Low Dose"</span>,</span>
+<span id="cb29-18"><a href="#cb29-18" aria-hidden="true" tabindex="-1"></a>     <span class="at">x =</span> <span class="st">"Month"</span>,</span>
+<span id="cb29-19"><a href="#cb29-19" aria-hidden="true" tabindex="-1"></a>     <span class="at">y =</span> <span class="st">"Total OME"</span>,</span>
+<span id="cb29-20"><a href="#cb29-20" aria-hidden="true" tabindex="-1"></a>     <span class="at">color =</span> <span class="st">"Codeine Dose"</span></span>
+<span id="cb29-21"><a href="#cb29-21" aria-hidden="true" tabindex="-1"></a>   ) <span class="sc">+</span></span>
+<span id="cb29-22"><a href="#cb29-22" aria-hidden="true" tabindex="-1"></a>   <span class="fu">theme_minimal</span>(<span class="at">base_size =</span> <span class="dv">14</span>) <span class="sc">+</span></span>
+<span id="cb29-23"><a href="#cb29-23" aria-hidden="true" tabindex="-1"></a>   <span class="fu">theme</span>(</span>
+<span id="cb29-24"><a href="#cb29-24" aria-hidden="true" tabindex="-1"></a>     <span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">face =</span> <span class="st">"bold"</span>, <span class="at">size =</span> <span class="dv">16</span>),</span>
+<span id="cb29-25"><a href="#cb29-25" aria-hidden="true" tabindex="-1"></a>     <span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">45</span>, <span class="at">hjust =</span> <span class="dv">1</span>),</span>
+<span id="cb29-26"><a href="#cb29-26" aria-hidden="true" tabindex="-1"></a>     <span class="at">panel.grid.minor =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb29-27"><a href="#cb29-27" aria-hidden="true" tabindex="-1"></a>     <span class="at">panel.grid.major.x =</span> <span class="fu">element_blank</span>()</span>
+<span id="cb29-28"><a href="#cb29-28" aria-hidden="true" tabindex="-1"></a>   )</span>
+<span id="cb29-29"><a href="#cb29-29" aria-hidden="true" tabindex="-1"></a> <span class="fu">print</span>(ranking_graph)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="quarto_files/figure-html/unnamed-chunk-1-4.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a> <span class="co"># =================================================================================================================================================================================</span></span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a> <span class="co"># Graphing Codeine OME's by sex</span></span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a> <span class="co"># =================================================================================================================================================================================</span></span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a> ome_by_sex <span class="ot">&lt;-</span> df <span class="sc">%&gt;%</span></span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a>   <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(ome)) <span class="sc">%&gt;%</span></span>
+<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a>   <span class="fu">group_by</span>(sex) <span class="sc">%&gt;%</span></span>
+<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a>   <span class="fu">summarise</span>(<span class="at">avg_ome =</span> <span class="fu">mean</span>(ome, <span class="at">na.rm =</span> <span class="cn">TRUE</span>))</span>
+<span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a> </span>
+<span id="cb30-9"><a href="#cb30-9" aria-hidden="true" tabindex="-1"></a> ome_by_sex <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(ome_by_sex, <span class="fu">aes</span>(<span class="at">x =</span> sex, <span class="at">y =</span> avg_ome)) <span class="sc">+</span></span>
+<span id="cb30-10"><a href="#cb30-10" aria-hidden="true" tabindex="-1"></a>   <span class="fu">geom_col</span>(<span class="at">fill =</span> <span class="st">"blue"</span>, <span class="at">alpha =</span> <span class="fl">0.8</span>) <span class="sc">+</span></span>
+<span id="cb30-11"><a href="#cb30-11" aria-hidden="true" tabindex="-1"></a>   <span class="fu">labs</span>(</span>
+<span id="cb30-12"><a href="#cb30-12" aria-hidden="true" tabindex="-1"></a>     <span class="at">title =</span> <span class="st">"Average Codeine OME per Prescription by Sex"</span>,</span>
+<span id="cb30-13"><a href="#cb30-13" aria-hidden="true" tabindex="-1"></a>     <span class="at">x =</span> <span class="st">"Sex"</span>,</span>
+<span id="cb30-14"><a href="#cb30-14" aria-hidden="true" tabindex="-1"></a>     <span class="at">y =</span> <span class="st">"Average OME"</span></span>
+<span id="cb30-15"><a href="#cb30-15" aria-hidden="true" tabindex="-1"></a>   ) <span class="sc">+</span></span>
+<span id="cb30-16"><a href="#cb30-16" aria-hidden="true" tabindex="-1"></a>   <span class="fu">theme_minimal</span>(<span class="at">base_size =</span> <span class="dv">14</span>)</span>
+<span id="cb30-17"><a href="#cb30-17" aria-hidden="true" tabindex="-1"></a> <span class="fu">print</span>(ome_by_sex)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="quarto_files/figure-html/unnamed-chunk-1-5.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a> <span class="co"># =================================================================================================================================================================================</span></span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a> <span class="co"># Graphing Codeine OME's by medication name</span></span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a> <span class="co"># =================================================================================================================================================================================</span></span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a> ome_by_med <span class="ot">&lt;-</span> df <span class="sc">%&gt;%</span></span>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a>   <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(ome)) <span class="sc">%&gt;%</span></span>
+<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a>   <span class="fu">group_by</span>(medicationname) <span class="sc">%&gt;%</span></span>
+<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a>   <span class="fu">summarise</span>(<span class="at">avg_ome =</span> <span class="fu">mean</span>(ome, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb31-8"><a href="#cb31-8" aria-hidden="true" tabindex="-1"></a>   <span class="fu">arrange</span>(<span class="fu">desc</span>(avg_ome))</span>
+<span id="cb31-9"><a href="#cb31-9" aria-hidden="true" tabindex="-1"></a> </span>
+<span id="cb31-10"><a href="#cb31-10" aria-hidden="true" tabindex="-1"></a> ome_by_product <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(ome_by_med, <span class="fu">aes</span>(<span class="at">x =</span> <span class="fu">reorder</span>(medicationname, avg_ome), <span class="at">y =</span> avg_ome)) <span class="sc">+</span></span>
+<span id="cb31-11"><a href="#cb31-11" aria-hidden="true" tabindex="-1"></a>   <span class="fu">geom_col</span>(<span class="at">fill =</span> <span class="st">"blue"</span>, <span class="at">alpha =</span> <span class="fl">0.8</span>) <span class="sc">+</span></span>
+<span id="cb31-12"><a href="#cb31-12" aria-hidden="true" tabindex="-1"></a>   <span class="fu">coord_flip</span>() <span class="sc">+</span></span>
+<span id="cb31-13"><a href="#cb31-13" aria-hidden="true" tabindex="-1"></a>   <span class="fu">labs</span>(</span>
+<span id="cb31-14"><a href="#cb31-14" aria-hidden="true" tabindex="-1"></a>     <span class="at">title =</span> <span class="st">"Average Codeine OME per Prescription by Product"</span>,</span>
+<span id="cb31-15"><a href="#cb31-15" aria-hidden="true" tabindex="-1"></a>     <span class="at">x =</span> <span class="st">"Medication"</span>,</span>
+<span id="cb31-16"><a href="#cb31-16" aria-hidden="true" tabindex="-1"></a>     <span class="at">y =</span> <span class="st">"Average OME"</span></span>
+<span id="cb31-17"><a href="#cb31-17" aria-hidden="true" tabindex="-1"></a>   ) <span class="sc">+</span></span>
+<span id="cb31-18"><a href="#cb31-18" aria-hidden="true" tabindex="-1"></a>   <span class="fu">theme_minimal</span>(<span class="at">base_size =</span> <span class="dv">14</span>)</span>
+<span id="cb31-19"><a href="#cb31-19" aria-hidden="true" tabindex="-1"></a> <span class="fu">print</span>(ome_by_product)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="quarto_files/figure-html/unnamed-chunk-1-6.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a> <span class="co"># =================================================================================================================================================================================</span></span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a> <span class="co"># Graphing Codeine OME's by GP practice</span></span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a> <span class="co"># =================================================================================================================================================================================</span></span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a> ome_by_gp <span class="ot">&lt;-</span> df <span class="sc">%&gt;%</span></span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a>   <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(ome)) <span class="sc">%&gt;%</span></span>
+<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a>   <span class="fu">group_by</span>(gpidentifiernumber) <span class="sc">%&gt;%</span></span>
+<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a>   <span class="fu">summarise</span>(<span class="at">avg_ome =</span> <span class="fu">mean</span>(ome, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb32-8"><a href="#cb32-8" aria-hidden="true" tabindex="-1"></a>   <span class="fu">arrange</span>(<span class="fu">desc</span>(avg_ome))<span class="sc">%&gt;%</span></span>
+<span id="cb32-9"><a href="#cb32-9" aria-hidden="true" tabindex="-1"></a>   <span class="fu">slice_head</span>(<span class="at">n =</span> <span class="dv">20</span>)</span>
+<span id="cb32-10"><a href="#cb32-10" aria-hidden="true" tabindex="-1"></a> </span>
+<span id="cb32-11"><a href="#cb32-11" aria-hidden="true" tabindex="-1"></a> ome_by_gp <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(ome_by_gp, <span class="fu">aes</span>(<span class="at">x =</span> <span class="fu">reorder</span>(gpidentifiernumber, avg_ome), <span class="at">y =</span> avg_ome)) <span class="sc">+</span></span>
+<span id="cb32-12"><a href="#cb32-12" aria-hidden="true" tabindex="-1"></a>   <span class="fu">geom_col</span>(<span class="at">fill =</span> <span class="st">"red"</span>, <span class="at">alpha =</span> <span class="fl">0.8</span>) <span class="sc">+</span></span>
+<span id="cb32-13"><a href="#cb32-13" aria-hidden="true" tabindex="-1"></a>   <span class="fu">coord_flip</span>() <span class="sc">+</span></span>
+<span id="cb32-14"><a href="#cb32-14" aria-hidden="true" tabindex="-1"></a>   <span class="fu">labs</span>(</span>
+<span id="cb32-15"><a href="#cb32-15" aria-hidden="true" tabindex="-1"></a>     <span class="at">title =</span> <span class="st">"Average Codeine OME per Prescription by GP (Top 20)"</span>,</span>
+<span id="cb32-16"><a href="#cb32-16" aria-hidden="true" tabindex="-1"></a>     <span class="at">x =</span> <span class="st">"GP Identifier"</span>,</span>
+<span id="cb32-17"><a href="#cb32-17" aria-hidden="true" tabindex="-1"></a>     <span class="at">y =</span> <span class="st">"Average OME"</span></span>
+<span id="cb32-18"><a href="#cb32-18" aria-hidden="true" tabindex="-1"></a>   ) <span class="sc">+</span></span>
+<span id="cb32-19"><a href="#cb32-19" aria-hidden="true" tabindex="-1"></a>   <span class="fu">theme_minimal</span>(<span class="at">base_size =</span> <span class="dv">14</span>)</span>
+<span id="cb32-20"><a href="#cb32-20" aria-hidden="true" tabindex="-1"></a> <span class="fu">print</span>(ome_by_gp)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="quarto_files/figure-html/unnamed-chunk-1-7.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a> <span class="co"># =================================================================================================================================================================================</span></span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a> <span class="co"># Boxplot of total OME proportions by sex in high vs low dose</span></span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a> <span class="co"># ================================================================================================================================================================================= </span></span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a> <span class="co"># non-normalised</span></span>
+<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a>  ome_by_sex_dose <span class="ot">&lt;-</span> df <span class="sc">%&gt;%</span></span>
+<span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(ome), <span class="sc">!</span><span class="fu">is.na</span>(codeine_ranking), <span class="sc">!</span><span class="fu">is.na</span>(sex)) <span class="sc">%&gt;%</span></span>
+<span id="cb33-7"><a href="#cb33-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>(codeine_ranking, sex) <span class="sc">%&gt;%</span></span>
+<span id="cb33-8"><a href="#cb33-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">summarise</span>(<span class="at">total_ome =</span> <span class="fu">sum</span>(ome, <span class="at">na.rm =</span> <span class="cn">TRUE</span>), <span class="at">.groups =</span> <span class="st">"drop"</span>)</span>
+<span id="cb33-9"><a href="#cb33-9" aria-hidden="true" tabindex="-1"></a> </span>
+<span id="cb33-10"><a href="#cb33-10" aria-hidden="true" tabindex="-1"></a> <span class="co"># Stacked bar chart</span></span>
+<span id="cb33-11"><a href="#cb33-11" aria-hidden="true" tabindex="-1"></a> ome_by_sex_barchart <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(ome_by_sex_dose, <span class="fu">aes</span>(<span class="at">x =</span> codeine_ranking, <span class="at">y =</span> total_ome, <span class="at">fill =</span> sex)) <span class="sc">+</span></span>
+<span id="cb33-12"><a href="#cb33-12" aria-hidden="true" tabindex="-1"></a>   <span class="fu">geom_col</span>(<span class="at">width =</span> <span class="fl">0.6</span>) <span class="sc">+</span></span>
+<span id="cb33-13"><a href="#cb33-13" aria-hidden="true" tabindex="-1"></a>   <span class="fu">scale_y_continuous</span>(<span class="at">labels =</span> comma) <span class="sc">+</span></span>
+<span id="cb33-14"><a href="#cb33-14" aria-hidden="true" tabindex="-1"></a>   <span class="fu">labs</span>(</span>
+<span id="cb33-15"><a href="#cb33-15" aria-hidden="true" tabindex="-1"></a>     <span class="at">title =</span> <span class="st">"Total Codeine OME by Dose Category and Sex"</span>,</span>
+<span id="cb33-16"><a href="#cb33-16" aria-hidden="true" tabindex="-1"></a>     <span class="at">x =</span> <span class="st">"Codeine Dose Category"</span>,</span>
+<span id="cb33-17"><a href="#cb33-17" aria-hidden="true" tabindex="-1"></a>     <span class="at">y =</span> <span class="st">"Total OME"</span>,</span>
+<span id="cb33-18"><a href="#cb33-18" aria-hidden="true" tabindex="-1"></a>     <span class="at">fill =</span> <span class="st">"Sex"</span></span>
+<span id="cb33-19"><a href="#cb33-19" aria-hidden="true" tabindex="-1"></a>   ) <span class="sc">+</span></span>
+<span id="cb33-20"><a href="#cb33-20" aria-hidden="true" tabindex="-1"></a>   <span class="fu">theme_minimal</span>(<span class="at">base_size =</span> <span class="dv">14</span>) <span class="sc">+</span></span>
+<span id="cb33-21"><a href="#cb33-21" aria-hidden="true" tabindex="-1"></a>   <span class="fu">theme</span>(</span>
+<span id="cb33-22"><a href="#cb33-22" aria-hidden="true" tabindex="-1"></a>     <span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">face =</span> <span class="st">"bold"</span>, <span class="at">size =</span> <span class="dv">16</span>),</span>
+<span id="cb33-23"><a href="#cb33-23" aria-hidden="true" tabindex="-1"></a>     <span class="at">panel.grid.minor =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb33-24"><a href="#cb33-24" aria-hidden="true" tabindex="-1"></a>     <span class="at">panel.grid.major.x =</span> <span class="fu">element_blank</span>()</span>
+<span id="cb33-25"><a href="#cb33-25" aria-hidden="true" tabindex="-1"></a>   )</span>
+<span id="cb33-26"><a href="#cb33-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-27"><a href="#cb33-27" aria-hidden="true" tabindex="-1"></a> <span class="fu">print</span>(ome_by_sex_barchart)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="quarto_files/figure-html/unnamed-chunk-1-8.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="co">#normalised</span></span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a> <span class="co"># Stacked proportional bar chart</span></span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a> proportional_sex_bar <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(ome_by_sex_dose,</span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a>             <span class="fu">aes</span>(<span class="at">x =</span> codeine_ranking, <span class="at">y =</span> total_ome, <span class="at">fill =</span> sex)) <span class="sc">+</span></span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a>   <span class="fu">geom_col</span>(<span class="at">position =</span> <span class="st">"fill"</span>, <span class="at">width =</span> <span class="fl">0.6</span>) <span class="sc">+</span></span>
+<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a>   <span class="fu">labs</span>(</span>
+<span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a>     <span class="at">title =</span> <span class="st">"Proportion of Codeine OME by Dose Category and Sex"</span>,</span>
+<span id="cb34-8"><a href="#cb34-8" aria-hidden="true" tabindex="-1"></a>     <span class="at">x =</span> <span class="st">"Codeine Dose Category"</span>,</span>
+<span id="cb34-9"><a href="#cb34-9" aria-hidden="true" tabindex="-1"></a>     <span class="at">y =</span> <span class="st">"Proportion of Total OME"</span>,</span>
+<span id="cb34-10"><a href="#cb34-10" aria-hidden="true" tabindex="-1"></a>     <span class="at">fill =</span> <span class="st">"Sex"</span></span>
+<span id="cb34-11"><a href="#cb34-11" aria-hidden="true" tabindex="-1"></a>   ) <span class="sc">+</span></span>
+<span id="cb34-12"><a href="#cb34-12" aria-hidden="true" tabindex="-1"></a>   <span class="fu">theme_minimal</span>(<span class="at">base_size =</span> <span class="dv">14</span>) <span class="sc">+</span></span>
+<span id="cb34-13"><a href="#cb34-13" aria-hidden="true" tabindex="-1"></a>   <span class="fu">theme</span>(</span>
+<span id="cb34-14"><a href="#cb34-14" aria-hidden="true" tabindex="-1"></a>     <span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">face =</span> <span class="st">"bold"</span>, <span class="at">size =</span> <span class="dv">16</span>),</span>
+<span id="cb34-15"><a href="#cb34-15" aria-hidden="true" tabindex="-1"></a>     <span class="at">panel.grid.minor =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb34-16"><a href="#cb34-16" aria-hidden="true" tabindex="-1"></a>     <span class="at">panel.grid.major.x =</span> <span class="fu">element_blank</span>()</span>
+<span id="cb34-17"><a href="#cb34-17" aria-hidden="true" tabindex="-1"></a>   )</span>
+<span id="cb34-18"><a href="#cb34-18" aria-hidden="true" tabindex="-1"></a> </span>
+<span id="cb34-19"><a href="#cb34-19" aria-hidden="true" tabindex="-1"></a> <span class="fu">print</span>(proportional_sex_bar)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="quarto_files/figure-html/unnamed-chunk-1-9.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a> <span class="co"># =================================================================================================================================================================================</span></span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a> <span class="co"># Boxplot and violin of total OME proportions by age in high vs low dose</span></span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a> <span class="co"># ================================================================================================================================================================================= </span></span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a> </span>
+<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a> boxplot_data <span class="ot">&lt;-</span> df <span class="sc">%&gt;%</span></span>
+<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a>   <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(ome), <span class="sc">!</span><span class="fu">is.na</span>(age), <span class="sc">!</span><span class="fu">is.na</span>(codeine_ranking))</span>
+<span id="cb35-7"><a href="#cb35-7" aria-hidden="true" tabindex="-1"></a> </span>
+<span id="cb35-8"><a href="#cb35-8" aria-hidden="true" tabindex="-1"></a> violin_box_plot <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(boxplot_data,</span>
+<span id="cb35-9"><a href="#cb35-9" aria-hidden="true" tabindex="-1"></a>                           <span class="fu">aes</span>(<span class="at">x =</span> codeine_ranking, <span class="at">y =</span> age, <span class="at">fill =</span> codeine_ranking)) <span class="sc">+</span></span>
+<span id="cb35-10"><a href="#cb35-10" aria-hidden="true" tabindex="-1"></a>   <span class="fu">geom_violin</span>(<span class="at">alpha =</span> <span class="fl">0.4</span>, <span class="at">trim =</span> <span class="cn">FALSE</span>, <span class="at">scale =</span> <span class="st">"width"</span>) <span class="sc">+</span> </span>
+<span id="cb35-11"><a href="#cb35-11" aria-hidden="true" tabindex="-1"></a>   <span class="fu">geom_boxplot</span>(<span class="at">width =</span> <span class="fl">0.2</span>, <span class="at">outlier.alpha =</span> <span class="fl">0.3</span>) <span class="sc">+</span> </span>
+<span id="cb35-12"><a href="#cb35-12" aria-hidden="true" tabindex="-1"></a>   <span class="fu">scale_y_continuous</span>(<span class="at">breaks =</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="fu">max</span>(boxplot_data<span class="sc">$</span>ome, <span class="at">na.rm =</span> <span class="cn">TRUE</span>), <span class="at">by =</span> <span class="dv">10</span>)) <span class="sc">+</span></span>
+<span id="cb35-13"><a href="#cb35-13" aria-hidden="true" tabindex="-1"></a>   <span class="fu">labs</span>(</span>
+<span id="cb35-14"><a href="#cb35-14" aria-hidden="true" tabindex="-1"></a>     <span class="at">title =</span> <span class="st">"Distribution of Codeine OME by Age and Dose Category"</span>,</span>
+<span id="cb35-15"><a href="#cb35-15" aria-hidden="true" tabindex="-1"></a>     <span class="at">x =</span> <span class="st">"OME"</span>,</span>
+<span id="cb35-16"><a href="#cb35-16" aria-hidden="true" tabindex="-1"></a>     <span class="at">y =</span> <span class="st">"Age"</span>,</span>
+<span id="cb35-17"><a href="#cb35-17" aria-hidden="true" tabindex="-1"></a>     <span class="at">fill =</span> <span class="st">"Codeine Dose"</span></span>
+<span id="cb35-18"><a href="#cb35-18" aria-hidden="true" tabindex="-1"></a>   ) <span class="sc">+</span></span>
+<span id="cb35-19"><a href="#cb35-19" aria-hidden="true" tabindex="-1"></a>   <span class="fu">scale_fill_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(</span>
+<span id="cb35-20"><a href="#cb35-20" aria-hidden="true" tabindex="-1"></a>     <span class="st">"Low"</span> <span class="ot">=</span> <span class="st">"blue"</span>,</span>
+<span id="cb35-21"><a href="#cb35-21" aria-hidden="true" tabindex="-1"></a>     <span class="st">"High"</span> <span class="ot">=</span> <span class="st">"red"</span></span>
+<span id="cb35-22"><a href="#cb35-22" aria-hidden="true" tabindex="-1"></a>   )) <span class="sc">+</span></span>
+<span id="cb35-23"><a href="#cb35-23" aria-hidden="true" tabindex="-1"></a>   <span class="fu">theme_minimal</span>(<span class="at">base_size =</span> <span class="dv">14</span>) <span class="sc">+</span></span>
+<span id="cb35-24"><a href="#cb35-24" aria-hidden="true" tabindex="-1"></a>   <span class="fu">theme</span>(</span>
+<span id="cb35-25"><a href="#cb35-25" aria-hidden="true" tabindex="-1"></a>     <span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">face =</span> <span class="st">"bold"</span>, <span class="at">size =</span> <span class="dv">16</span>),</span>
+<span id="cb35-26"><a href="#cb35-26" aria-hidden="true" tabindex="-1"></a>     <span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">45</span>, <span class="at">hjust =</span> <span class="dv">1</span>),</span>
+<span id="cb35-27"><a href="#cb35-27" aria-hidden="true" tabindex="-1"></a>     <span class="at">panel.grid.minor =</span> <span class="fu">element_blank</span>()</span>
+<span id="cb35-28"><a href="#cb35-28" aria-hidden="true" tabindex="-1"></a>   )</span>
+<span id="cb35-29"><a href="#cb35-29" aria-hidden="true" tabindex="-1"></a> </span>
+<span id="cb35-30"><a href="#cb35-30" aria-hidden="true" tabindex="-1"></a> <span class="fu">print</span>(violin_box_plot)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="quarto_files/figure-html/unnamed-chunk-1-10.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a> <span class="co"># =================================================================================================================================================================================</span></span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a> <span class="co"># Creating new data frame to perform chi squared test on sex vs codeine consumption</span></span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a> <span class="co"># ================================================================================================================================================================================= </span></span>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a> dose_by_sex <span class="ot">&lt;-</span> df <span class="sc">%&gt;%</span></span>
+<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a>   <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(codeine_ranking), sex <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"M"</span>,<span class="st">"F"</span>), codeine_ranking <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"High"</span>,<span class="st">"Low"</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb36-6"><a href="#cb36-6" aria-hidden="true" tabindex="-1"></a>   <span class="fu">select</span>(sex,codeine_ranking)<span class="sc">%&gt;%</span></span>
+<span id="cb36-7"><a href="#cb36-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">table</span>()</span>
+<span id="cb36-8"><a href="#cb36-8" aria-hidden="true" tabindex="-1"></a> </span>
+<span id="cb36-9"><a href="#cb36-9" aria-hidden="true" tabindex="-1"></a> </span>
+<span id="cb36-10"><a href="#cb36-10" aria-hidden="true" tabindex="-1"></a> test1<span class="ot">&lt;-</span><span class="fu">chisq.test</span>(dose_by_sex)  </span>
+<span id="cb36-11"><a href="#cb36-11" aria-hidden="true" tabindex="-1"></a> <span class="fu">print</span>(test1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    Pearson's Chi-squared test with Yates' continuity correction
+
+data:  dose_by_sex
+X-squared = 14.646, df = 1, p-value = 0.0001297</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a> <span class="co"># =================================================================================================================================================================================</span></span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a> <span class="co"># t-test</span></span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a> <span class="co"># ================================================================================================================================================================================= </span></span>
+<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a> ttest_df <span class="ot">&lt;-</span> df <span class="sc">%&gt;%</span></span>
+<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a>   <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(codeine_ranking), sex <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"M"</span>,<span class="st">"F"</span>), codeine_ranking <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"High"</span>,<span class="st">"Low"</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb38-6"><a href="#cb38-6" aria-hidden="true" tabindex="-1"></a>   <span class="fu">mutate</span>(<span class="at">codeine_ranking =</span> <span class="fu">as.factor</span>(codeine_ranking))<span class="sc">%&gt;%</span></span>
+<span id="cb38-7"><a href="#cb38-7" aria-hidden="true" tabindex="-1"></a>   <span class="fu">select</span>(age,codeine_ranking)</span>
+<span id="cb38-8"><a href="#cb38-8" aria-hidden="true" tabindex="-1"></a> </span>
+<span id="cb38-9"><a href="#cb38-9" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb38-10"><a href="#cb38-10" aria-hidden="true" tabindex="-1"></a>test2<span class="ot">&lt;-</span><span class="fu">t.test</span>(age <span class="sc">~</span> codeine_ranking,<span class="at">data =</span> ttest_df)</span>
+<span id="cb38-11"><a href="#cb38-11" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(test2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    Welch Two Sample t-test
+
+data:  age by codeine_ranking
+t = 1.7416, df = 1835, p-value = 0.08175
+alternative hypothesis: true difference in means between group High and group Low is not equal to 0
+95 percent confidence interval:
+ -0.1756348  2.9600978
+sample estimates:
+mean in group High  mean in group Low 
+          59.08690           57.69467 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="co"># =================================================================================================================================================================================</span></span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Graphing average Codeine OME by age (10-year brackets from 18–80, then 5-year brackets from 80–110)</span></span>
+<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a><span class="co"># =================================================================================================================================================================================</span></span>
+<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-5"><a href="#cb40-5" aria-hidden="true" tabindex="-1"></a>ome_by_ageband_codeine <span class="ot">&lt;-</span> df <span class="sc">%&gt;%</span></span>
+<span id="cb40-6"><a href="#cb40-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(</span>
+<span id="cb40-7"><a href="#cb40-7" aria-hidden="true" tabindex="-1"></a>    codeine <span class="sc">==</span> <span class="cn">TRUE</span>,</span>
+<span id="cb40-8"><a href="#cb40-8" aria-hidden="true" tabindex="-1"></a>    <span class="sc">!</span><span class="fu">is.na</span>(age), <span class="sc">!</span><span class="fu">is.na</span>(ome),</span>
+<span id="cb40-9"><a href="#cb40-9" aria-hidden="true" tabindex="-1"></a>    age <span class="sc">&gt;=</span> <span class="dv">18</span>, age <span class="sc">&lt;=</span> <span class="dv">110</span></span>
+<span id="cb40-10"><a href="#cb40-10" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb40-11"><a href="#cb40-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb40-12"><a href="#cb40-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">age_band =</span> <span class="fu">cut</span>(</span>
+<span id="cb40-13"><a href="#cb40-13" aria-hidden="true" tabindex="-1"></a>      age,</span>
+<span id="cb40-14"><a href="#cb40-14" aria-hidden="true" tabindex="-1"></a>      <span class="at">breaks =</span> <span class="fu">c</span>(<span class="dv">18</span>, <span class="dv">30</span>, <span class="dv">40</span>, <span class="dv">50</span>, <span class="dv">60</span>, <span class="dv">70</span>, <span class="dv">80</span>, <span class="dv">85</span>, <span class="dv">90</span>, <span class="dv">95</span>, <span class="dv">100</span>, <span class="dv">105</span>, <span class="dv">110</span>),</span>
+<span id="cb40-15"><a href="#cb40-15" aria-hidden="true" tabindex="-1"></a>      <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"18-29"</span>, <span class="st">"30-39"</span>, <span class="st">"40-49"</span>, <span class="st">"50-59"</span>, <span class="st">"60-69"</span>, <span class="st">"70-79"</span>,</span>
+<span id="cb40-16"><a href="#cb40-16" aria-hidden="true" tabindex="-1"></a>                 <span class="st">"80-84"</span>, <span class="st">"85-89"</span>, <span class="st">"90-94"</span>, <span class="st">"95-99"</span>, <span class="st">"100-104"</span>, <span class="st">"105-109"</span>),</span>
+<span id="cb40-17"><a href="#cb40-17" aria-hidden="true" tabindex="-1"></a>      <span class="at">right =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb40-18"><a href="#cb40-18" aria-hidden="true" tabindex="-1"></a>      <span class="at">include.lowest =</span> <span class="cn">TRUE</span></span>
+<span id="cb40-19"><a href="#cb40-19" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb40-20"><a href="#cb40-20" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb40-21"><a href="#cb40-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(age_band) <span class="sc">%&gt;%</span></span>
+<span id="cb40-22"><a href="#cb40-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb40-23"><a href="#cb40-23" aria-hidden="true" tabindex="-1"></a>    <span class="at">avg_ome =</span> <span class="fu">mean</span>(ome, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb40-24"><a href="#cb40-24" aria-hidden="true" tabindex="-1"></a>    <span class="at">n =</span> <span class="fu">n</span>(),</span>
+<span id="cb40-25"><a href="#cb40-25" aria-hidden="true" tabindex="-1"></a>    <span class="at">.groups =</span> <span class="st">"drop"</span></span>
+<span id="cb40-26"><a href="#cb40-26" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb40-27"><a href="#cb40-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">age_band =</span> <span class="fu">factor</span>(age_band, <span class="at">levels =</span> <span class="fu">levels</span>(age_band)))</span>
+<span id="cb40-28"><a href="#cb40-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-29"><a href="#cb40-29" aria-hidden="true" tabindex="-1"></a>ome_by_age_graph <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(ome_by_ageband_codeine, <span class="fu">aes</span>(<span class="at">x =</span> age_band, <span class="at">y =</span> avg_ome, <span class="at">fill =</span> avg_ome)) <span class="sc">+</span></span>
+<span id="cb40-30"><a href="#cb40-30" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>() <span class="sc">+</span></span>
+<span id="cb40-31"><a href="#cb40-31" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_gradient</span>(<span class="at">low =</span> <span class="st">"lightblue"</span>, <span class="at">high =</span> <span class="st">"blue"</span>) <span class="sc">+</span></span>
+<span id="cb40-32"><a href="#cb40-32" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb40-33"><a href="#cb40-33" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Average OME by Age Band (18–80 in 10-year brackets, 80–110 in 5-year brackets) — Codeine only"</span>,</span>
+<span id="cb40-34"><a href="#cb40-34" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Age band (years)"</span>,</span>
+<span id="cb40-35"><a href="#cb40-35" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Average OME"</span>,</span>
+<span id="cb40-36"><a href="#cb40-36" aria-hidden="true" tabindex="-1"></a>    <span class="at">fill =</span> <span class="st">"Avg OME"</span></span>
+<span id="cb40-37"><a href="#cb40-37" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb40-38"><a href="#cb40-38" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>(<span class="at">base_size =</span> <span class="dv">12</span>) <span class="sc">+</span></span>
+<span id="cb40-39"><a href="#cb40-39" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">45</span>, <span class="at">hjust =</span> <span class="dv">1</span>))</span>
+<span id="cb40-40"><a href="#cb40-40" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-41"><a href="#cb40-41" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(ome_by_age_graph)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="quarto_files/figure-html/unnamed-chunk-1-11.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a> <span class="co"># =================================================================================================================================================================================</span></span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a> <span class="co"># Graphing average Codeine OME by age for males and females (10 year brackets)</span></span>
+<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a> <span class="co"># =================================================================================================================================================================================  </span></span>
+<span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a> <span class="co"># Summarise avg OME per 10-year window (midpoints) for codeine-only, split by sex</span></span>
+<span id="cb41-5"><a href="#cb41-5" aria-hidden="true" tabindex="-1"></a> ome_age_sex <span class="ot">&lt;-</span> df <span class="sc">%&gt;%</span></span>
+<span id="cb41-6"><a href="#cb41-6" aria-hidden="true" tabindex="-1"></a>   <span class="fu">filter</span>(codeine <span class="sc">==</span> <span class="cn">TRUE</span>, <span class="sc">!</span><span class="fu">is.na</span>(age), <span class="sc">!</span><span class="fu">is.na</span>(ome), age <span class="sc">&gt;=</span> <span class="dv">0</span>, age <span class="sc">&lt;=</span> <span class="dv">107</span>, sex <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"M"</span>,<span class="st">"F"</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb41-7"><a href="#cb41-7" aria-hidden="true" tabindex="-1"></a>   <span class="fu">mutate</span>(</span>
+<span id="cb41-8"><a href="#cb41-8" aria-hidden="true" tabindex="-1"></a>     <span class="at">age_band =</span> <span class="fu">cut</span>(age, <span class="at">breaks =</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">110</span>, <span class="at">by =</span> <span class="dv">10</span>), <span class="at">right =</span> <span class="cn">FALSE</span>, <span class="at">include.lowest =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb41-9"><a href="#cb41-9" aria-hidden="true" tabindex="-1"></a>     <span class="at">age_mid  =</span> <span class="fu">as.numeric</span>(<span class="fu">sub</span>(<span class="st">"</span><span class="sc">\\</span><span class="st">[(</span><span class="sc">\\</span><span class="st">d+),.*"</span>, <span class="st">"</span><span class="sc">\\</span><span class="st">1"</span>, <span class="fu">as.character</span>(age_band))) <span class="sc">+</span> <span class="dv">5</span></span>
+<span id="cb41-10"><a href="#cb41-10" aria-hidden="true" tabindex="-1"></a>   ) <span class="sc">%&gt;%</span></span>
+<span id="cb41-11"><a href="#cb41-11" aria-hidden="true" tabindex="-1"></a>   <span class="fu">group_by</span>(sex, age_mid) <span class="sc">%&gt;%</span></span>
+<span id="cb41-12"><a href="#cb41-12" aria-hidden="true" tabindex="-1"></a>   <span class="fu">summarise</span>(<span class="at">avg_ome =</span> <span class="fu">mean</span>(ome, <span class="at">na.rm =</span> <span class="cn">TRUE</span>), <span class="at">.groups =</span> <span class="st">"drop"</span>)</span>
+<span id="cb41-13"><a href="#cb41-13" aria-hidden="true" tabindex="-1"></a> </span>
+<span id="cb41-14"><a href="#cb41-14" aria-hidden="true" tabindex="-1"></a> <span class="co"># Plot with legend: Male = blue, Female = red</span></span>
+<span id="cb41-15"><a href="#cb41-15" aria-hidden="true" tabindex="-1"></a> p <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(ome_age_sex, <span class="fu">aes</span>(<span class="at">x =</span> age_mid, <span class="at">y =</span> avg_ome, <span class="at">color =</span> sex, <span class="at">group =</span> sex)) <span class="sc">+</span></span>
+<span id="cb41-16"><a href="#cb41-16" aria-hidden="true" tabindex="-1"></a>   <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
+<span id="cb41-17"><a href="#cb41-17" aria-hidden="true" tabindex="-1"></a>   <span class="fu">geom_line</span>(<span class="at">linewidth =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb41-18"><a href="#cb41-18" aria-hidden="true" tabindex="-1"></a>   <span class="fu">scale_color_manual</span>(</span>
+<span id="cb41-19"><a href="#cb41-19" aria-hidden="true" tabindex="-1"></a>     <span class="at">values =</span> <span class="fu">c</span>(<span class="st">"M"</span> <span class="ot">=</span> <span class="st">"blue"</span>, <span class="st">"F"</span> <span class="ot">=</span> <span class="st">"red"</span>),</span>
+<span id="cb41-20"><a href="#cb41-20" aria-hidden="true" tabindex="-1"></a>     <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"M"</span> <span class="ot">=</span> <span class="st">"Male"</span>, <span class="st">"F"</span> <span class="ot">=</span> <span class="st">"Female"</span>),</span>
+<span id="cb41-21"><a href="#cb41-21" aria-hidden="true" tabindex="-1"></a>     <span class="at">name =</span> <span class="st">"Sex"</span></span>
+<span id="cb41-22"><a href="#cb41-22" aria-hidden="true" tabindex="-1"></a>   ) <span class="sc">+</span></span>
+<span id="cb41-23"><a href="#cb41-23" aria-hidden="true" tabindex="-1"></a>   <span class="fu">scale_x_continuous</span>(<span class="at">breaks =</span> <span class="fu">seq</span>(<span class="dv">5</span>, <span class="dv">105</span>, <span class="at">by =</span> <span class="dv">10</span>)) <span class="sc">+</span></span>
+<span id="cb41-24"><a href="#cb41-24" aria-hidden="true" tabindex="-1"></a>   <span class="fu">labs</span>(</span>
+<span id="cb41-25"><a href="#cb41-25" aria-hidden="true" tabindex="-1"></a>     <span class="at">title =</span> <span class="st">"Average OME by Age Band (10-year) — Codeine only"</span>,</span>
+<span id="cb41-26"><a href="#cb41-26" aria-hidden="true" tabindex="-1"></a>     <span class="at">x =</span> <span class="st">"Age (10-year band midpoint)"</span>,</span>
+<span id="cb41-27"><a href="#cb41-27" aria-hidden="true" tabindex="-1"></a>     <span class="at">y =</span> <span class="st">"Average OME"</span></span>
+<span id="cb41-28"><a href="#cb41-28" aria-hidden="true" tabindex="-1"></a>   ) <span class="sc">+</span></span>
+<span id="cb41-29"><a href="#cb41-29" aria-hidden="true" tabindex="-1"></a>   <span class="fu">theme_minimal</span>()</span>
+<span id="cb41-30"><a href="#cb41-30" aria-hidden="true" tabindex="-1"></a> <span class="fu">print</span>(p)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="quarto_files/figure-html/unnamed-chunk-1-12.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a> <span class="co"># =================================================================================================================================================================================</span></span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a> <span class="co"># Generating Objective 2 Table (05/03/26)</span></span>
+<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a> <span class="co"># =================================================================================================================================================================================  </span></span>
+<span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a> </span>
+<span id="cb42-5"><a href="#cb42-5" aria-hidden="true" tabindex="-1"></a> objective_two <span class="ot">&lt;-</span> df <span class="sc">%&gt;%</span></span>
+<span id="cb42-6"><a href="#cb42-6" aria-hidden="true" tabindex="-1"></a>   <span class="fu">filter</span>(</span>
+<span id="cb42-7"><a href="#cb42-7" aria-hidden="true" tabindex="-1"></a>     codeine <span class="sc">==</span> <span class="cn">TRUE</span>,</span>
+<span id="cb42-8"><a href="#cb42-8" aria-hidden="true" tabindex="-1"></a>     <span class="fu">year</span>(<span class="fu">ymd</span>(dateofdispensing)) <span class="sc">==</span> <span class="dv">2022</span>,</span>
+<span id="cb42-9"><a href="#cb42-9" aria-hidden="true" tabindex="-1"></a>     <span class="sc">!</span><span class="fu">is.na</span>(codeine_ranking),</span>
+<span id="cb42-10"><a href="#cb42-10" aria-hidden="true" tabindex="-1"></a>     codeine_ranking <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"High"</span>, <span class="st">"Low"</span>)</span>
+<span id="cb42-11"><a href="#cb42-11" aria-hidden="true" tabindex="-1"></a>   ) <span class="sc">%&gt;%</span></span>
+<span id="cb42-12"><a href="#cb42-12" aria-hidden="true" tabindex="-1"></a>   <span class="fu">transmute</span>(</span>
+<span id="cb42-13"><a href="#cb42-13" aria-hidden="true" tabindex="-1"></a>     <span class="at">dateofdispensing =</span> <span class="fu">ymd</span>(dateofdispensing),</span>
+<span id="cb42-14"><a href="#cb42-14" aria-hidden="true" tabindex="-1"></a>     indID,</span>
+<span id="cb42-15"><a href="#cb42-15" aria-hidden="true" tabindex="-1"></a>     age,</span>
+<span id="cb42-16"><a href="#cb42-16" aria-hidden="true" tabindex="-1"></a>     sex,</span>
+<span id="cb42-17"><a href="#cb42-17" aria-hidden="true" tabindex="-1"></a>     patientlho,</span>
+<span id="cb42-18"><a href="#cb42-18" aria-hidden="true" tabindex="-1"></a>     medicationname,</span>
+<span id="cb42-19"><a href="#cb42-19" aria-hidden="true" tabindex="-1"></a>     atccode,</span>
+<span id="cb42-20"><a href="#cb42-20" aria-hidden="true" tabindex="-1"></a>     <span class="at">codeine_dose =</span> <span class="fu">if_else</span>(codeine_ranking <span class="sc">==</span> <span class="st">"High"</span>, <span class="dv">1</span>L, <span class="dv">0</span>L)</span>
+<span id="cb42-21"><a href="#cb42-21" aria-hidden="true" tabindex="-1"></a>   )</span>
+<span id="cb42-22"><a href="#cb42-22" aria-hidden="true" tabindex="-1"></a> </span>
+<span id="cb42-23"><a href="#cb42-23" aria-hidden="true" tabindex="-1"></a> <span class="co"># =================================================================================================================================================================================</span></span>
+<span id="cb42-24"><a href="#cb42-24" aria-hidden="true" tabindex="-1"></a> <span class="co"># Hard-Coding oral NSAID's,topical NSAID's, sedatives, gabapentinoids and anti-migraines</span></span>
+<span id="cb42-25"><a href="#cb42-25" aria-hidden="true" tabindex="-1"></a> <span class="co"># =================================================================================================================================================================================  </span></span>
+<span id="cb42-26"><a href="#cb42-26" aria-hidden="true" tabindex="-1"></a> oral_nsaids_codes <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
+<span id="cb42-27"><a href="#cb42-27" aria-hidden="true" tabindex="-1"></a>   <span class="st">"M01AB01"</span>,</span>
+<span id="cb42-28"><a href="#cb42-28" aria-hidden="true" tabindex="-1"></a>   <span class="st">"M01AB05"</span>,</span>
+<span id="cb42-29"><a href="#cb42-29" aria-hidden="true" tabindex="-1"></a>   <span class="st">"M01AB55"</span>,</span>
+<span id="cb42-30"><a href="#cb42-30" aria-hidden="true" tabindex="-1"></a>   <span class="st">"M01AB16"</span>,</span>
+<span id="cb42-31"><a href="#cb42-31" aria-hidden="true" tabindex="-1"></a>   <span class="st">"M01AC06"</span>,</span>
+<span id="cb42-32"><a href="#cb42-32" aria-hidden="true" tabindex="-1"></a>   <span class="st">"M01AE01"</span>,</span>
+<span id="cb42-33"><a href="#cb42-33" aria-hidden="true" tabindex="-1"></a>   <span class="st">"M01AE02"</span>,</span>
+<span id="cb42-34"><a href="#cb42-34" aria-hidden="true" tabindex="-1"></a>   <span class="st">"M01AE52"</span>,</span>
+<span id="cb42-35"><a href="#cb42-35" aria-hidden="true" tabindex="-1"></a>   <span class="st">"M01AE03"</span>,</span>
+<span id="cb42-36"><a href="#cb42-36" aria-hidden="true" tabindex="-1"></a>   <span class="st">"M01AE09"</span>,</span>
+<span id="cb42-37"><a href="#cb42-37" aria-hidden="true" tabindex="-1"></a>   <span class="st">"M01AE17"</span>,</span>
+<span id="cb42-38"><a href="#cb42-38" aria-hidden="true" tabindex="-1"></a>   <span class="st">"M01AG01"</span>,</span>
+<span id="cb42-39"><a href="#cb42-39" aria-hidden="true" tabindex="-1"></a>   <span class="st">"M01AH01"</span>,</span>
+<span id="cb42-40"><a href="#cb42-40" aria-hidden="true" tabindex="-1"></a>   <span class="st">"M01AH05"</span>,</span>
+<span id="cb42-41"><a href="#cb42-41" aria-hidden="true" tabindex="-1"></a>   <span class="st">"M01AX01"</span></span>
+<span id="cb42-42"><a href="#cb42-42" aria-hidden="true" tabindex="-1"></a> )</span>
+<span id="cb42-43"><a href="#cb42-43" aria-hidden="true" tabindex="-1"></a> </span>
+<span id="cb42-44"><a href="#cb42-44" aria-hidden="true" tabindex="-1"></a> topical_nsaids_codes <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
+<span id="cb42-45"><a href="#cb42-45" aria-hidden="true" tabindex="-1"></a>   <span class="st">"M02AA05"</span>,</span>
+<span id="cb42-46"><a href="#cb42-46" aria-hidden="true" tabindex="-1"></a>   <span class="st">"M02AA06"</span>,</span>
+<span id="cb42-47"><a href="#cb42-47" aria-hidden="true" tabindex="-1"></a>   <span class="st">"M02AA07"</span>,</span>
+<span id="cb42-48"><a href="#cb42-48" aria-hidden="true" tabindex="-1"></a>   <span class="st">"M02AA10"</span>,</span>
+<span id="cb42-49"><a href="#cb42-49" aria-hidden="true" tabindex="-1"></a>   <span class="st">"M02AA13"</span>,</span>
+<span id="cb42-50"><a href="#cb42-50" aria-hidden="true" tabindex="-1"></a>   <span class="st">"M02AA15"</span>,</span>
+<span id="cb42-51"><a href="#cb42-51" aria-hidden="true" tabindex="-1"></a>   <span class="st">"M02AB01"</span></span>
+<span id="cb42-52"><a href="#cb42-52" aria-hidden="true" tabindex="-1"></a> )</span>
+<span id="cb42-53"><a href="#cb42-53" aria-hidden="true" tabindex="-1"></a> </span>
+<span id="cb42-54"><a href="#cb42-54" aria-hidden="true" tabindex="-1"></a> gabapentinoids_codes <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
+<span id="cb42-55"><a href="#cb42-55" aria-hidden="true" tabindex="-1"></a>   <span class="st">"N02BF01"</span>,</span>
+<span id="cb42-56"><a href="#cb42-56" aria-hidden="true" tabindex="-1"></a>   <span class="st">"N02BF02"</span></span>
+<span id="cb42-57"><a href="#cb42-57" aria-hidden="true" tabindex="-1"></a> )</span>
+<span id="cb42-58"><a href="#cb42-58" aria-hidden="true" tabindex="-1"></a> </span>
+<span id="cb42-59"><a href="#cb42-59" aria-hidden="true" tabindex="-1"></a> benzodiazepines_sedatives_codes <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
+<span id="cb42-60"><a href="#cb42-60" aria-hidden="true" tabindex="-1"></a>   <span class="st">"N05BA01"</span>,</span>
+<span id="cb42-61"><a href="#cb42-61" aria-hidden="true" tabindex="-1"></a>   <span class="st">"N05BA02"</span>,</span>
+<span id="cb42-62"><a href="#cb42-62" aria-hidden="true" tabindex="-1"></a>   <span class="st">"N05BA05"</span>,</span>
+<span id="cb42-63"><a href="#cb42-63" aria-hidden="true" tabindex="-1"></a>   <span class="st">"N05BA06"</span>,</span>
+<span id="cb42-64"><a href="#cb42-64" aria-hidden="true" tabindex="-1"></a>   <span class="st">"N05BA08"</span>,</span>
+<span id="cb42-65"><a href="#cb42-65" aria-hidden="true" tabindex="-1"></a>   <span class="st">"N05BA09"</span>,</span>
+<span id="cb42-66"><a href="#cb42-66" aria-hidden="true" tabindex="-1"></a>   <span class="st">"N05BA11"</span>,</span>
+<span id="cb42-67"><a href="#cb42-67" aria-hidden="true" tabindex="-1"></a>   <span class="st">"N05BA12"</span>,</span>
+<span id="cb42-68"><a href="#cb42-68" aria-hidden="true" tabindex="-1"></a>   <span class="st">"N05CD01"</span>,</span>
+<span id="cb42-69"><a href="#cb42-69" aria-hidden="true" tabindex="-1"></a>   <span class="st">"N05CD02"</span>,</span>
+<span id="cb42-70"><a href="#cb42-70" aria-hidden="true" tabindex="-1"></a>   <span class="st">"N05CD03"</span>,</span>
+<span id="cb42-71"><a href="#cb42-71" aria-hidden="true" tabindex="-1"></a>   <span class="st">"N05CD05"</span>,</span>
+<span id="cb42-72"><a href="#cb42-72" aria-hidden="true" tabindex="-1"></a>   <span class="st">"N05CD06"</span>,</span>
+<span id="cb42-73"><a href="#cb42-73" aria-hidden="true" tabindex="-1"></a>   <span class="st">"N05CD07"</span>,</span>
+<span id="cb42-74"><a href="#cb42-74" aria-hidden="true" tabindex="-1"></a>   <span class="st">"N05CD08"</span>,</span>
+<span id="cb42-75"><a href="#cb42-75" aria-hidden="true" tabindex="-1"></a>   <span class="st">"N05CF01"</span>,</span>
+<span id="cb42-76"><a href="#cb42-76" aria-hidden="true" tabindex="-1"></a>   <span class="st">"N05CF02"</span>,</span>
+<span id="cb42-77"><a href="#cb42-77" aria-hidden="true" tabindex="-1"></a>   <span class="st">"N03AE01"</span>,</span>
+<span id="cb42-78"><a href="#cb42-78" aria-hidden="true" tabindex="-1"></a>   <span class="st">"N06AA09"</span></span>
+<span id="cb42-79"><a href="#cb42-79" aria-hidden="true" tabindex="-1"></a> )</span>
+<span id="cb42-80"><a href="#cb42-80" aria-hidden="true" tabindex="-1"></a> </span>
+<span id="cb42-81"><a href="#cb42-81" aria-hidden="true" tabindex="-1"></a> anti_migraine_codes <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
+<span id="cb42-82"><a href="#cb42-82" aria-hidden="true" tabindex="-1"></a>    <span class="st">"N02CC01"</span>,</span>
+<span id="cb42-83"><a href="#cb42-83" aria-hidden="true" tabindex="-1"></a>    <span class="st">"N02CC02"</span>,</span>
+<span id="cb42-84"><a href="#cb42-84" aria-hidden="true" tabindex="-1"></a>    <span class="st">"N02CC03"</span>,</span>
+<span id="cb42-85"><a href="#cb42-85" aria-hidden="true" tabindex="-1"></a>    <span class="st">"N02CC04"</span>,</span>
+<span id="cb42-86"><a href="#cb42-86" aria-hidden="true" tabindex="-1"></a>    <span class="st">"N02CC05"</span>,</span>
+<span id="cb42-87"><a href="#cb42-87" aria-hidden="true" tabindex="-1"></a>    <span class="st">"N02CC06"</span>,</span>
+<span id="cb42-88"><a href="#cb42-88" aria-hidden="true" tabindex="-1"></a>    <span class="st">"N02CC07"</span>,</span>
+<span id="cb42-89"><a href="#cb42-89" aria-hidden="true" tabindex="-1"></a>    <span class="st">"N02CX02"</span></span>
+<span id="cb42-90"><a href="#cb42-90" aria-hidden="true" tabindex="-1"></a> )</span>
+<span id="cb42-91"><a href="#cb42-91" aria-hidden="true" tabindex="-1"></a> </span>
+<span id="cb42-92"><a href="#cb42-92" aria-hidden="true" tabindex="-1"></a> Other_Opioids_codes <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
+<span id="cb42-93"><a href="#cb42-93" aria-hidden="true" tabindex="-1"></a>  <span class="st">"N02AA01"</span>,</span>
+<span id="cb42-94"><a href="#cb42-94" aria-hidden="true" tabindex="-1"></a>  <span class="st">"N02AA51"</span>,</span>
+<span id="cb42-95"><a href="#cb42-95" aria-hidden="true" tabindex="-1"></a>  <span class="st">"N02AA03"</span>,</span>
+<span id="cb42-96"><a href="#cb42-96" aria-hidden="true" tabindex="-1"></a>  <span class="st">"N02AA05"</span>,</span>
+<span id="cb42-97"><a href="#cb42-97" aria-hidden="true" tabindex="-1"></a>  <span class="st">"N02AA55"</span>,</span>
+<span id="cb42-98"><a href="#cb42-98" aria-hidden="true" tabindex="-1"></a>  <span class="st">"N02AA08"</span>,</span>
+<span id="cb42-99"><a href="#cb42-99" aria-hidden="true" tabindex="-1"></a>  <span class="st">"N02AJ01"</span>,</span>
+<span id="cb42-100"><a href="#cb42-100" aria-hidden="true" tabindex="-1"></a>  <span class="st">"N02AB02"</span>,</span>
+<span id="cb42-101"><a href="#cb42-101" aria-hidden="true" tabindex="-1"></a>  <span class="st">"N02AB03"</span>,</span>
+<span id="cb42-102"><a href="#cb42-102" aria-hidden="true" tabindex="-1"></a>  <span class="st">"N02AE01"</span>,</span>
+<span id="cb42-103"><a href="#cb42-103" aria-hidden="true" tabindex="-1"></a>  <span class="st">"N02AX02"</span>,</span>
+<span id="cb42-104"><a href="#cb42-104" aria-hidden="true" tabindex="-1"></a>  <span class="st">"N02AJ13"</span>,</span>
+<span id="cb42-105"><a href="#cb42-105" aria-hidden="true" tabindex="-1"></a>  <span class="st">"N02AJ14"</span>,</span>
+<span id="cb42-106"><a href="#cb42-106" aria-hidden="true" tabindex="-1"></a>  <span class="st">"N02AX05"</span>,</span>
+<span id="cb42-107"><a href="#cb42-107" aria-hidden="true" tabindex="-1"></a>  <span class="st">"N02AX06"</span></span>
+<span id="cb42-108"><a href="#cb42-108" aria-hidden="true" tabindex="-1"></a> )</span>
+<span id="cb42-109"><a href="#cb42-109" aria-hidden="true" tabindex="-1"></a> </span>
+<span id="cb42-110"><a href="#cb42-110" aria-hidden="true" tabindex="-1"></a> <span class="co"># ================================================================================================================================================================================</span></span>
+<span id="cb42-111"><a href="#cb42-111" aria-hidden="true" tabindex="-1"></a> <span class="co"># CREATE PATIENT-LEVEL FLAGS FROM df FOR DISPENSINGS IN 2022</span></span>
+<span id="cb42-112"><a href="#cb42-112" aria-hidden="true" tabindex="-1"></a> <span class="co"># ================================================================================================================================================================================</span></span>
+<span id="cb42-113"><a href="#cb42-113" aria-hidden="true" tabindex="-1"></a> </span>
+<span id="cb42-114"><a href="#cb42-114" aria-hidden="true" tabindex="-1"></a> other_analgesic_flags_2022 <span class="ot">&lt;-</span> df <span class="sc">%&gt;%</span></span>
+<span id="cb42-115"><a href="#cb42-115" aria-hidden="true" tabindex="-1"></a>   <span class="fu">mutate</span>(</span>
+<span id="cb42-116"><a href="#cb42-116" aria-hidden="true" tabindex="-1"></a>     <span class="at">dateofdispensing =</span> <span class="fu">ymd</span>(dateofdispensing),</span>
+<span id="cb42-117"><a href="#cb42-117" aria-hidden="true" tabindex="-1"></a>     <span class="at">atccode =</span> <span class="fu">as.character</span>(atccode)</span>
+<span id="cb42-118"><a href="#cb42-118" aria-hidden="true" tabindex="-1"></a>   ) <span class="sc">%&gt;%</span></span>
+<span id="cb42-119"><a href="#cb42-119" aria-hidden="true" tabindex="-1"></a>   <span class="fu">filter</span>(<span class="fu">year</span>(dateofdispensing) <span class="sc">==</span> <span class="dv">2022</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb42-120"><a href="#cb42-120" aria-hidden="true" tabindex="-1"></a>   <span class="fu">group_by</span>(indID) <span class="sc">%&gt;%</span></span>
+<span id="cb42-121"><a href="#cb42-121" aria-hidden="true" tabindex="-1"></a>   <span class="fu">summarise</span>(</span>
+<span id="cb42-122"><a href="#cb42-122" aria-hidden="true" tabindex="-1"></a>     <span class="at">Oral_NSAIDs =</span> <span class="fu">as.integer</span>(<span class="fu">any</span>(atccode <span class="sc">%in%</span> oral_nsaids_codes)),</span>
+<span id="cb42-123"><a href="#cb42-123" aria-hidden="true" tabindex="-1"></a>     <span class="at">Topical_NSAIDs =</span> <span class="fu">as.integer</span>(<span class="fu">any</span>(atccode <span class="sc">%in%</span> topical_nsaids_codes)),</span>
+<span id="cb42-124"><a href="#cb42-124" aria-hidden="true" tabindex="-1"></a>     <span class="at">Gabapentinoids =</span> <span class="fu">as.integer</span>(<span class="fu">any</span>(atccode <span class="sc">%in%</span> gabapentinoids_codes)),</span>
+<span id="cb42-125"><a href="#cb42-125" aria-hidden="true" tabindex="-1"></a>     <span class="at">Benzodiazepines_sedatives =</span> <span class="fu">as.integer</span>(<span class="fu">any</span>(atccode <span class="sc">%in%</span> benzodiazepines_sedatives_codes)),</span>
+<span id="cb42-126"><a href="#cb42-126" aria-hidden="true" tabindex="-1"></a>     <span class="at">Anti_migraines =</span> <span class="fu">as.integer</span>(<span class="fu">any</span>(atccode <span class="sc">%in%</span> anti_migraine_codes)),</span>
+<span id="cb42-127"><a href="#cb42-127" aria-hidden="true" tabindex="-1"></a>     <span class="at">Other_Opioids =</span> <span class="fu">as.integer</span>(<span class="fu">any</span>(atccode <span class="sc">%in%</span> Other_Opioids_codes)),</span>
+<span id="cb42-128"><a href="#cb42-128" aria-hidden="true" tabindex="-1"></a>     <span class="at">.groups =</span> <span class="st">"drop"</span></span>
+<span id="cb42-129"><a href="#cb42-129" aria-hidden="true" tabindex="-1"></a>   ) <span class="sc">%&gt;%</span></span>
+<span id="cb42-130"><a href="#cb42-130" aria-hidden="true" tabindex="-1"></a>   <span class="fu">mutate</span>(</span>
+<span id="cb42-131"><a href="#cb42-131" aria-hidden="true" tabindex="-1"></a>     <span class="at">other_analgesic_total =</span> Oral_NSAIDs <span class="sc">+</span></span>
+<span id="cb42-132"><a href="#cb42-132" aria-hidden="true" tabindex="-1"></a>       Topical_NSAIDs <span class="sc">+</span></span>
+<span id="cb42-133"><a href="#cb42-133" aria-hidden="true" tabindex="-1"></a>       Gabapentinoids <span class="sc">+</span></span>
+<span id="cb42-134"><a href="#cb42-134" aria-hidden="true" tabindex="-1"></a>       Benzodiazepines_sedatives <span class="sc">+</span></span>
+<span id="cb42-135"><a href="#cb42-135" aria-hidden="true" tabindex="-1"></a>       Anti_migraines <span class="sc">+</span></span>
+<span id="cb42-136"><a href="#cb42-136" aria-hidden="true" tabindex="-1"></a>       Other_Opioids,</span>
+<span id="cb42-137"><a href="#cb42-137" aria-hidden="true" tabindex="-1"></a>     <span class="at">other_analgesic_y_n =</span> <span class="fu">as.integer</span>(other_analgesic_total <span class="sc">&gt;</span> <span class="dv">0</span>)</span>
+<span id="cb42-138"><a href="#cb42-138" aria-hidden="true" tabindex="-1"></a>   )</span>
+<span id="cb42-139"><a href="#cb42-139" aria-hidden="true" tabindex="-1"></a> </span>
+<span id="cb42-140"><a href="#cb42-140" aria-hidden="true" tabindex="-1"></a> <span class="co"># ================================================================================================================================================================================</span></span>
+<span id="cb42-141"><a href="#cb42-141" aria-hidden="true" tabindex="-1"></a> <span class="co"># JOIN BACK TO objective_two AND FILL MISSING WITH 0</span></span>
+<span id="cb42-142"><a href="#cb42-142" aria-hidden="true" tabindex="-1"></a> <span class="co"># ================================================================================================================================================================================</span></span>
+<span id="cb42-143"><a href="#cb42-143" aria-hidden="true" tabindex="-1"></a> </span>
+<span id="cb42-144"><a href="#cb42-144" aria-hidden="true" tabindex="-1"></a> objective_two <span class="ot">&lt;-</span> objective_two <span class="sc">%&gt;%</span></span>
+<span id="cb42-145"><a href="#cb42-145" aria-hidden="true" tabindex="-1"></a>   <span class="fu">select</span>(</span>
+<span id="cb42-146"><a href="#cb42-146" aria-hidden="true" tabindex="-1"></a>     <span class="sc">-</span><span class="fu">any_of</span>(<span class="fu">c</span>(</span>
+<span id="cb42-147"><a href="#cb42-147" aria-hidden="true" tabindex="-1"></a>       <span class="st">"Oral_NSAIDs"</span>,</span>
+<span id="cb42-148"><a href="#cb42-148" aria-hidden="true" tabindex="-1"></a>       <span class="st">"Topical_NSAIDs"</span>,</span>
+<span id="cb42-149"><a href="#cb42-149" aria-hidden="true" tabindex="-1"></a>       <span class="st">"Gabapentinoids"</span>,</span>
+<span id="cb42-150"><a href="#cb42-150" aria-hidden="true" tabindex="-1"></a>       <span class="st">"Benzodiazepines_sedatives"</span>,</span>
+<span id="cb42-151"><a href="#cb42-151" aria-hidden="true" tabindex="-1"></a>       <span class="st">"Anti_migraines"</span>,</span>
+<span id="cb42-152"><a href="#cb42-152" aria-hidden="true" tabindex="-1"></a>       <span class="st">"Other_Opioids"</span>,</span>
+<span id="cb42-153"><a href="#cb42-153" aria-hidden="true" tabindex="-1"></a>       <span class="st">"other_analgesic_total"</span>,</span>
+<span id="cb42-154"><a href="#cb42-154" aria-hidden="true" tabindex="-1"></a>       <span class="st">"other_analgesic_y_n"</span></span>
+<span id="cb42-155"><a href="#cb42-155" aria-hidden="true" tabindex="-1"></a>     ))</span>
+<span id="cb42-156"><a href="#cb42-156" aria-hidden="true" tabindex="-1"></a>   ) <span class="sc">%&gt;%</span></span>
+<span id="cb42-157"><a href="#cb42-157" aria-hidden="true" tabindex="-1"></a>   <span class="fu">left_join</span>(other_analgesic_flags_2022, <span class="at">by =</span> <span class="st">"indID"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb42-158"><a href="#cb42-158" aria-hidden="true" tabindex="-1"></a>   <span class="fu">mutate</span>(</span>
+<span id="cb42-159"><a href="#cb42-159" aria-hidden="true" tabindex="-1"></a>     <span class="fu">across</span>(</span>
+<span id="cb42-160"><a href="#cb42-160" aria-hidden="true" tabindex="-1"></a>       <span class="fu">c</span>(</span>
+<span id="cb42-161"><a href="#cb42-161" aria-hidden="true" tabindex="-1"></a>         Oral_NSAIDs,</span>
+<span id="cb42-162"><a href="#cb42-162" aria-hidden="true" tabindex="-1"></a>         Topical_NSAIDs,</span>
+<span id="cb42-163"><a href="#cb42-163" aria-hidden="true" tabindex="-1"></a>         Gabapentinoids,</span>
+<span id="cb42-164"><a href="#cb42-164" aria-hidden="true" tabindex="-1"></a>         Benzodiazepines_sedatives,</span>
+<span id="cb42-165"><a href="#cb42-165" aria-hidden="true" tabindex="-1"></a>         Anti_migraines,</span>
+<span id="cb42-166"><a href="#cb42-166" aria-hidden="true" tabindex="-1"></a>         Other_Opioids,</span>
+<span id="cb42-167"><a href="#cb42-167" aria-hidden="true" tabindex="-1"></a>         other_analgesic_total,</span>
+<span id="cb42-168"><a href="#cb42-168" aria-hidden="true" tabindex="-1"></a>         other_analgesic_y_n</span>
+<span id="cb42-169"><a href="#cb42-169" aria-hidden="true" tabindex="-1"></a>       ),</span>
+<span id="cb42-170"><a href="#cb42-170" aria-hidden="true" tabindex="-1"></a>       <span class="sc">~</span> tidyr<span class="sc">::</span><span class="fu">replace_na</span>(., <span class="dv">0</span>L)</span>
+<span id="cb42-171"><a href="#cb42-171" aria-hidden="true" tabindex="-1"></a>     )</span>
+<span id="cb42-172"><a href="#cb42-172" aria-hidden="true" tabindex="-1"></a>   )</span>
+<span id="cb42-173"><a href="#cb42-173" aria-hidden="true" tabindex="-1"></a> <span class="co"># ================================================================================================================================================================================</span></span>
+<span id="cb42-174"><a href="#cb42-174" aria-hidden="true" tabindex="-1"></a> <span class="co"># Making anticholinergic groups</span></span>
+<span id="cb42-175"><a href="#cb42-175" aria-hidden="true" tabindex="-1"></a> <span class="co"># ================================================================================================================================================================================</span></span>
+<span id="cb42-176"><a href="#cb42-176" aria-hidden="true" tabindex="-1"></a> ach1_codes <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
+<span id="cb42-177"><a href="#cb42-177" aria-hidden="true" tabindex="-1"></a>   <span class="st">"R06AD01"</span>, </span>
+<span id="cb42-178"><a href="#cb42-178" aria-hidden="true" tabindex="-1"></a>   <span class="st">"A03AX08"</span>,</span>
+<span id="cb42-179"><a href="#cb42-179" aria-hidden="true" tabindex="-1"></a>   <span class="st">"A03AX58"</span>,</span>
+<span id="cb42-180"><a href="#cb42-180" aria-hidden="true" tabindex="-1"></a>   <span class="st">"C07AB03"</span>,</span>
+<span id="cb42-181"><a href="#cb42-181" aria-hidden="true" tabindex="-1"></a>   <span class="st">"C07FB03"</span>,</span>
+<span id="cb42-182"><a href="#cb42-182" aria-hidden="true" tabindex="-1"></a>   <span class="st">"C07CB03"</span>,</span>
+<span id="cb42-183"><a href="#cb42-183" aria-hidden="true" tabindex="-1"></a>   <span class="st">"C07CB53"</span>,</span>
+<span id="cb42-184"><a href="#cb42-184" aria-hidden="true" tabindex="-1"></a>   <span class="st">"C07BB03"</span>,</span>
+<span id="cb42-185"><a href="#cb42-185" aria-hidden="true" tabindex="-1"></a>   <span class="st">"C07DB01"</span>,</span>
+<span id="cb42-186"><a href="#cb42-186" aria-hidden="true" tabindex="-1"></a>   <span class="st">"R06AB01"</span>,</span>
+<span id="cb42-187"><a href="#cb42-187" aria-hidden="true" tabindex="-1"></a>   <span class="st">"R06AB51"</span>,</span>
+<span id="cb42-188"><a href="#cb42-188" aria-hidden="true" tabindex="-1"></a>   <span class="st">"N06AX12"</span>,</span>
+<span id="cb42-189"><a href="#cb42-189" aria-hidden="true" tabindex="-1"></a>   <span class="st">"A08AA62"</span>,</span>
+<span id="cb42-190"><a href="#cb42-190" aria-hidden="true" tabindex="-1"></a>   <span class="st">"C09AA01"</span>,</span>
+<span id="cb42-191"><a href="#cb42-191" aria-hidden="true" tabindex="-1"></a>   <span class="st">"C09BA01"</span>,</span>
+<span id="cb42-192"><a href="#cb42-192" aria-hidden="true" tabindex="-1"></a>   <span class="st">"C03BA04"</span>,</span>
+<span id="cb42-193"><a href="#cb42-193" aria-hidden="true" tabindex="-1"></a>   <span class="st">"C03BB04"</span>,</span>
+<span id="cb42-194"><a href="#cb42-194" aria-hidden="true" tabindex="-1"></a>   <span class="st">"C03EA06"</span>,</span>
+<span id="cb42-195"><a href="#cb42-195" aria-hidden="true" tabindex="-1"></a>   <span class="st">"A02BA01"</span>,</span>
+<span id="cb42-196"><a href="#cb42-196" aria-hidden="true" tabindex="-1"></a>   <span class="st">"A02BA51"</span>,</span>
+<span id="cb42-197"><a href="#cb42-197" aria-hidden="true" tabindex="-1"></a>   <span class="st">"M04AC01"</span>,</span>
+<span id="cb42-198"><a href="#cb42-198" aria-hidden="true" tabindex="-1"></a>   <span class="st">"C01AA05"</span>,</span>
+<span id="cb42-199"><a href="#cb42-199" aria-hidden="true" tabindex="-1"></a>   <span class="st">"B01AC07"</span>,</span>
+<span id="cb42-200"><a href="#cb42-200" aria-hidden="true" tabindex="-1"></a>   <span class="st">"C01BA03"</span>,</span>
+<span id="cb42-201"><a href="#cb42-201" aria-hidden="true" tabindex="-1"></a>   <span class="st">"N02AB03"</span>,</span>
+<span id="cb42-202"><a href="#cb42-202" aria-hidden="true" tabindex="-1"></a>   <span class="st">"C03CA01"</span>,</span>
+<span id="cb42-203"><a href="#cb42-203" aria-hidden="true" tabindex="-1"></a>   <span class="st">"C03CB01"</span>,</span>
+<span id="cb42-204"><a href="#cb42-204" aria-hidden="true" tabindex="-1"></a>   <span class="st">"C03EB01"</span>,</span>
+<span id="cb42-205"><a href="#cb42-205" aria-hidden="true" tabindex="-1"></a>   <span class="st">"N06AB08"</span>,</span>
+<span id="cb42-206"><a href="#cb42-206" aria-hidden="true" tabindex="-1"></a>   <span class="st">"N05AD01"</span>,</span>
+<span id="cb42-207"><a href="#cb42-207" aria-hidden="true" tabindex="-1"></a>   <span class="st">"C02DB02"</span>,</span>
+<span id="cb42-208"><a href="#cb42-208" aria-hidden="true" tabindex="-1"></a>   <span class="st">"C02LG02"</span>,</span>
+<span id="cb42-209"><a href="#cb42-209" aria-hidden="true" tabindex="-1"></a>   <span class="st">"H02AB09"</span>,</span>
+<span id="cb42-210"><a href="#cb42-210" aria-hidden="true" tabindex="-1"></a>   <span class="st">"C01DA08"</span>,</span>
+<span id="cb42-211"><a href="#cb42-211" aria-hidden="true" tabindex="-1"></a>   <span class="st">"C01DA58"</span>,</span>
+<span id="cb42-212"><a href="#cb42-212" aria-hidden="true" tabindex="-1"></a>   <span class="st">"C05AE02"</span>,</span>
+<span id="cb42-213"><a href="#cb42-213" aria-hidden="true" tabindex="-1"></a>   <span class="st">"C01DA14"</span>,</span>
+<span id="cb42-214"><a href="#cb42-214" aria-hidden="true" tabindex="-1"></a>   <span class="st">"A07DA03"</span>,</span>
+<span id="cb42-215"><a href="#cb42-215" aria-hidden="true" tabindex="-1"></a>   <span class="st">"A07DA05"</span>,</span>
+<span id="cb42-216"><a href="#cb42-216" aria-hidden="true" tabindex="-1"></a>   <span class="st">"A07DA53"</span>,</span>
+<span id="cb42-217"><a href="#cb42-217" aria-hidden="true" tabindex="-1"></a>   <span class="st">"C07AB02"</span>,</span>
+<span id="cb42-218"><a href="#cb42-218" aria-hidden="true" tabindex="-1"></a>   <span class="st">"C07FX03"</span>,</span>
+<span id="cb42-219"><a href="#cb42-219" aria-hidden="true" tabindex="-1"></a>   <span class="st">"C07FB13"</span>,</span>
+<span id="cb42-220"><a href="#cb42-220" aria-hidden="true" tabindex="-1"></a>   <span class="st">"C07FB02"</span>,</span>
+<span id="cb42-221"><a href="#cb42-221" aria-hidden="true" tabindex="-1"></a>   <span class="st">"C07FX05"</span>,</span>
+<span id="cb42-222"><a href="#cb42-222" aria-hidden="true" tabindex="-1"></a>   <span class="st">"C07CB02"</span>,</span>
+<span id="cb42-223"><a href="#cb42-223" aria-hidden="true" tabindex="-1"></a>   <span class="st">"C07BB02"</span>,</span>
+<span id="cb42-224"><a href="#cb42-224" aria-hidden="true" tabindex="-1"></a>   <span class="st">"C07BB52"</span>,</span>
+<span id="cb42-225"><a href="#cb42-225" aria-hidden="true" tabindex="-1"></a>   <span class="st">"R05DA05"</span>,</span>
+<span id="cb42-226"><a href="#cb42-226" aria-hidden="true" tabindex="-1"></a>   <span class="st">"C08CA05"</span>,</span>
+<span id="cb42-227"><a href="#cb42-227" aria-hidden="true" tabindex="-1"></a>   <span class="st">"C07FB03"</span>,</span>
+<span id="cb42-228"><a href="#cb42-228" aria-hidden="true" tabindex="-1"></a>   <span class="st">"C08GA01"</span>,</span>
+<span id="cb42-229"><a href="#cb42-229" aria-hidden="true" tabindex="-1"></a>   <span class="st">"C08CA55"</span>,</span>
+<span id="cb42-230"><a href="#cb42-230" aria-hidden="true" tabindex="-1"></a>   <span class="st">"H02AB07"</span>,</span>
+<span id="cb42-231"><a href="#cb42-231" aria-hidden="true" tabindex="-1"></a>   <span class="st">"A07EA03"</span>,</span>
+<span id="cb42-232"><a href="#cb42-232" aria-hidden="true" tabindex="-1"></a>   <span class="st">"C01BA01"</span>,</span>
+<span id="cb42-233"><a href="#cb42-233" aria-hidden="true" tabindex="-1"></a>   <span class="st">"C01BA51"</span>,</span>
+<span id="cb42-234"><a href="#cb42-234" aria-hidden="true" tabindex="-1"></a>   <span class="st">"C01BA71"</span>,</span>
+<span id="cb42-235"><a href="#cb42-235" aria-hidden="true" tabindex="-1"></a>   <span class="st">"A02BA02"</span>,</span>
+<span id="cb42-236"><a href="#cb42-236" aria-hidden="true" tabindex="-1"></a>   <span class="st">"A02BA07"</span>,</span>
+<span id="cb42-237"><a href="#cb42-237" aria-hidden="true" tabindex="-1"></a>   <span class="st">"R03DA04"</span>,</span>
+<span id="cb42-238"><a href="#cb42-238" aria-hidden="true" tabindex="-1"></a>   <span class="st">"R03DB04"</span>,</span>
+<span id="cb42-239"><a href="#cb42-239" aria-hidden="true" tabindex="-1"></a>   <span class="st">"R03DA54"</span>,</span>
+<span id="cb42-240"><a href="#cb42-240" aria-hidden="true" tabindex="-1"></a>   <span class="st">"R03DA74"</span>,</span>
+<span id="cb42-241"><a href="#cb42-241" aria-hidden="true" tabindex="-1"></a>   <span class="st">"C03DB02"</span>,</span>
+<span id="cb42-242"><a href="#cb42-242" aria-hidden="true" tabindex="-1"></a>   <span class="st">"B01AA03"</span></span>
+<span id="cb42-243"><a href="#cb42-243" aria-hidden="true" tabindex="-1"></a> )</span>
+<span id="cb42-244"><a href="#cb42-244" aria-hidden="true" tabindex="-1"></a> </span>
+<span id="cb42-245"><a href="#cb42-245" aria-hidden="true" tabindex="-1"></a> ach2_codes <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
+<span id="cb42-246"><a href="#cb42-246" aria-hidden="true" tabindex="-1"></a>   <span class="st">"N04BB01"</span>,</span>
+<span id="cb42-247"><a href="#cb42-247" aria-hidden="true" tabindex="-1"></a>   <span class="st">"A03BA01"</span>,</span>
+<span id="cb42-248"><a href="#cb42-248" aria-hidden="true" tabindex="-1"></a>   <span class="st">"A03BA04"</span>,</span>
+<span id="cb42-249"><a href="#cb42-249" aria-hidden="true" tabindex="-1"></a>   <span class="st">"A03BB01"</span>,</span>
+<span id="cb42-250"><a href="#cb42-250" aria-hidden="true" tabindex="-1"></a>   <span class="st">"A03BB02"</span>,</span>
+<span id="cb42-251"><a href="#cb42-251" aria-hidden="true" tabindex="-1"></a>   <span class="st">"A03BB03"</span>,</span>
+<span id="cb42-252"><a href="#cb42-252" aria-hidden="true" tabindex="-1"></a>   <span class="st">"A03BB04"</span>,</span>
+<span id="cb42-253"><a href="#cb42-253" aria-hidden="true" tabindex="-1"></a>   <span class="st">"A03BB05"</span>,</span>
+<span id="cb42-254"><a href="#cb42-254" aria-hidden="true" tabindex="-1"></a>   <span class="st">"A03BB06"</span>,</span>
+<span id="cb42-255"><a href="#cb42-255" aria-hidden="true" tabindex="-1"></a>   <span class="st">"A06AB30"</span>,</span>
+<span id="cb42-256"><a href="#cb42-256" aria-hidden="true" tabindex="-1"></a>   <span class="st">"N03AF01"</span>,</span>
+<span id="cb42-257"><a href="#cb42-257" aria-hidden="true" tabindex="-1"></a>   <span class="st">"M03BX08"</span>,</span>
+<span id="cb42-258"><a href="#cb42-258" aria-hidden="true" tabindex="-1"></a>   <span class="st">"R06AX02"</span>,</span>
+<span id="cb42-259"><a href="#cb42-259" aria-hidden="true" tabindex="-1"></a>   <span class="st">"N05AA02"</span>,</span>
+<span id="cb42-260"><a href="#cb42-260" aria-hidden="true" tabindex="-1"></a>   <span class="st">"N05AH01"</span>,</span>
+<span id="cb42-261"><a href="#cb42-261" aria-hidden="true" tabindex="-1"></a>   <span class="st">"N05AE02"</span>,</span>
+<span id="cb42-262"><a href="#cb42-262" aria-hidden="true" tabindex="-1"></a>   <span class="st">"N03AF02"</span>,</span>
+<span id="cb42-263"><a href="#cb42-263" aria-hidden="true" tabindex="-1"></a>   <span class="st">"N05AG02"</span></span>
+<span id="cb42-264"><a href="#cb42-264" aria-hidden="true" tabindex="-1"></a> )</span>
+<span id="cb42-265"><a href="#cb42-265" aria-hidden="true" tabindex="-1"></a> </span>
+<span id="cb42-266"><a href="#cb42-266" aria-hidden="true" tabindex="-1"></a> ach3_codes <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
+<span id="cb42-267"><a href="#cb42-267" aria-hidden="true" tabindex="-1"></a>   <span class="st">"N06AA09"</span>,</span>
+<span id="cb42-268"><a href="#cb42-268" aria-hidden="true" tabindex="-1"></a>   <span class="st">"N06AA17"</span>,</span>
+<span id="cb42-269"><a href="#cb42-269" aria-hidden="true" tabindex="-1"></a>   <span class="st">"A03CB03"</span>,</span>
+<span id="cb42-270"><a href="#cb42-270" aria-hidden="true" tabindex="-1"></a>   <span class="st">"N04AC01"</span>,</span>
+<span id="cb42-271"><a href="#cb42-271" aria-hidden="true" tabindex="-1"></a>   <span class="st">"R06AA08"</span>,</span>
+<span id="cb42-272"><a href="#cb42-272" aria-hidden="true" tabindex="-1"></a>   <span class="st">"R06AB04"</span>,</span>
+<span id="cb42-273"><a href="#cb42-273" aria-hidden="true" tabindex="-1"></a>   <span class="st">"R06AB54"</span>,</span>
+<span id="cb42-274"><a href="#cb42-274" aria-hidden="true" tabindex="-1"></a>   <span class="st">"N05AA01"</span>,</span>
+<span id="cb42-275"><a href="#cb42-275" aria-hidden="true" tabindex="-1"></a>   <span class="st">"R06AA04"</span>,</span>
+<span id="cb42-276"><a href="#cb42-276" aria-hidden="true" tabindex="-1"></a>   <span class="st">"R06AA54"</span>,</span>
+<span id="cb42-277"><a href="#cb42-277" aria-hidden="true" tabindex="-1"></a>   <span class="st">"N06AA04"</span>,</span>
+<span id="cb42-278"><a href="#cb42-278" aria-hidden="true" tabindex="-1"></a>   <span class="st">"N05AH02"</span>,</span>
+<span id="cb42-279"><a href="#cb42-279" aria-hidden="true" tabindex="-1"></a>   <span class="st">"G04BD10"</span>,</span>
+<span id="cb42-280"><a href="#cb42-280" aria-hidden="true" tabindex="-1"></a>   <span class="st">"N06AA01"</span>,</span>
+<span id="cb42-281"><a href="#cb42-281" aria-hidden="true" tabindex="-1"></a>   <span class="st">"A03AA07"</span>,</span>
+<span id="cb42-282"><a href="#cb42-282" aria-hidden="true" tabindex="-1"></a>   <span class="st">"R06AA11"</span>,</span>
+<span id="cb42-283"><a href="#cb42-283" aria-hidden="true" tabindex="-1"></a>   <span class="st">"R06AA02"</span>,</span>
+<span id="cb42-284"><a href="#cb42-284" aria-hidden="true" tabindex="-1"></a>   <span class="st">"R06AA52"</span>,</span>
+<span id="cb42-285"><a href="#cb42-285" aria-hidden="true" tabindex="-1"></a>   <span class="st">"G04BD02"</span>,</span>
+<span id="cb42-286"><a href="#cb42-286" aria-hidden="true" tabindex="-1"></a>   <span class="st">"N05BB01"</span>,</span>
+<span id="cb42-287"><a href="#cb42-287" aria-hidden="true" tabindex="-1"></a>   <span class="st">"N05BB51"</span>,</span>
+<span id="cb42-288"><a href="#cb42-288" aria-hidden="true" tabindex="-1"></a>   <span class="st">"A03BA03"</span>,</span>
+<span id="cb42-289"><a href="#cb42-289" aria-hidden="true" tabindex="-1"></a>   <span class="st">"A03CB31"</span>,</span>
+<span id="cb42-290"><a href="#cb42-290" aria-hidden="true" tabindex="-1"></a>   <span class="st">"N06AA02"</span>,</span>
+<span id="cb42-291"><a href="#cb42-291" aria-hidden="true" tabindex="-1"></a>   <span class="st">"N06AA03"</span>,</span>
+<span id="cb42-292"><a href="#cb42-292" aria-hidden="true" tabindex="-1"></a>   <span class="st">"R06AC01"</span>,</span>
+<span id="cb42-293"><a href="#cb42-293" aria-hidden="true" tabindex="-1"></a>   <span class="st">"R03DA12"</span>,</span>
+<span id="cb42-294"><a href="#cb42-294" aria-hidden="true" tabindex="-1"></a>   <span class="st">"R06AE05"</span>,</span>
+<span id="cb42-295"><a href="#cb42-295" aria-hidden="true" tabindex="-1"></a>   <span class="st">"R06AE55"</span>,</span>
+<span id="cb42-296"><a href="#cb42-296" aria-hidden="true" tabindex="-1"></a>   <span class="st">"N06AA10"</span>,</span>
+<span id="cb42-297"><a href="#cb42-297" aria-hidden="true" tabindex="-1"></a>   <span class="st">"N04AB02"</span>,</span>
+<span id="cb42-298"><a href="#cb42-298" aria-hidden="true" tabindex="-1"></a>   <span class="st">"M03BC01"</span>,</span>
+<span id="cb42-299"><a href="#cb42-299" aria-hidden="true" tabindex="-1"></a>   <span class="st">"M03BC51"</span>,</span>
+<span id="cb42-300"><a href="#cb42-300" aria-hidden="true" tabindex="-1"></a>   <span class="st">"G04BD04"</span>,</span>
+<span id="cb42-301"><a href="#cb42-301" aria-hidden="true" tabindex="-1"></a>   <span class="st">"N06AB05"</span>,</span>
+<span id="cb42-302"><a href="#cb42-302" aria-hidden="true" tabindex="-1"></a>   <span class="st">"N05AB03"</span>,</span>
+<span id="cb42-303"><a href="#cb42-303" aria-hidden="true" tabindex="-1"></a>   <span class="st">"N04AA04"</span>,</span>
+<span id="cb42-304"><a href="#cb42-304" aria-hidden="true" tabindex="-1"></a>   <span class="st">"N05AA03"</span>,</span>
+<span id="cb42-305"><a href="#cb42-305" aria-hidden="true" tabindex="-1"></a>   <span class="st">"A03CA34"</span>,</span>
+<span id="cb42-306"><a href="#cb42-306" aria-hidden="true" tabindex="-1"></a>   <span class="st">"A04AD01"</span>,</span>
+<span id="cb42-307"><a href="#cb42-307" aria-hidden="true" tabindex="-1"></a>   <span class="st">"A04AD51"</span>,</span>
+<span id="cb42-308"><a href="#cb42-308" aria-hidden="true" tabindex="-1"></a>   <span class="st">"N05CM05"</span>,</span>
+<span id="cb42-309"><a href="#cb42-309" aria-hidden="true" tabindex="-1"></a>   <span class="st">"N05AC02"</span>,</span>
+<span id="cb42-310"><a href="#cb42-310" aria-hidden="true" tabindex="-1"></a>   <span class="st">"G04BD07"</span>,</span>
+<span id="cb42-311"><a href="#cb42-311" aria-hidden="true" tabindex="-1"></a>   <span class="st">"N05AB06"</span>,</span>
+<span id="cb42-312"><a href="#cb42-312" aria-hidden="true" tabindex="-1"></a>   <span class="st">"N04AA01"</span>,</span>
+<span id="cb42-313"><a href="#cb42-313" aria-hidden="true" tabindex="-1"></a>   <span class="st">"N06AA06"</span></span>
+<span id="cb42-314"><a href="#cb42-314" aria-hidden="true" tabindex="-1"></a>   )</span>
+<span id="cb42-315"><a href="#cb42-315" aria-hidden="true" tabindex="-1"></a> </span>
+<span id="cb42-316"><a href="#cb42-316" aria-hidden="true" tabindex="-1"></a> all_ach_codes <span class="ot">&lt;-</span> <span class="fu">c</span>(ach1_codes, ach2_codes, ach3_codes)</span>
+<span id="cb42-317"><a href="#cb42-317" aria-hidden="true" tabindex="-1"></a> </span>
+<span id="cb42-318"><a href="#cb42-318" aria-hidden="true" tabindex="-1"></a> <span class="co"># ================================================================================================================================================================================</span></span>
+<span id="cb42-319"><a href="#cb42-319" aria-hidden="true" tabindex="-1"></a> <span class="co"># Create patient-level ACH burden scores from df</span></span>
+<span id="cb42-320"><a href="#cb42-320" aria-hidden="true" tabindex="-1"></a> <span class="co"># ================================================================================================================================================================================</span></span>
+<span id="cb42-321"><a href="#cb42-321" aria-hidden="true" tabindex="-1"></a> ach_scores_2022 <span class="ot">&lt;-</span> df <span class="sc">%&gt;%</span></span>
+<span id="cb42-322"><a href="#cb42-322" aria-hidden="true" tabindex="-1"></a>   <span class="fu">mutate</span>(<span class="at">dateofdispensing =</span> <span class="fu">ymd</span>(dateofdispensing)) <span class="sc">%&gt;%</span></span>
+<span id="cb42-323"><a href="#cb42-323" aria-hidden="true" tabindex="-1"></a>   <span class="fu">filter</span>(</span>
+<span id="cb42-324"><a href="#cb42-324" aria-hidden="true" tabindex="-1"></a>     <span class="fu">year</span>(dateofdispensing) <span class="sc">==</span> <span class="dv">2022</span>,</span>
+<span id="cb42-325"><a href="#cb42-325" aria-hidden="true" tabindex="-1"></a>     atccode <span class="sc">%in%</span> all_ach_codes</span>
+<span id="cb42-326"><a href="#cb42-326" aria-hidden="true" tabindex="-1"></a>   ) <span class="sc">%&gt;%</span></span>
+<span id="cb42-327"><a href="#cb42-327" aria-hidden="true" tabindex="-1"></a>   <span class="fu">distinct</span>(indID, atccode) <span class="sc">%&gt;%</span></span>
+<span id="cb42-328"><a href="#cb42-328" aria-hidden="true" tabindex="-1"></a>   <span class="fu">group_by</span>(indID) <span class="sc">%&gt;%</span></span>
+<span id="cb42-329"><a href="#cb42-329" aria-hidden="true" tabindex="-1"></a>   <span class="fu">summarise</span>(</span>
+<span id="cb42-330"><a href="#cb42-330" aria-hidden="true" tabindex="-1"></a>     <span class="at">ach1 =</span> <span class="fu">sum</span>(atccode <span class="sc">%in%</span> ach1_codes),</span>
+<span id="cb42-331"><a href="#cb42-331" aria-hidden="true" tabindex="-1"></a>     <span class="at">ach2 =</span> <span class="fu">sum</span>(atccode <span class="sc">%in%</span> ach2_codes),</span>
+<span id="cb42-332"><a href="#cb42-332" aria-hidden="true" tabindex="-1"></a>     <span class="at">ach3 =</span> <span class="fu">sum</span>(atccode <span class="sc">%in%</span> ach3_codes),</span>
+<span id="cb42-333"><a href="#cb42-333" aria-hidden="true" tabindex="-1"></a>     <span class="at">total_ach_score =</span> ach1 <span class="sc">+</span> ach2 <span class="sc">+</span> ach3,</span>
+<span id="cb42-334"><a href="#cb42-334" aria-hidden="true" tabindex="-1"></a>     <span class="at">.groups =</span> <span class="st">"drop"</span></span>
+<span id="cb42-335"><a href="#cb42-335" aria-hidden="true" tabindex="-1"></a>   )</span>
+<span id="cb42-336"><a href="#cb42-336" aria-hidden="true" tabindex="-1"></a> </span>
+<span id="cb42-337"><a href="#cb42-337" aria-hidden="true" tabindex="-1"></a> <span class="co"># ================================================================================================================================================================================</span></span>
+<span id="cb42-338"><a href="#cb42-338" aria-hidden="true" tabindex="-1"></a> <span class="co"># Join ACH scores into objective_two</span></span>
+<span id="cb42-339"><a href="#cb42-339" aria-hidden="true" tabindex="-1"></a> <span class="co"># ================================================================================================================================================================================</span></span>
+<span id="cb42-340"><a href="#cb42-340" aria-hidden="true" tabindex="-1"></a> objective_two <span class="ot">&lt;-</span> objective_two <span class="sc">%&gt;%</span></span>
+<span id="cb42-341"><a href="#cb42-341" aria-hidden="true" tabindex="-1"></a>   <span class="fu">select</span>(<span class="sc">-</span><span class="fu">any_of</span>(<span class="fu">c</span>(<span class="st">"ach1"</span>, <span class="st">"ach2"</span>, <span class="st">"ach3"</span>, <span class="st">"total_ach_score"</span>))) <span class="sc">%&gt;%</span></span>
+<span id="cb42-342"><a href="#cb42-342" aria-hidden="true" tabindex="-1"></a>   <span class="fu">left_join</span>(ach_scores_2022, <span class="at">by =</span> <span class="st">"indID"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb42-343"><a href="#cb42-343" aria-hidden="true" tabindex="-1"></a>   <span class="fu">mutate</span>(</span>
+<span id="cb42-344"><a href="#cb42-344" aria-hidden="true" tabindex="-1"></a>     <span class="at">ach1 =</span> <span class="fu">coalesce</span>(ach1, <span class="dv">0</span>L),</span>
+<span id="cb42-345"><a href="#cb42-345" aria-hidden="true" tabindex="-1"></a>     <span class="at">ach2 =</span> <span class="fu">coalesce</span>(ach2, <span class="dv">0</span>L),</span>
+<span id="cb42-346"><a href="#cb42-346" aria-hidden="true" tabindex="-1"></a>     <span class="at">ach3 =</span> <span class="fu">coalesce</span>(ach3, <span class="dv">0</span>L),</span>
+<span id="cb42-347"><a href="#cb42-347" aria-hidden="true" tabindex="-1"></a>     <span class="at">total_ach_score =</span> <span class="fu">coalesce</span>(total_ach_score, <span class="dv">0</span>L)</span>
+<span id="cb42-348"><a href="#cb42-348" aria-hidden="true" tabindex="-1"></a>   )</span>
+<span id="cb42-349"><a href="#cb42-349" aria-hidden="true" tabindex="-1"></a> <span class="co"># ================================================================================================================================================================================</span></span>
+<span id="cb42-350"><a href="#cb42-350" aria-hidden="true" tabindex="-1"></a> <span class="co"># </span></span>
+<span id="cb42-351"><a href="#cb42-351" aria-hidden="true" tabindex="-1"></a> <span class="co"># ================================================================================================================================================================================</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+
+
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
