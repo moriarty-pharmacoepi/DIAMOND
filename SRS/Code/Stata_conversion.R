@@ -12,6 +12,8 @@ library(ggplot2)
 library(scales)
 library(viridis)
 library(here)
+library(networkD3)
+library(scales)
 here::i_am("SRS project/DIAMOND/SRS/Code/Stata_conversion.r")
 # =================================================================================================================================================================================
 # Load data
@@ -805,7 +807,7 @@ objective_two <- df %>%
  print(ome_by_cho_plot)
  
  # ================================================================================================================================================================================
- # OME by CHO proportional pi chart - dont think this is codeine only
+ # OME by CHO proportional pi chart
  # ================================================================================================================================================================================
  ome_by_cho_pi <- df %>%
    filter(codeine == TRUE, !is.na(CHO), !is.na(ome)) %>%
@@ -833,6 +835,192 @@ objective_two <- df %>%
    theme_void()
  
  print(pie_chart)
+ 
+ # ================================================================================================================================================================================
+ # Pie carts of most commonly prescribed otehr analgesics across high and low dose users fo codeine
+ # ================================================================================================================================================================================
+ 
+ analgesic_cols <- c(
+   "Oral_NSAIDs",
+   "Topical_NSAIDs",
+   "Gabapentinoids",
+   "Benzodiazepines_sedatives",
+   "Anti_migraines",
+   "Other_Opioids"
+ )
+ 
+ pie_data <- objective_two %>%
+   filter(!is.na(high_codeine_dose)) %>%
+   distinct(indID, high_codeine_dose, .keep_all = TRUE) %>%
+   mutate(
+     codeine_group = if_else(high_codeine_dose == 1, "High-dose codeine", "Low-dose codeine")
+   ) %>%
+   select(indID, codeine_group, all_of(analgesic_cols)) %>%
+   pivot_longer(
+     cols = all_of(analgesic_cols),
+     names_to = "analgesic_type",
+     values_to = "present"
+   ) %>%
+   filter(present == 1) %>%
+   group_by(codeine_group, analgesic_type) %>%
+   summarise(n = n(), .groups = "drop") %>%
+   group_by(codeine_group) %>%
+   mutate(
+     prop = n / sum(n),
+     label = paste0(round(prop * 100, 1), "%")
+   ) %>%
+   ungroup()
+ 
+pie_other_analgesics <- ggplot(pie_data, aes(x = "", y = prop, fill = analgesic_type)) +
+   geom_col(width = 1, colour = "white") +
+   coord_polar(theta = "y") +
+   geom_text(
+     aes(label = label),
+     position = position_stack(vjust = 0.5),
+     size = 4,
+     color = "white"
+   ) +
+   facet_wrap(~codeine_group) +
+   labs(
+     title = "Most Commonly Prescribed Other Analgesics by Codeine Dose Group",
+     fill = "Other Analgesic"
+   ) +
+   theme_void() +
+   theme(
+     plot.title = element_text(face = "bold", size = 14, hjust = 0.5),
+     strip.text = element_text(face = "bold", size = 12),
+     legend.position = "right"
+   )
+ 
+ print(pie_other_analgesics)
+ 
+ # ================================================================================================================================================================================
+ # proportional bar chart for high and low dose codine user ACH burden
+ # ================================================================================================================================================================================
+ 
+ ach_plot_data <- objective_two %>%
+   filter(!is.na(high_codeine_dose), !is.na(total_ach_score)) %>%
+   distinct(indID, high_codeine_dose, total_ach_score, .keep_all = TRUE) %>%
+   mutate(
+     codeine_group = if_else(high_codeine_dose == 1, "High-dose codeine", "Low-dose codeine"),
+     ach_burden = case_when(
+       total_ach_score == 0 ~ "ACH = 0",
+       total_ach_score %in% c(1, 2) ~ "ACH = 1-2",
+       total_ach_score >= 3 ~ "ACH = 3+",
+       TRUE ~ NA_character_
+     )
+   ) %>%
+   filter(!is.na(ach_burden))
+ 
+ achb_porp <-ggplot(ach_plot_data, aes(x = codeine_group, fill = ach_burden)) +
+   geom_bar(position = "fill", width = 0.7) +
+   scale_y_continuous(labels = scales::percent) +
+   labs(
+     title = "Proportional ACH Burden in High- vs Low-Dose Codeine Users",
+     x = "Codeine dose group",
+     y = "Proportion of users",
+     fill = "ACH burden"
+   ) +
+   theme_minimal(base_size = 14)
+ 
+ print(achb_porp)
+
+ # ================================================================================================================================================================================
+ # gp level trends
+ # ================================================================================================================================================================================
+
+ gp_metrics <- df %>%
+   filter(!is.na(gpidentifiernumber)) %>%
+   group_by(gpidentifiernumber) %>%
+   summarise(
+     total_analgesic = n(),
+     total_codeine = sum(codeine == TRUE, na.rm = TRUE),
+     high_codeine = sum(codeine == TRUE & codeine_ranking == "High", na.rm = TRUE),
+     prop_high_within_codeine = if_else(total_codeine > 0, high_codeine / total_codeine, NA_real_),
+     prop_codeine_overall = total_codeine / total_analgesic,
+     .groups = "drop"
+   )
+ 
+ # ================================================================================================================================================================================
+ # Pie chart 1: High-dose codeine over all codeine
+ # ================================================================================================================================================================================
+ 
+ pie_high_codeine <- tibble(
+   category = c("High-dose codeine", "Other codeine"),
+   value = c(
+     mean(gp_metrics$prop_high_within_codeine, na.rm = TRUE),
+     1 - mean(gp_metrics$prop_high_within_codeine, na.rm = TRUE)
+   )
+ ) %>%
+   mutate(
+     label = paste0(round(value * 100, 1), "%")
+   )
+ 
+ pie_one <- ggplot(pie_high_codeine, aes(x = "", y = value, fill = category)) +
+   geom_col(width = 1, colour = "white") +
+   coord_polar(theta = "y") +
+   geom_text(
+     aes(label = label),
+     position = position_stack(vjust = 0.5),
+     color = "white",
+     size = 5
+   ) +
+   labs(
+     title = "Average High-Dose Codeine as a Proportion of All Codeine Prescribing Across GPs",
+     fill = ""
+   ) +
+   theme_void() +
+   theme(
+     plot.title = element_text(face = "bold", size = 14, hjust = 0.5)
+   )
+ 
+ print(pie_one)
+ 
+ # ================================================================================================================================================================================
+ # Pie chart 2: Any-dose codeine over all analgesics
+ # ================================================================================================================================================================================
+ 
+ pie_any_codeine <- tibble(
+   category = c("Any-dose codeine", "Other analgesics"),
+   value = c(
+     mean(gp_metrics$prop_codeine_overall, na.rm = TRUE),
+     1 - mean(gp_metrics$prop_codeine_overall, na.rm = TRUE)
+   )
+ ) %>%
+   mutate(
+     label = paste0(round(value * 100, 1), "%")
+   )
+ 
+ pie_two <- ggplot(pie_any_codeine, aes(x = "", y = value, fill = category)) +
+   geom_col(width = 1, colour = "white") +
+   coord_polar(theta = "y") +
+   geom_text(
+     aes(label = label),
+     position = position_stack(vjust = 0.5),
+     color = "white",
+     size = 5
+   ) +
+   labs(
+     title = "Average Any-Dose Codeine as a Proportion of All Analgesic Prescribing Across GPs",
+     fill = ""
+   ) +
+   theme_void() +
+   theme(
+     plot.title = element_text(face = "bold", size = 14, hjust = 0.5)
+   )
+ 
+ print(pie_two)
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
  
  
  
