@@ -1237,7 +1237,114 @@ objective_three_annual <- objective_three %>%
     n_dispensings_year = n(),
     .groups = "drop"
   )
+objective_three_annual <- objective_three_annual %>%
+  rename(
+    GENDER = sex,
+    CLIENT_NORM_AGE_GROUP_DESC = age,
+    LHO_DESC_CHO = LHO_area,
+  )
 
-#n_dispensings_year column is for codeine only, objective_three_annual is the right dataset
+# ================================================================================================================================================================================
+# Mimicing Excel Formats
+# ================================================================================================================================================================================
+objective_three_annual <- objective_three_annual %>%
+  mutate(
+    CLIENT_NORM_AGE_GROUP_DESC = case_when(
+      CLIENT_NORM_AGE_GROUP_DESC < 5 ~ "Under 5 Years",
+      CLIENT_NORM_AGE_GROUP_DESC >= 5  & CLIENT_NORM_AGE_GROUP_DESC <= 11 ~ "05-11 Years",
+      CLIENT_NORM_AGE_GROUP_DESC >= 12 & CLIENT_NORM_AGE_GROUP_DESC <= 15 ~ "12-15 Years",
+      CLIENT_NORM_AGE_GROUP_DESC >= 16 & CLIENT_NORM_AGE_GROUP_DESC <= 24 ~ "16-24 Years",
+      CLIENT_NORM_AGE_GROUP_DESC >= 25 & CLIENT_NORM_AGE_GROUP_DESC <= 34 ~ "25-34 Years",
+      CLIENT_NORM_AGE_GROUP_DESC >= 35 & CLIENT_NORM_AGE_GROUP_DESC <= 44 ~ "35-44 Years",
+      CLIENT_NORM_AGE_GROUP_DESC >= 45 & CLIENT_NORM_AGE_GROUP_DESC <= 54 ~ "45-54 Years",
+      CLIENT_NORM_AGE_GROUP_DESC >= 55 & CLIENT_NORM_AGE_GROUP_DESC <= 64 ~ "55-64 Years",
+      CLIENT_NORM_AGE_GROUP_DESC >= 65 & CLIENT_NORM_AGE_GROUP_DESC <= 69 ~ "65-69 Years",
+      CLIENT_NORM_AGE_GROUP_DESC >= 70 & CLIENT_NORM_AGE_GROUP_DESC <= 74 ~ "70-74 Years",
+      CLIENT_NORM_AGE_GROUP_DESC >= 75 ~ "75 Years and Over",
+      TRUE ~ NA_character_
+    )
+  ) %>%
+  filter(CLIENT_NORM_AGE_GROUP_DESC >= 16)
 
+objective_three_annual <- objective_three_annual %>%
+  mutate(
+    GENDER = case_when(
+      GENDER == "M" ~ "Male",
+      GENDER == "F" ~ "Female",
+      TRUE ~ GENDER
+    )
+  )
+
+# ================================================================================================================================================================================
+# Merging Excel
+# ================================================================================================================================================================================
+# Read Excel exactly as it is
+eligibility <- read_excel("/Users/padraicdonoghue/Library/CloudStorage/OneDrive-SharedLibraries-RoyalCollegeofSurgeonsinIreland/Frank Moriarty - RSS 2025/SRS/age_sex_lho_eligibility_2017-2021.xlsx")
+
+# Create April-only lookup from the Excel
+eligibility_april_lookup <- eligibility %>%
+  mutate(
+    YEAR = as.integer(substr(as.character(MTH_YR), 1, 4)),
+    MONTH = as.integer(substr(as.character(MTH_YR), 5, 6))
+  ) %>%
+  filter(
+    MONTH == 4,
+    !CLIENT_NORM_AGE_GROUP_DESC %in% c("Under 5 Years", "05-11 Years", "12-15 Years")
+  ) %>%
+  mutate(
+    GENDER = case_when(
+      toupper(trimws(GENDER)) == "M" ~ "Male",
+      toupper(trimws(GENDER)) == "F" ~ "Female",
+      TRUE ~ trimws(GENDER)
+    ),
+    CLIENT_NORM_AGE_GROUP_DESC = str_squish(CLIENT_NORM_AGE_GROUP_DESC),
+    LHO_DESC_CHO = str_squish(LHO_DESC_CHO),
+    LHO_DESC_CHO = case_when(
+      LHO_DESC_CHO == "Cavan / Monaghan" ~ "Cavan/Monaghan",
+      LHO_DESC_CHO == "Kildare / West Wicklow" ~ "Kildare/West Wicklow",
+      LHO_DESC_CHO == "Laois / Offaly" ~ "Laois/Offaly",
+      LHO_DESC_CHO == "Longford / Westmeath" ~ "Longford/Westmeath",
+      LHO_DESC_CHO == "North Tipp./East Limerick" ~ "North Tipperary/East Limerick",
+      LHO_DESC_CHO == "Sligo / Leitrim / West Cavan" ~ "Sligo/Leitrim/West Cavan",
+      TRUE ~ LHO_DESC_CHO
+    )
+  ) %>%
+  select(
+    YEAR,
+    GENDER,
+    CLIENT_NORM_AGE_GROUP_DESC,
+    LHO_DESC_CHO,
+    Age_Classification
+  )
+
+# Match onto objective_three_annual and add new column
+objective_three_annual <- objective_three_annual %>%
+  mutate(
+    year = as.integer(year),
+    GENDER = case_when(
+      toupper(trimws(GENDER)) == "M" ~ "Male",
+      toupper(trimws(GENDER)) == "F" ~ "Female",
+      TRUE ~ trimws(GENDER)
+    ),
+    CLIENT_NORM_AGE_GROUP_DESC = str_squish(CLIENT_NORM_AGE_GROUP_DESC),
+    LHO_DESC_CHO = str_squish(LHO_DESC_CHO),
+    LHO_DESC_CHO = case_when(
+      LHO_DESC_CHO == "Cavan / Monaghan" ~ "Cavan/Monaghan",
+      LHO_DESC_CHO == "Kildare / West Wicklow" ~ "Kildare/West Wicklow",
+      LHO_DESC_CHO == "Laois / Offaly" ~ "Laois/Offaly",
+      LHO_DESC_CHO == "Longford / Westmeath" ~ "Longford/Westmeath",
+      LHO_DESC_CHO == "North Tipp./East Limerick" ~ "North Tipperary/East Limerick",
+      LHO_DESC_CHO == "Sligo / Leitrim / West Cavan" ~ "Sligo/Leitrim/West Cavan",
+      TRUE ~ LHO_DESC_CHO
+    )
+  ) %>%
+  left_join(
+    eligibility_april_lookup,
+    by = c(
+      "year" = "YEAR",
+      "GENDER",
+      "CLIENT_NORM_AGE_GROUP_DESC",
+      "LHO_DESC_CHO"
+    )
+  )
 ```
