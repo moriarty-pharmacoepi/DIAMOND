@@ -21,6 +21,7 @@ library(viridis)
 library(here)
 library(networkD3)
 library(scales)
+library(readxl)
 here::i_am("SRS project/DIAMOND/SRS/Code/Stata_conversion.r")
 # =================================================================================================================================================================================
 # Load data
@@ -1097,5 +1098,146 @@ pie_two <- ggplot(pie_any_codeine, aes(x = "", y = value, fill = category)) +
   )
 
 print(pie_two)
+ 
+# ================================================================================================================================================================================
+# Create objective_three
+# ================================================================================================================================================================================
+objective_three <- df %>%
+  filter(
+    codeine == TRUE,
+    !is.na(codeine_ranking),
+    codeine_ranking %in% c("High", "Low")
+  ) %>%
+  transmute(
+    dateofdispensing = ymd(dateofdispensing),
+    indID,
+    age,
+    sex,
+    patientlho,
+    LHO_area,
+    CHO_area,
+    medicationname,
+    atccode,
+    quantity,
+    codeine_dose_mg = codeine_dose,
+    high_codeine_dose = if_else(codeine_ranking == "High", 1L, 0L),
+    codeine_ranking,
+    codeine_ome = if_else(
+      !is.na(codeine_dose_mg) & !is.na(quantity),
+      quantity * codeine_dose_mg * 0.1,
+      NA_real_
+    )
+  )
+
+# ================================================================================================================================================================================
+# Create annual codeine sums per patient-year from df
+# ================================================================================================================================================================================
+annual_codeine_sums <- df %>%
+  mutate(
+    dateofdispensing = ymd(dateofdispensing),
+    year = lubridate::year(dateofdispensing),
+    codeine_ome = if_else(
+      codeine == TRUE & !is.na(codeine_dose) & !is.na(quantity),
+      quantity * codeine_dose * 0.1,
+      0
+    )
+  ) %>%
+  filter(!is.na(indID), !is.na(year), codeine == TRUE) %>%
+  group_by(indID, year) %>%
+  summarise(
+    high_codeine_sum = sum(if_else(codeine_ranking == "High", codeine_ome, 0), na.rm = TRUE),
+    low_codeine_sum = sum(if_else(codeine_ranking == "Low", codeine_ome, 0), na.rm = TRUE),
+    total_codeine_annual = sum(codeine_ome, na.rm = TRUE),
+    .groups = "drop"
+  )
+
+# ================================================================================================================================================================================
+# Create annual counts of other analgesics/sedatives per patient-year from df
+# ================================================================================================================================================================================
+all_other_analgesics_sedatives_codes <- c(
+  oral_nsaids_codes,
+  topical_analgesics_codes,
+  gabapentinoids_codes,
+  benzodiazepines_sedatives_codes,
+  anti_migraine_codes,
+  Other_Opioids_codes
+)
+
+annual_other_analgesics <- df %>%
+  mutate(
+    dateofdispensing = ymd(dateofdispensing),
+    year = lubridate::year(dateofdispensing),
+    atccode = as.character(atccode)
+  ) %>%
+  filter(!is.na(indID), !is.na(year)) %>%
+  group_by(indID, year) %>%
+  summarise(
+    all_other_analgesics_sedatives = sum(atccode %in% all_other_analgesics_sedatives_codes, na.rm = TRUE),
+    Oral_NSAIDs = sum(atccode %in% oral_nsaids_codes, na.rm = TRUE),
+    Topical_analgesics = sum(atccode %in% topical_analgesics_codes, na.rm = TRUE),
+    Gabapentinoids = sum(atccode %in% gabapentinoids_codes, na.rm = TRUE),
+    Benzodiazepines_sedatives = sum(atccode %in% benzodiazepines_sedatives_codes, na.rm = TRUE),
+    Anti_migraines = sum(atccode %in% anti_migraine_codes, na.rm = TRUE),
+    Other_Opioids = sum(atccode %in% Other_Opioids_codes, na.rm = TRUE),
+    .groups = "drop"
+  )
+
+# ================================================================================================================================================================================
+# Join annual variables back to objective_three
+# ================================================================================================================================================================================
+objective_three <- objective_three %>%
+  mutate(
+    dateofdispensing = ymd(dateofdispensing),
+    year = lubridate::year(dateofdispensing)
+  ) %>%
+  left_join(annual_codeine_sums, by = c("indID", "year")) %>%
+  left_join(annual_other_analgesics, by = c("indID", "year")) %>%
+  mutate(
+    high_codeine_sum = tidyr::replace_na(high_codeine_sum, 0),
+    low_codeine_sum = tidyr::replace_na(low_codeine_sum, 0),
+    total_codeine_annual = tidyr::replace_na(total_codeine_annual, 0),
+    all_other_analgesics_sedatives = tidyr::replace_na(all_other_analgesics_sedatives, 0L),
+    Oral_NSAIDs = tidyr::replace_na(Oral_NSAIDs, 0L),
+    Topical_analgesics = tidyr::replace_na(Topical_analgesics, 0L),
+    Gabapentinoids = tidyr::replace_na(Gabapentinoids, 0L),
+    Benzodiazepines_sedatives = tidyr::replace_na(Benzodiazepines_sedatives, 0L),
+    Anti_migraines = tidyr::replace_na(Anti_migraines, 0L),
+    Other_Opioids = tidyr::replace_na(Other_Opioids, 0L)
+  )
+
+# ================================================================================================================================================================================
+# Collapse all dispensings to ONE ROW PER PATIENT PER YEAR
+# FIX: use first() for annual OME values so they are not summed repeatedly
+# ================================================================================================================================================================================
+objective_three_annual <- objective_three %>%
+  mutate(
+    dateofdispensing = ymd(dateofdispensing),
+    year = lubridate::year(dateofdispensing)
+  ) %>%
+  group_by(indID, year) %>%
+  summarise(
+    age = first(age),
+    sex = first(sex),
+    patientlho = first(patientlho),
+    LHO_area = first(LHO_area),
+    CHO_area = first(CHO_area),
+    
+    high_codeine_sum = first(high_codeine_sum),
+    low_codeine_sum = first(low_codeine_sum),
+    total_codeine_annual = first(total_codeine_annual),
+    
+    all_other_analgesics_sedatives = first(all_other_analgesics_sedatives),
+    Oral_NSAIDs = first(Oral_NSAIDs),
+    Topical_analgesics = first(Topical_analgesics),
+    Gabapentinoids = first(Gabapentinoids),
+    Benzodiazepines_sedatives = first(Benzodiazepines_sedatives),
+    Anti_migraines = first(Anti_migraines),
+    Other_Opioids = first(Other_Opioids),
+    
+    n_dispensings_year = n(),
+    .groups = "drop"
+  )
+
+#n_dispensings_year column is for codeine only, objective_three_annual is the right dataset
 
 ```

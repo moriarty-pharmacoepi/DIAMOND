@@ -1200,6 +1200,7 @@ objective_three <- objective_three %>%
 
 # ================================================================================================================================================================================
 # Collapse all dispensings to ONE ROW PER PATIENT PER YEAR
+# FIX: use first() for annual OME values so they are not summed repeatedly
 # ================================================================================================================================================================================
 objective_three_annual <- objective_three %>%
   mutate(
@@ -1214,22 +1215,22 @@ objective_three_annual <- objective_three %>%
     LHO_area = first(LHO_area),
     CHO_area = first(CHO_area),
     
-    high_codeine_sum = sum(high_codeine_sum, na.rm = TRUE),
-    low_codeine_sum = sum(low_codeine_sum, na.rm = TRUE),
-    total_codeine_annual = sum(total_codeine_annual, na.rm = TRUE),
+    high_codeine_sum = first(high_codeine_sum),
+    low_codeine_sum = first(low_codeine_sum),
+    total_codeine_annual = first(total_codeine_annual),
     
-    all_other_analgesics_sedatives = sum(all_other_analgesics_sedatives, na.rm = TRUE),
-    Oral_NSAIDs = sum(Oral_NSAIDs, na.rm = TRUE),
-    Topical_analgesics = sum(Topical_analgesics, na.rm = TRUE),
-    Gabapentinoids = sum(Gabapentinoids, na.rm = TRUE),
-    Benzodiazepines_sedatives = sum(Benzodiazepines_sedatives, na.rm = TRUE),
-    Anti_migraines = sum(Anti_migraines, na.rm = TRUE),
-    Other_Opioids = sum(Other_Opioids, na.rm = TRUE),
+    all_other_analgesics_sedatives = first(all_other_analgesics_sedatives),
+    Oral_NSAIDs = first(Oral_NSAIDs),
+    Topical_analgesics = first(Topical_analgesics),
+    Gabapentinoids = first(Gabapentinoids),
+    Benzodiazepines_sedatives = first(Benzodiazepines_sedatives),
+    Anti_migraines = first(Anti_migraines),
+    Other_Opioids = first(Other_Opioids),
     
     n_dispensings_year = n(),
     .groups = "drop"
   )
 
-
+#n_dispensings_year column is for codeine only, objective_three_annual is the right dataset
 
 
