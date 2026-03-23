@@ -1537,14 +1537,97 @@ objective_three_annual <- objective_three_annual %>%
     )
   )
 
+# =========================================================================================================
+# importing 2022 eligibility numbers
+# =========================================================================================================
+# Read CSV
+gms_april_lookup <- read_csv("/Users/padraicdonoghue/Library/CloudStorage/OneDrive-SharedLibraries-RoyalCollegeofSurgeonsinIreland/Frank Moriarty - RSS 2025/SRS/Monthly GMS Medical Cards - Number of Eligible Persons.csv")
 
+# Rename columns
+gms_april_lookup <- gms_april_lookup %>%
+  rename(
+    Age_Classification = `...5`,
+    CLIENT_NORM_AGE_GROUP_DESC = `Age Classification`,
+    LHO_DESC_CHO = `Local Health Office (LHO)`,
+    GENDER = Gender
+  )
 
+# ================================================================================================================================================================================
+# Fill missing Age_Classification values in objective_three_annual
+# using April 2022 CSV values matched on year + sex + age group + LHO
+# ================================================================================================================================================================================
 
+# 1. Prepare lookup from CSV
+gms_april_lookup_match <- gms_april_lookup %>%
+  filter(
+    !CLIENT_NORM_AGE_GROUP_DESC %in% c("Under 5 Years", "05-11 Years", "12-15 Years")
+  ) %>%
+  mutate(
+    YEAR = 2022,
+    GENDER = case_when(
+      toupper(trimws(GENDER)) == "M" ~ "Male",
+      toupper(trimws(GENDER)) == "F" ~ "Female",
+      TRUE ~ trimws(GENDER)
+    ),
+    CLIENT_NORM_AGE_GROUP_DESC = str_squish(CLIENT_NORM_AGE_GROUP_DESC),
+    LHO_DESC_CHO = str_squish(LHO_DESC_CHO),
+    LHO_DESC_CHO = case_when(
+      LHO_DESC_CHO == "Cavan / Monaghan" ~ "Cavan/Monaghan",
+      LHO_DESC_CHO == "Kildare / West Wicklow" ~ "Kildare/West Wicklow",
+      LHO_DESC_CHO == "Laois / Offaly" ~ "Laois/Offaly",
+      LHO_DESC_CHO == "Longford / Westmeath" ~ "Longford/Westmeath",
+      LHO_DESC_CHO == "North Tipp./East Limerick" ~ "North Tipperary/East Limerick",
+      LHO_DESC_CHO == "Sligo / Leitrim / West Cavan" ~ "Sligo/Leitrim/West Cavan",
+      TRUE ~ LHO_DESC_CHO
+    )
+  ) %>%
+  select(
+    YEAR,
+    GENDER,
+    CLIENT_NORM_AGE_GROUP_DESC,
+    LHO_DESC_CHO,
+    Age_Classification
+  ) %>%
+  distinct()
 
-
-
-
-
+# 2. Match onto your dataset and fill only missing values
+objective_three_annual <- objective_three_annual %>%
+  mutate(
+    year = as.integer(year),
+    GENDER = case_when(
+      toupper(trimws(GENDER)) == "M" ~ "Male",
+      toupper(trimws(GENDER)) == "F" ~ "Female",
+      TRUE ~ trimws(GENDER)
+    ),
+    CLIENT_NORM_AGE_GROUP_DESC = str_squish(CLIENT_NORM_AGE_GROUP_DESC),
+    LHO_DESC_CHO = str_squish(LHO_DESC_CHO),
+    LHO_DESC_CHO = case_when(
+      LHO_DESC_CHO == "Cavan / Monaghan" ~ "Cavan/Monaghan",
+      LHO_DESC_CHO == "Kildare / West Wicklow" ~ "Kildare/West Wicklow",
+      LHO_DESC_CHO == "Laois / Offaly" ~ "Laois/Offaly",
+      LHO_DESC_CHO == "Longford / Westmeath" ~ "Longford/Westmeath",
+      LHO_DESC_CHO == "North Tipp./East Limerick" ~ "North Tipperary/East Limerick",
+      LHO_DESC_CHO == "Sligo / Leitrim / West Cavan" ~ "Sligo/Leitrim/West Cavan",
+      TRUE ~ LHO_DESC_CHO
+    )
+  ) %>%
+  left_join(
+    gms_april_lookup_match,
+    by = c(
+      "year" = "YEAR",
+      "GENDER",
+      "CLIENT_NORM_AGE_GROUP_DESC",
+      "LHO_DESC_CHO"
+    )
+  ) %>%
+  mutate(
+    Age_Classification = if_else(
+      year == 2022,
+      coalesce(Age_Classification.x, Age_Classification.y),
+      Age_Classification.x
+    )
+  ) %>%
+  select(-Age_Classification.x, -Age_Classification.y)
 # =========================================================================================================
 # GRAPH SET FOR OBJECTIVE 1 AND OBJECTIVE 2
 # Based on existing df / objective_two structure
@@ -2381,3 +2464,13 @@ g30_cho_distribution_2022 <- ggplot(
   theme_minimal()
 
 print(g30_cho_distribution_2022)
+
+# ---------------------------------------------------------------------------------------------------------
+# Beginning logistical regression for objective 2
+# ---------------------------------------------------------------------------------------------------------
+
+
+
+
+
+
