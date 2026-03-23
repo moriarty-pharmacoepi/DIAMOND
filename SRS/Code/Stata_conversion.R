@@ -15,6 +15,8 @@ library(here)
 library(networkD3)
 library(scales)
 library(readxl)
+library(broom)
+library(gtsummary)
 here::i_am("SRS project/DIAMOND/SRS/Code/Stata_conversion.r")
 # =================================================================================================================================================================================
 # Load data
@@ -2465,12 +2467,7 @@ g30_cho_distribution_2022 <- ggplot(
 
 print(g30_cho_distribution_2022)
 
+
 # ---------------------------------------------------------------------------------------------------------
-# Beginning logistical regression for objective 2
+# Regression analysis 
 # ---------------------------------------------------------------------------------------------------------
-
-
-
-
-
-
