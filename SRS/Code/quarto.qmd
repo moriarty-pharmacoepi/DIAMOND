@@ -23,6 +23,8 @@ library(scales)
 library(readxl)
 library(broom)
 library(gtsummary)
+library(tidyr)
+library(gt)
 #library(gtsummary)
 here::i_am("SRS project/DIAMOND/SRS/Code/Stata_conversion.r") 
 # =================================================================================================================================================================================
@@ -2589,5 +2591,289 @@ or_polot1 <- ggplot(plot_data, aes(x = estimate, y = term, colour = group)) +
 
 print(or_polot1)
 
+
+# ---------------------------------------------------------------------------------------------------------
+# Create yearly other analgesic flags
+# ---------------------------------------------------------------------------------------------------------
+
+other_analgesic_flags_all_years <- df %>%
+  mutate(
+    dateofdispensing = ymd(dateofdispensing),
+    year = year(dateofdispensing),
+    atccode = as.character(atccode)
+  ) %>%
+  filter(year >= 2014, year <= 2022) %>%
+  group_by(indID, year) %>%
+  summarise(
+    other_analgesic_y_n = as.integer(any(atccode %in% c(
+      oral_nsaids_codes,
+      topical_analgesics_codes,
+      gabapentinoids_codes,
+      benzodiazepines_sedatives_codes,
+      anti_migraine_codes,
+      Other_Opioids_codes
+    ))),
+    .groups = "drop"
+  )
+
+# ---------------------------------------------------------------------------------------------------------
+# Create yearly ACB flags
+# ---------------------------------------------------------------------------------------------------------
+
+ach_flags_all_years <- df %>%
+  mutate(
+    dateofdispensing = ymd(dateofdispensing),
+    year = year(dateofdispensing),
+    atccode = as.character(atccode)
+  ) %>%
+  filter(
+    year >= 2014, year <= 2022,
+    atccode %in% all_ach_codes
+  ) %>%
+  distinct(indID, year, atccode) %>%
+  group_by(indID, year) %>%
+  summarise(
+    total_ach_meds = n(),
+    ach_burden_med = as.integer(total_ach_meds > 0),
+    .groups = "drop"
+  )
+
+# ---------------------------------------------------------------------------------------------------------
+# Build dataset
+# ---------------------------------------------------------------------------------------------------------
+
+analysis_all_years <- df %>%
+  mutate(
+    dateofdispensing = ymd(dateofdispensing),
+    year = year(dateofdispensing)
+  ) %>%
+  filter(
+    codeine == TRUE,
+    year >= 2014, year <= 2022,
+    !is.na(codeine_ranking),
+    codeine_ranking %in% c("High", "Low"),
+    !is.na(age),
+    !is.na(sex)
+  ) %>%
+  transmute(
+    indID,
+    year,
+    age,
+    sex,
+    high_codeine_dose = if_else(codeine_ranking == "High", 1L, 0L)
+  ) %>%
+  left_join(other_analgesic_flags_all_years, by = c("indID", "year")) %>%
+  left_join(ach_flags_all_years, by = c("indID", "year")) %>%
+  mutate(
+    other_analgesic_y_n = replace_na(other_analgesic_y_n, 0L),
+    ach_burden_med = replace_na(ach_burden_med, 0L),
+    sex = factor(sex, levels = c("M", "F"), labels = c("Male", "Female")),
+    high_codeine_dose = factor(high_codeine_dose, levels = c(0, 1), labels = c("Low", "High")),
+    ach_burden_med = factor(ach_burden_med, levels = c(0, 1), labels = c("No", "Yes")),
+    other_analgesic_y_n = factor(other_analgesic_y_n, levels = c(0, 1), labels = c("No", "Yes")),
+    age_10 = age / 10
+  )
+
+# ---------------------------------------------------------------------------------------------------------
+# Run model per year
+# ---------------------------------------------------------------------------------------------------------
+
+results_by_year <- analysis_all_years %>%
+  group_by(year) %>%
+  group_split() %>%
+  map_df(function(data_year) {
+    
+    current_year <- unique(data_year$year)
+    
+    model <- glm(
+      high_codeine_dose ~ age_10 + sex + ach_burden_med + other_analgesic_y_n,
+      data = data_year,
+      family = binomial()
+    )
+    
+    tidy(model, exponentiate = TRUE, conf.int = TRUE) %>%
+      filter(term %in% c("sexFemale", "age_10", "ach_burden_medYes", "other_analgesic_y_nYes")) %>%
+      mutate(year = current_year)
+  })
+
+# ---------------------------------------------------------------------------------------------------------
+# Prepare plotting data
+# ---------------------------------------------------------------------------------------------------------
+
+plot_data <- results_by_year %>%
+  mutate(
+    variable = recode(
+      term,
+      "sexFemale" = "Female",
+      "age_10" = "Age (per 10 years)",
+      "ach_burden_medYes" = "ACB: Yes",
+      "other_analgesic_y_nYes" = "Other analgesics: Yes"
+    ),
+    group = recode(
+      term,
+      "sexFemale" = "Sex",
+      "age_10" = "Age",
+      "ach_burden_medYes" = "ACB",
+      "other_analgesic_y_nYes" = "Other analgesics"
+    ),
+    year = factor(year, levels = rev(2014:2022))
+  )
+
+# ---------------------------------------------------------------------------------------------------------
+# Plot (clean version)
+# ---------------------------------------------------------------------------------------------------------
+
+pd <- position_dodge(width = 0.5)
+
+forest_plot_clean <- ggplot(
+  plot_data,
+  aes(
+    x = estimate,
+    y = year,
+    colour = group,
+    group = variable
+  )
+) +
+  geom_vline(xintercept = 1, linetype = "dashed", linewidth = 0.7) +
+  
+  geom_errorbarh(
+    aes(xmin = conf.low, xmax = conf.high),
+    height = 0.2,
+    linewidth = 1,
+    position = pd
+  ) +
+  
+  geom_point(
+    size = 3,
+    position = pd
+  ) +
+  
+  scale_colour_manual(
+    values = c(
+      "Sex" = "#1b9e77",
+      "Age" = "#7570b3",
+      "ACB" = "#d95f02",
+      "Other analgesics" = "#666666"
+    )
+  ) +
+  
+  coord_cartesian(xlim = c(0, 10)) +
+  
+  labs(
+    title = "Adjusted Odds of High-Dose Codeine Prescribing by Year",
+    subtitle = "Age shown as odds ratio per 10-year increase",
+    x = "Odds Ratio",
+    y = "Year",
+    colour = "Variable"
+  ) +
+  
+  theme_bw(base_size = 12) +
+  theme(
+    plot.title = element_text(face = "bold"),
+    legend.position = "bottom",
+    panel.grid.minor = element_blank(),
+    panel.grid.major.y = element_blank()
+  )
+
+print(forest_plot_clean)
+
+# ================================================================================================================
+# OBJECTIVE 3: Explore geographic variation in high-dose codeine use
+# ALL YEARS COMBINED - NO YEAR FILTER
+# AREA-LEVEL TOTALS AND PERCENTAGES
+# ================================================================================================================
+
+# ================================================================================================================
+# STEP 1: PREP DATA
+# ================================================================================================================
+
+objective_three_amount <- df %>%
+  filter(!is.na(LHO_area)) %>%
+  mutate(
+    is_codeine = if_else(codeine == TRUE, 1L, 0L),
+    is_high_codeine = if_else(codeine == TRUE & codeine_ranking == "High", 1L, 0L)
+  )
+
+# ================================================================================================================
+# STEP 2: LHO-LEVEL RESULTS TABLE (VIEWER)
+# ================================================================================================================
+
+objective_three_lho_table <- objective_three_amount %>%
+  group_by(LHO_area, CHO_area) %>%
+  summarise(
+    total_dispensings = n(),
+    codeine_dispensings = sum(is_codeine, na.rm = TRUE),
+    high_codeine_dispensings = sum(is_high_codeine, na.rm = TRUE),
+    pct_codeine_of_all = 100 * codeine_dispensings / total_dispensings,
+    pct_high_of_codeine = 100 * high_codeine_dispensings / codeine_dispensings,
+    .groups = "drop"
+  ) %>%
+  mutate(
+    pct_codeine_of_all = round(pct_codeine_of_all, 1),
+    pct_high_of_codeine = round(pct_high_of_codeine, 1)
+  ) %>%
+  arrange(desc(pct_high_of_codeine))
+
+# DISPLAY IN VIEWER
+objective_three_lho_table %>%
+  gt() %>%
+  tab_header(
+    title = "Geographic Variation in Codeine Prescribing",
+    subtitle = "LHO Level (All Years Combined)"
+  ) %>%
+  cols_label(
+    LHO_area = "LHO",
+    CHO_area = "CHO",
+    total_dispensings = "Total dispensings",
+    codeine_dispensings = "Codeine dispensings",
+    pct_codeine_of_all = "% Codeine of all dispensing",
+    pct_high_of_codeine = "% High-dose of codeine"
+  ) %>%
+  fmt_number(
+    columns = where(is.numeric),
+    decimals = 1
+  )
+
+# ================================================================================================================
+# STEP 3: CHO-LEVEL RESULTS TABLE (VIEWER)
+# ================================================================================================================
+
+objective_three_cho_table <- objective_three_amount %>%
+  filter(!is.na(CHO_area)) %>%
+  group_by(CHO_area) %>%
+  summarise(
+    total_dispensings = n(),
+    codeine_dispensings = sum(is_codeine, na.rm = TRUE),
+    high_codeine_dispensings = sum(is_high_codeine, na.rm = TRUE),
+    pct_codeine_of_all = 100 * codeine_dispensings / total_dispensings,
+    pct_high_of_codeine = 100 * high_codeine_dispensings / codeine_dispensings,
+    .groups = "drop"
+  ) %>%
+  mutate(
+    pct_codeine_of_all = round(pct_codeine_of_all, 1),
+    pct_high_of_codeine = round(pct_high_of_codeine, 1)
+  ) %>%
+  arrange(desc(pct_high_of_codeine))
+print(objective_three_lho_table)
+
+# DISPLAY IN VIEWER
+objective_three_cho_table %>%
+  gt() %>%
+  tab_header(
+    title = "Geographic Variation in Codeine Prescribing",
+    subtitle = "CHO Level (All Years Combined)"
+  ) %>%
+  cols_label(
+    CHO_area = "CHO",
+    total_dispensings = "Total dispensings",
+    codeine_dispensings = "Codeine dispensings",
+    pct_codeine_of_all = "% Codeine of all dispensing",
+    pct_high_of_codeine = "% High-dose of codeine"
+  ) %>%
+  fmt_number(
+    columns = where(is.numeric),
+    decimals = 1
+  )
+print(objective_three_cho_table)
 
 ```

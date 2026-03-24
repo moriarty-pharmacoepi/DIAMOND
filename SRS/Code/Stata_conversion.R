@@ -2847,6 +2847,7 @@ objective_three_cho_table <- objective_three_amount %>%
     pct_high_of_codeine = round(pct_high_of_codeine, 1)
   ) %>%
   arrange(desc(pct_high_of_codeine))
+print(objective_three_lho_table)
 
 # DISPLAY IN VIEWER
 objective_three_cho_table %>%
@@ -2866,3 +2867,4 @@ objective_three_cho_table %>%
     columns = where(is.numeric),
     decimals = 1
   )
+print(objective_three_cho_table)
