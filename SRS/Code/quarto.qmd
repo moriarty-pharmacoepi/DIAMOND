@@ -19,10 +19,12 @@ library(ggplot2)
 library(scales)
 library(viridis)
 library(here)
-library(networkD3)
 library(scales)
 library(readxl)
-here::i_am("SRS project/DIAMOND/SRS/Code/Stata_conversion.r")
+library(broom)
+library(gtsummary)
+#library(gtsummary)
+here::i_am("SRS project/DIAMOND/SRS/Code/Stata_conversion.r") 
 # =================================================================================================================================================================================
 # Load data
 # =================================================================================================================================================================================
@@ -1475,7 +1477,9 @@ objective_three_annual <- objective_three_annual %>%
 # Merging Excel
 # ================================================================================================================================================================================
 # Read Excel exactly as it is
-eligibility <- read_excel("/Users/padraicdonoghue/Library/CloudStorage/OneDrive-SharedLibraries-RoyalCollegeofSurgeonsinIreland/Frank Moriarty - RSS 2025/SRS/age_sex_lho_eligibility_2017-2021.xlsx")
+here::i_am("SRS project/Data/age_sex_lho_eligibility_2017-2021.xlsx")
+merge_one_path <- here("SRS project/Data/age_sex_lho_eligibility_2017-2021.xlsx")
+eligibility <- read_excel(merge_one_path)
 
 # Create April-only lookup from the Excel
 eligibility_april_lookup <- eligibility %>%
@@ -1544,14 +1548,97 @@ objective_three_annual <- objective_three_annual %>%
     )
   )
 
+# =========================================================================================================
+# importing 2022 eligibility numbers
+# =========================================================================================================
+here::i_am("SRS project/Data/Monthly GMS Medical Cards - Number of Eligible Persons.csv")
+merge_one_path <- here("SRS project/Data/Monthly GMS Medical Cards - Number of Eligible Persons.csv")
+gms_april_lookup <- read_csv(merge_one_path)
+# Rename columns
+gms_april_lookup <- gms_april_lookup %>%
+  rename(
+    Age_Classification = `...5`,
+    CLIENT_NORM_AGE_GROUP_DESC = `Age Classification`,
+    LHO_DESC_CHO = `Local Health Office (LHO)`,
+    GENDER = Gender
+  )
 
+# ================================================================================================================================================================================
+# Fill missing Age_Classification values in objective_three_annual
+# using April 2022 CSV values matched on year + sex + age group + LHO
+# ================================================================================================================================================================================
 
+# 1. Prepare lookup from CSV
+gms_april_lookup_match <- gms_april_lookup %>%
+  filter(
+    !CLIENT_NORM_AGE_GROUP_DESC %in% c("Under 5 Years", "05-11 Years", "12-15 Years")
+  ) %>%
+  mutate(
+    YEAR = 2022,
+    GENDER = case_when(
+      toupper(trimws(GENDER)) == "M" ~ "Male",
+      toupper(trimws(GENDER)) == "F" ~ "Female",
+      TRUE ~ trimws(GENDER)
+    ),
+    CLIENT_NORM_AGE_GROUP_DESC = str_squish(CLIENT_NORM_AGE_GROUP_DESC),
+    LHO_DESC_CHO = str_squish(LHO_DESC_CHO),
+    LHO_DESC_CHO = case_when(
+      LHO_DESC_CHO == "Cavan / Monaghan" ~ "Cavan/Monaghan",
+      LHO_DESC_CHO == "Kildare / West Wicklow" ~ "Kildare/West Wicklow",
+      LHO_DESC_CHO == "Laois / Offaly" ~ "Laois/Offaly",
+      LHO_DESC_CHO == "Longford / Westmeath" ~ "Longford/Westmeath",
+      LHO_DESC_CHO == "North Tipp./East Limerick" ~ "North Tipperary/East Limerick",
+      LHO_DESC_CHO == "Sligo / Leitrim / West Cavan" ~ "Sligo/Leitrim/West Cavan",
+      TRUE ~ LHO_DESC_CHO
+    )
+  ) %>%
+  select(
+    YEAR,
+    GENDER,
+    CLIENT_NORM_AGE_GROUP_DESC,
+    LHO_DESC_CHO,
+    Age_Classification
+  ) %>%
+  distinct()
 
-
-
-
-
-
+# 2. Match onto your dataset and fill only missing values
+objective_three_annual <- objective_three_annual %>%
+  mutate(
+    year = as.integer(year),
+    GENDER = case_when(
+      toupper(trimws(GENDER)) == "M" ~ "Male",
+      toupper(trimws(GENDER)) == "F" ~ "Female",
+      TRUE ~ trimws(GENDER)
+    ),
+    CLIENT_NORM_AGE_GROUP_DESC = str_squish(CLIENT_NORM_AGE_GROUP_DESC),
+    LHO_DESC_CHO = str_squish(LHO_DESC_CHO),
+    LHO_DESC_CHO = case_when(
+      LHO_DESC_CHO == "Cavan / Monaghan" ~ "Cavan/Monaghan",
+      LHO_DESC_CHO == "Kildare / West Wicklow" ~ "Kildare/West Wicklow",
+      LHO_DESC_CHO == "Laois / Offaly" ~ "Laois/Offaly",
+      LHO_DESC_CHO == "Longford / Westmeath" ~ "Longford/Westmeath",
+      LHO_DESC_CHO == "North Tipp./East Limerick" ~ "North Tipperary/East Limerick",
+      LHO_DESC_CHO == "Sligo / Leitrim / West Cavan" ~ "Sligo/Leitrim/West Cavan",
+      TRUE ~ LHO_DESC_CHO
+    )
+  ) %>%
+  left_join(
+    gms_april_lookup_match,
+    by = c(
+      "year" = "YEAR",
+      "GENDER",
+      "CLIENT_NORM_AGE_GROUP_DESC",
+      "LHO_DESC_CHO"
+    )
+  ) %>%
+  mutate(
+    Age_Classification = if_else(
+      year == 2022,
+      coalesce(Age_Classification.x, Age_Classification.y),
+      Age_Classification.x
+    )
+  ) %>%
+  select(-Age_Classification.x, -Age_Classification.y)
 # =========================================================================================================
 # GRAPH SET FOR OBJECTIVE 1 AND OBJECTIVE 2
 # Based on existing df / objective_two structure
@@ -2388,4 +2475,119 @@ g30_cho_distribution_2022 <- ggplot(
   theme_minimal()
 
 print(g30_cho_distribution_2022)
+
+
+# ---------------------------------------------------------------------------------------------------------
+# Regression analysis 
+# ---------------------------------------------------------------------------------------------------------
+analysis <- objective_two %>%
+  mutate(
+    high_codeine_dose = factor(high_codeine_dose, levels = c(0,1), labels = c("Low","High")),
+    sex = factor(sex, levels = c("M","F"), labels = c("Male","Female")),
+    age_group = case_when(
+      age >= 16 & age <= 24 ~ "16-24",
+      age >= 25 & age <= 34 ~ "25-34",
+      age >= 35 & age <= 44 ~ "35-44",
+      age >= 45 & age <= 54 ~ "45-54",
+      age >= 55 & age <= 64 ~ "55-64",
+      age >= 65 & age <= 69 ~ "65-69",
+      age >= 70 & age <= 74 ~ "70-74",
+      age >= 75 ~ "75+"
+    ) %>% factor(),
+    ach_burden_med = factor(ifelse(is.na(ach_burden_med), 0, ach_burden_med), levels = c(0,1), labels = c("No","Yes")),
+    other_analgesic_y_n = factor(ifelse(is.na(other_analgesic_y_n), 0, other_analgesic_y_n), levels = c(0,1), labels = c("No","Yes"))
+  )
+
+model <- glm(
+  high_codeine_dose ~ age_group + sex + ach_burden_med + other_analgesic_y_n,
+  data = analysis,
+  family = binomial()
+)
+
+# Odds ratios table (raw)
+or_results <- tidy(model, exponentiate = TRUE, conf.int = TRUE)
+or_results
+
+# Clean publication table
+tbl_regression(model, exponentiate = TRUE)
+
+
+plot_data <- or_results %>%
+  filter(term != "(Intercept)") %>%
+  mutate(
+    term = recode(term,
+                  "sexFemale" = "Female",
+                  "age_group25-34" = "Age 25-34",
+                  "age_group35-44" = "Age 35-44",
+                  "age_group45-54" = "Age 45-54",
+                  "age_group55-64" = "Age 55-64",
+                  "age_group65-69" = "Age 65-69",
+                  "age_group70-74" = "Age 70-74",
+                  "age_group75+" = "Age 75+",
+                  "ach_burden_medYes" = "ACB: Yes",
+                  "other_analgesic_y_nYes" = "Other analgesics: Yes"
+    ),
+    
+    # Assign variable groups (for colour)
+    group = case_when(
+      grepl("Age", term) ~ "Age",
+      term == "Female" ~ "Sex",
+      grepl("ACB", term) ~ "ACB",
+      grepl("Analgesics", term) ~ "Other analgesics"
+    ),
+    
+    term = factor(
+      term,
+      levels = rev(c(
+        "Female",
+        "Age 25-34",
+        "Age 35-44",
+        "Age 45-54",
+        "Age 55-64",
+        "Age 65-69",
+        "Age 70-74",
+        "Age 75+",
+        "ACB: Yes",
+        "Other analgesics: Yes"
+      ))
+    ),
+    
+    or_label = sprintf("%.2f", estimate),
+    ci_label = sprintf("%.2f–%.2f", conf.low, conf.high)
+  )
+
+or_polot1 <- ggplot(plot_data, aes(x = term, y = estimate, colour = group)) +
+  geom_hline(yintercept = 1, linetype = "dashed", linewidth = 0.6, colour = "black") +
+  
+  geom_errorbar(aes(ymin = conf.low, ymax = conf.high), width = 0.2, linewidth = 1) +
+  geom_point(size = 3) +
+  annotation_logticks(sides = "l")+
+  #geom_text(aes(label = or_label), nudge_x = 0.28, size = 3.2, colour = "black") +
+  #geom_text(aes(label = ci_label), nudge_x = -0.28, size = 3, colour = "black") +
+  
+  scale_y_log10() +
+  
+  scale_colour_manual(values = c(
+    "Sex" = "#1b9e77",
+    "Age" = "#7570b3",
+    "ACB" = "#d95f02",
+    "Other analgesics" = "#66a61e"
+  )) +
+  
+  labs(
+    title = "Adjusted Odds of High-Dose Codeine Prescribing (2022)",
+    x = NULL,
+    y = "Odds Ratio",
+    colour = "Variable"
+  ) +
+  
+  theme_bw(base_size = 12) +
+  theme(
+    plot.title = element_text(face = "bold"),
+    legend.position = "bottom",
+    panel.grid.minor = element_blank(),
+    panel.grid.major.x = element_blank()
+  )
+print(or_polot1)
+
 ```
