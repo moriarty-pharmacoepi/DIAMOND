@@ -17,6 +17,7 @@ library(readxl)
 library(broom)
 library(gtsummary)
 library(tidyr)
+library(gt)
 #library(gtsummary)
 here::i_am("SRS project/DIAMOND/SRS/Code/Stata_conversion.r") 
 # =================================================================================================================================================================================
@@ -2768,3 +2769,100 @@ forest_plot_clean <- ggplot(
   )
 
 print(forest_plot_clean)
+
+# ================================================================================================================
+# OBJECTIVE 3: Explore geographic variation in high-dose codeine use
+# ALL YEARS COMBINED - NO YEAR FILTER
+# AREA-LEVEL TOTALS AND PERCENTAGES
+# ================================================================================================================
+
+# ================================================================================================================
+# STEP 1: PREP DATA
+# ================================================================================================================
+
+objective_three_amount <- df %>%
+  filter(!is.na(LHO_area)) %>%
+  mutate(
+    is_codeine = if_else(codeine == TRUE, 1L, 0L),
+    is_high_codeine = if_else(codeine == TRUE & codeine_ranking == "High", 1L, 0L)
+  )
+
+# ================================================================================================================
+# STEP 2: LHO-LEVEL RESULTS TABLE (VIEWER)
+# ================================================================================================================
+
+objective_three_lho_table <- objective_three_amount %>%
+  group_by(LHO_area, CHO_area) %>%
+  summarise(
+    total_dispensings = n(),
+    codeine_dispensings = sum(is_codeine, na.rm = TRUE),
+    high_codeine_dispensings = sum(is_high_codeine, na.rm = TRUE),
+    pct_codeine_of_all = 100 * codeine_dispensings / total_dispensings,
+    pct_high_of_codeine = 100 * high_codeine_dispensings / codeine_dispensings,
+    .groups = "drop"
+  ) %>%
+  mutate(
+    pct_codeine_of_all = round(pct_codeine_of_all, 1),
+    pct_high_of_codeine = round(pct_high_of_codeine, 1)
+  ) %>%
+  arrange(desc(pct_high_of_codeine))
+
+# DISPLAY IN VIEWER
+objective_three_lho_table %>%
+  gt() %>%
+  tab_header(
+    title = "Geographic Variation in Codeine Prescribing",
+    subtitle = "LHO Level (All Years Combined)"
+  ) %>%
+  cols_label(
+    LHO_area = "LHO",
+    CHO_area = "CHO",
+    total_dispensings = "Total dispensings",
+    codeine_dispensings = "Codeine dispensings",
+    pct_codeine_of_all = "% Codeine of all dispensing",
+    pct_high_of_codeine = "% High-dose of codeine"
+  ) %>%
+  fmt_number(
+    columns = where(is.numeric),
+    decimals = 1
+  )
+
+# ================================================================================================================
+# STEP 3: CHO-LEVEL RESULTS TABLE (VIEWER)
+# ================================================================================================================
+
+objective_three_cho_table <- objective_three_amount %>%
+  filter(!is.na(CHO_area)) %>%
+  group_by(CHO_area) %>%
+  summarise(
+    total_dispensings = n(),
+    codeine_dispensings = sum(is_codeine, na.rm = TRUE),
+    high_codeine_dispensings = sum(is_high_codeine, na.rm = TRUE),
+    pct_codeine_of_all = 100 * codeine_dispensings / total_dispensings,
+    pct_high_of_codeine = 100 * high_codeine_dispensings / codeine_dispensings,
+    .groups = "drop"
+  ) %>%
+  mutate(
+    pct_codeine_of_all = round(pct_codeine_of_all, 1),
+    pct_high_of_codeine = round(pct_high_of_codeine, 1)
+  ) %>%
+  arrange(desc(pct_high_of_codeine))
+
+# DISPLAY IN VIEWER
+objective_three_cho_table %>%
+  gt() %>%
+  tab_header(
+    title = "Geographic Variation in Codeine Prescribing",
+    subtitle = "CHO Level (All Years Combined)"
+  ) %>%
+  cols_label(
+    CHO_area = "CHO",
+    total_dispensings = "Total dispensings",
+    codeine_dispensings = "Codeine dispensings",
+    pct_codeine_of_all = "% Codeine of all dispensing",
+    pct_high_of_codeine = "% High-dose of codeine"
+  ) %>%
+  fmt_number(
+    columns = where(is.numeric),
+    decimals = 1
+  )
