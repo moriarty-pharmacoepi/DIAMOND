@@ -2556,16 +2556,14 @@ plot_data <- or_results %>%
     ci_label = sprintf("%.2f–%.2f", conf.low, conf.high)
   )
 
-or_polot1 <- ggplot(plot_data, aes(x = term, y = estimate, colour = group)) +
-  geom_hline(yintercept = 1, linetype = "dashed", linewidth = 0.6, colour = "black") +
+or_polot1 <- ggplot(plot_data, aes(x = estimate, y = term, colour = group)) +
+  geom_vline(xintercept = 1, linetype = "dashed", linewidth = 0.6, colour = "black") +
   
-  geom_errorbar(aes(ymin = conf.low, ymax = conf.high), width = 0.2, linewidth = 1) +
+  geom_errorbarh(aes(xmin = conf.low, xmax = conf.high), height = 0.2, linewidth = 1) +
   geom_point(size = 3) +
-  annotation_logticks(sides = "l")+
-  #geom_text(aes(label = or_label), nudge_x = 0.28, size = 3.2, colour = "black") +
-  #geom_text(aes(label = ci_label), nudge_x = -0.28, size = 3, colour = "black") +
+  annotation_logticks(sides = "b") +
   
-  scale_y_log10() +
+  scale_x_log10() +
   
   scale_colour_manual(values = c(
     "Sex" = "#1b9e77",
@@ -2576,8 +2574,8 @@ or_polot1 <- ggplot(plot_data, aes(x = term, y = estimate, colour = group)) +
   
   labs(
     title = "Adjusted Odds of High-Dose Codeine Prescribing (2022)",
-    x = NULL,
-    y = "Odds Ratio",
+    x = "Odds Ratio",
+    y = NULL,
     colour = "Variable"
   ) +
   
@@ -2586,8 +2584,10 @@ or_polot1 <- ggplot(plot_data, aes(x = term, y = estimate, colour = group)) +
     plot.title = element_text(face = "bold"),
     legend.position = "bottom",
     panel.grid.minor = element_blank(),
-    panel.grid.major.x = element_blank()
+    panel.grid.major.y = element_blank()
   )
+
 print(or_polot1)
+
 
 ```

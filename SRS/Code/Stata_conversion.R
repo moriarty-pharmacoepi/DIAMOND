@@ -16,6 +16,7 @@ library(scales)
 library(readxl)
 library(broom)
 library(gtsummary)
+library(tidyr)
 #library(gtsummary)
 here::i_am("SRS project/DIAMOND/SRS/Code/Stata_conversion.r") 
 # =================================================================================================================================================================================
@@ -2549,16 +2550,14 @@ plot_data <- or_results %>%
     ci_label = sprintf("%.2f–%.2f", conf.low, conf.high)
   )
 
-or_polot1 <- ggplot(plot_data, aes(x = term, y = estimate, colour = group)) +
-  geom_hline(yintercept = 1, linetype = "dashed", linewidth = 0.6, colour = "black") +
+or_polot1 <- ggplot(plot_data, aes(x = estimate, y = term, colour = group)) +
+  geom_vline(xintercept = 1, linetype = "dashed", linewidth = 0.6, colour = "black") +
   
-  geom_errorbar(aes(ymin = conf.low, ymax = conf.high), width = 0.2, linewidth = 1) +
+  geom_errorbarh(aes(xmin = conf.low, xmax = conf.high), height = 0.2, linewidth = 1) +
   geom_point(size = 3) +
-  annotation_logticks(sides = "l")+
-  #geom_text(aes(label = or_label), nudge_x = 0.28, size = 3.2, colour = "black") +
-  #geom_text(aes(label = ci_label), nudge_x = -0.28, size = 3, colour = "black") +
+  annotation_logticks(sides = "b") +
   
-  scale_y_log10() +
+  scale_x_log10() +
   
   scale_colour_manual(values = c(
     "Sex" = "#1b9e77",
@@ -2569,8 +2568,8 @@ or_polot1 <- ggplot(plot_data, aes(x = term, y = estimate, colour = group)) +
   
   labs(
     title = "Adjusted Odds of High-Dose Codeine Prescribing (2022)",
-    x = NULL,
-    y = "Odds Ratio",
+    x = "Odds Ratio",
+    y = NULL,
     colour = "Variable"
   ) +
   
@@ -2579,6 +2578,193 @@ or_polot1 <- ggplot(plot_data, aes(x = term, y = estimate, colour = group)) +
     plot.title = element_text(face = "bold"),
     legend.position = "bottom",
     panel.grid.minor = element_blank(),
-    panel.grid.major.x = element_blank()
+    panel.grid.major.y = element_blank()
   )
+
 print(or_polot1)
+
+
+# ---------------------------------------------------------------------------------------------------------
+# Create yearly other analgesic flags
+# ---------------------------------------------------------------------------------------------------------
+
+other_analgesic_flags_all_years <- df %>%
+  mutate(
+    dateofdispensing = ymd(dateofdispensing),
+    year = year(dateofdispensing),
+    atccode = as.character(atccode)
+  ) %>%
+  filter(year >= 2014, year <= 2022) %>%
+  group_by(indID, year) %>%
+  summarise(
+    other_analgesic_y_n = as.integer(any(atccode %in% c(
+      oral_nsaids_codes,
+      topical_analgesics_codes,
+      gabapentinoids_codes,
+      benzodiazepines_sedatives_codes,
+      anti_migraine_codes,
+      Other_Opioids_codes
+    ))),
+    .groups = "drop"
+  )
+
+# ---------------------------------------------------------------------------------------------------------
+# Create yearly ACB flags
+# ---------------------------------------------------------------------------------------------------------
+
+ach_flags_all_years <- df %>%
+  mutate(
+    dateofdispensing = ymd(dateofdispensing),
+    year = year(dateofdispensing),
+    atccode = as.character(atccode)
+  ) %>%
+  filter(
+    year >= 2014, year <= 2022,
+    atccode %in% all_ach_codes
+  ) %>%
+  distinct(indID, year, atccode) %>%
+  group_by(indID, year) %>%
+  summarise(
+    total_ach_meds = n(),
+    ach_burden_med = as.integer(total_ach_meds > 0),
+    .groups = "drop"
+  )
+
+# ---------------------------------------------------------------------------------------------------------
+# Build dataset
+# ---------------------------------------------------------------------------------------------------------
+
+analysis_all_years <- df %>%
+  mutate(
+    dateofdispensing = ymd(dateofdispensing),
+    year = year(dateofdispensing)
+  ) %>%
+  filter(
+    codeine == TRUE,
+    year >= 2014, year <= 2022,
+    !is.na(codeine_ranking),
+    codeine_ranking %in% c("High", "Low"),
+    !is.na(age),
+    !is.na(sex)
+  ) %>%
+  transmute(
+    indID,
+    year,
+    age,
+    sex,
+    high_codeine_dose = if_else(codeine_ranking == "High", 1L, 0L)
+  ) %>%
+  left_join(other_analgesic_flags_all_years, by = c("indID", "year")) %>%
+  left_join(ach_flags_all_years, by = c("indID", "year")) %>%
+  mutate(
+    other_analgesic_y_n = replace_na(other_analgesic_y_n, 0L),
+    ach_burden_med = replace_na(ach_burden_med, 0L),
+    sex = factor(sex, levels = c("M", "F"), labels = c("Male", "Female")),
+    high_codeine_dose = factor(high_codeine_dose, levels = c(0, 1), labels = c("Low", "High")),
+    ach_burden_med = factor(ach_burden_med, levels = c(0, 1), labels = c("No", "Yes")),
+    other_analgesic_y_n = factor(other_analgesic_y_n, levels = c(0, 1), labels = c("No", "Yes")),
+    age_10 = age / 10
+  )
+
+# ---------------------------------------------------------------------------------------------------------
+# Run model per year
+# ---------------------------------------------------------------------------------------------------------
+
+results_by_year <- analysis_all_years %>%
+  group_by(year) %>%
+  group_split() %>%
+  map_df(function(data_year) {
+    
+    current_year <- unique(data_year$year)
+    
+    model <- glm(
+      high_codeine_dose ~ age_10 + sex + ach_burden_med + other_analgesic_y_n,
+      data = data_year,
+      family = binomial()
+    )
+    
+    tidy(model, exponentiate = TRUE, conf.int = TRUE) %>%
+      filter(term %in% c("sexFemale", "age_10", "ach_burden_medYes", "other_analgesic_y_nYes")) %>%
+      mutate(year = current_year)
+  })
+
+# ---------------------------------------------------------------------------------------------------------
+# Prepare plotting data
+# ---------------------------------------------------------------------------------------------------------
+
+plot_data <- results_by_year %>%
+  mutate(
+    variable = recode(
+      term,
+      "sexFemale" = "Female",
+      "age_10" = "Age (per 10 years)",
+      "ach_burden_medYes" = "ACB: Yes",
+      "other_analgesic_y_nYes" = "Other analgesics: Yes"
+    ),
+    group = recode(
+      term,
+      "sexFemale" = "Sex",
+      "age_10" = "Age",
+      "ach_burden_medYes" = "ACB",
+      "other_analgesic_y_nYes" = "Other analgesics"
+    ),
+    year = factor(year, levels = rev(2014:2022))
+  )
+
+# ---------------------------------------------------------------------------------------------------------
+# Plot (clean version)
+# ---------------------------------------------------------------------------------------------------------
+
+pd <- position_dodge(width = 0.5)
+
+forest_plot_clean <- ggplot(
+  plot_data,
+  aes(
+    x = estimate,
+    y = year,
+    colour = group,
+    group = variable
+  )
+) +
+  geom_vline(xintercept = 1, linetype = "dashed", linewidth = 0.7) +
+  
+  geom_errorbarh(
+    aes(xmin = conf.low, xmax = conf.high),
+    height = 0.2,
+    linewidth = 1,
+    position = pd
+  ) +
+  
+  geom_point(
+    size = 3,
+    position = pd
+  ) +
+  
+  scale_colour_manual(
+    values = c(
+      "Sex" = "#1b9e77",
+      "Age" = "#7570b3",
+      "ACB" = "#d95f02",
+      "Other analgesics" = "#666666"
+    )
+  ) +
+  
+  coord_cartesian(xlim = c(0, 10)) +
+  
+  labs(
+    title = "Adjusted Odds of High-Dose Codeine Prescribing by Year",
+    subtitle = "Age shown as odds ratio per 10-year increase",
+    x = "Odds Ratio",
+    y = "Year",
+    colour = "Variable"
+  ) +
+  
+  theme_bw(base_size = 12) +
+  theme(
+    plot.title = element_text(face = "bold"),
+    legend.position = "bottom",
+    panel.grid.minor = element_blank(),
+    panel.grid.major.y = element_blank()
+  )
+
+print(forest_plot_clean)
