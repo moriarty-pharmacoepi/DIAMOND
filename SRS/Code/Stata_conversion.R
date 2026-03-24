@@ -12,12 +12,12 @@ library(ggplot2)
 library(scales)
 library(viridis)
 library(here)
-library(networkD3)
 library(scales)
 library(readxl)
 library(broom)
 library(gtsummary)
-here::i_am("SRS project/DIAMOND/SRS/Code/Stata_conversion.r")
+#library(gtsummary)
+here::i_am("SRS project/DIAMOND/SRS/Code/Stata_conversion.r") 
 # =================================================================================================================================================================================
 # Load data
 # =================================================================================================================================================================================
