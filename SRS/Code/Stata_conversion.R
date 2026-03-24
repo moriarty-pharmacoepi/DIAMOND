@@ -2554,9 +2554,9 @@ or_polot1 <- ggplot(plot_data, aes(x = term, y = estimate, colour = group)) +
   
   geom_errorbar(aes(ymin = conf.low, ymax = conf.high), width = 0.2, linewidth = 1) +
   geom_point(size = 3) +
-  
-  geom_text(aes(label = or_label), nudge_x = 0.28, size = 3.2, colour = "black") +
-  geom_text(aes(label = ci_label), nudge_x = -0.28, size = 3, colour = "black") +
+  annotation_logticks(sides = "l")+
+  #geom_text(aes(label = or_label), nudge_x = 0.28, size = 3.2, colour = "black") +
+  #geom_text(aes(label = ci_label), nudge_x = -0.28, size = 3, colour = "black") +
   
   scale_y_log10() +
   
@@ -2570,11 +2570,11 @@ or_polot1 <- ggplot(plot_data, aes(x = term, y = estimate, colour = group)) +
   labs(
     title = "Adjusted Odds of High-Dose Codeine Prescribing (2022)",
     x = NULL,
-    y = "Odds Ratio (log scale)",
+    y = "Odds Ratio",
     colour = "Variable"
   ) +
   
-  theme_minimal(base_size = 12) +
+  theme_bw(base_size = 12) +
   theme(
     plot.title = element_text(face = "bold"),
     legend.position = "bottom",
