@@ -1294,7 +1294,7 @@ pie_two <- ggplot(pie_any_codeine, aes(x = "", y = value, fill = category)) +
   )
 
 print(pie_two)
- 
+
 # ================================================================================================================================================================================
 # Create objective_three
 # ================================================================================================================================================================================
@@ -2702,18 +2702,20 @@ plot_data <- results_by_year %>%
       "ach_burden_medYes" = "ACB: Yes",
       "other_analgesic_y_nYes" = "Other analgesics: Yes"
     ),
-    group = recode(
-      term,
-      "sexFemale" = "Sex",
-      "age_10" = "Age",
-      "ach_burden_medYes" = "ACB",
-      "other_analgesic_y_nYes" = "Other analgesics"
-    ),
-    year = factor(year, levels = rev(2014:2022))
+    year = factor(year, levels = 2014:2022),
+    variable = factor(
+      variable,
+      levels = rev(c(
+        "Female",
+        "Age (per 10 years)",
+        "ACB: Yes",
+        "Other analgesics: Yes"
+      ))
+    )
   )
 
 # ---------------------------------------------------------------------------------------------------------
-# Plot (clean version)
+# Plot (colour by year)
 # ---------------------------------------------------------------------------------------------------------
 
 pd <- position_dodge(width = 0.5)
@@ -2722,9 +2724,9 @@ forest_plot_clean <- ggplot(
   plot_data,
   aes(
     x = estimate,
-    y = year,
-    colour = group,
-    group = variable
+    y = variable,
+    colour = year,
+    group = year
   )
 ) +
   geom_vline(xintercept = 1, linetype = "dashed", linewidth = 0.7) +
@@ -2743,10 +2745,15 @@ forest_plot_clean <- ggplot(
   
   scale_colour_manual(
     values = c(
-      "Sex" = "#1b9e77",
-      "Age" = "#7570b3",
-      "ACB" = "#d95f02",
-      "Other analgesics" = "#666666"
+      "2014" = "red",
+      "2015" = "blue",
+      "2016" = "darkgreen",
+      "2017" = "purple",
+      "2018" = "orange",
+      "2019" = "brown",
+      "2020" = "pink",
+      "2021" = "cyan4",
+      "2022" = "goldenrod"
     )
   ) +
   
@@ -2756,8 +2763,8 @@ forest_plot_clean <- ggplot(
     title = "Adjusted Odds of High-Dose Codeine Prescribing by Year",
     subtitle = "Age shown as odds ratio per 10-year increase",
     x = "Odds Ratio",
-    y = "Year",
-    colour = "Variable"
+    y = "Factor",
+    colour = "Year"
   ) +
   
   theme_bw(base_size = 12) +
