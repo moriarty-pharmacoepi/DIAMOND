@@ -1,272 +1,169 @@
 # =================================================================================================================================================================================
 # Libraries
 # =================================================================================================================================================================================
-library(haven)
+library(readr)
 library(dplyr)
 library(stringr)
-library(data.table)
-library(lubridate)
-library(tidyverse)
-library(readr)
-library(ggplot2)
-library(scales)
-library(viridis)
 library(here)
-library(scales)
-library(readxl)
-library(broom)
-library(gtsummary)
 library(tidyr)
-library(gt)
+library(profvis)
 
 
-#library(gtsummary)
 here::i_am("SRS project/DIAMOND/SRS/Code/Stata_conversion.r") 
+
 # =================================================================================================================================================================================
-# Load data
+# File path
 # =================================================================================================================================================================================
-data_file_path<- here("SRS project/Data/sample_data.csv")
+data_file_path <- here("SRS project/Data/sample_data.csv")
 
+# =================================================================================================================================================================================
+# Chunk processing function
+# =================================================================================================================================================================================
+chunks_list <- list() # to store processed chunks
 
-library(readr)
-chunk_size <- 100000
-skip_rows <-1
-
-col_names <- read_csv(data_file_path,skip = 0, n_max = 1,col_names = FALSE)
-
-while(TRUE) {
-  analgesic_ind <- read_csv(data_file_path,skip = skip_rows, n_max = chunk_size,col_names = as.character(col_names)) 
-  print(1)
-  if(nrow(analgesic_ind) == 0) break
-  # Process the chunk here
+process_chunk <- function(df_chunk, pos) {
   
-  first = 1
+  # Rename ID
+  df_chunk <- df_chunk %>% rename(indID = individualidentifiernumber)
   
-  skip_rows <- skip_rows + chunk_size - first
+  # Quantiles
+  df_chunk <- df_chunk %>% mutate(ID_d = ntile(indID, 30))
   
-  first = 0
-
-
-
-
-
-
-
-
-
-
-
-# Preserve equivalent.
-subset_dates <- analgesic_ind %>%
-  filter(
-    (str_detect(atccode, "N06A") & atccode != "N06AA09") |
-      str_detect(atccode, "N05") |
-      str_detect(atccode, "N03")
-  )
-
-analgesic_ind_dates <- analgesic_ind
-
-subset_dates <- bind_rows(subset_dates, analgesic_ind_dates) %>%
-  distinct(dateofdispensing, individualidentifiernumber, .keep_all = TRUE)
-
-#write_csv(subset_dates,
-#          "~/Desktop/test.csv")
-
-# Restore equivalent
-analgesic_ind <- subset_dates %>%
-  filter(!(
-    (str_detect(atccode, "N06A") & atccode != "N06AA09") |
-      str_detect(atccode, "N05") |
-      str_detect(atccode, "N03")
-  ))
-
-analgesic_ind_dates <- analgesic_ind
-analgesic_ind_A <- analgesic_ind_dates
-
-df <- analgesic_ind
-
-df <- df %>%
-  rename(indID = individualidentifiernumber)
-
-# =================================================================================================================================================================================
-# Create 30 quantiles (xtile)
-# =================================================================================================================================================================================
-df <- df %>%
-  mutate(ID_d = ntile(indID, 30))
-
-# =================================================================================================================================================================================
-# LHO to LHO_Area mapping
-# =================================================================================================================================================================================
-
-df <- df %>%
-  mutate(
-    LHO_area = case_when(
-      patientlho == 1  ~ "Dun Laoghaire",
-      patientlho == 2  ~ "Dublin South East",
-      patientlho == 3  ~ "Dublin South City",
-      patientlho == 4  ~ "Dublin South West",
-      patientlho == 5  ~ "Dublin West",
-      patientlho == 6  ~ "Kildare/West Wicklow",
-      patientlho == 7  ~ "Wicklow",
-      patientlho == 8  ~ "Laois/Offaly",
-      patientlho == 9  ~ "Longford/Westmeath",
-      patientlho == 10  ~ "Dublin North West",
-      patientlho == 11  ~ "Dublin North Central",
-      patientlho == 12  ~ "Dublin North",
-      patientlho == 13  ~ "Cavan/Monaghan",
-      patientlho == 14  ~ "Louth",
-      patientlho == 15  ~ "Meath",
-      patientlho == 16  ~ "Galway",
-      patientlho == 17  ~ "Mayo",
-      patientlho == 18  ~ "Roscommon",
-      patientlho == 19  ~ "Donegal",
-      patientlho == 20  ~ "Sligo/Leitrim/West Cavan",
-      patientlho == 21  ~ "Clare",
-      patientlho == 22  ~ "North Tipperary/East Limerick",
-      patientlho == 23  ~ "Limerick",
-      patientlho == 24  ~ "South Lee",
-      patientlho == 25  ~ "North Lee",
-      patientlho == 26  ~ "West Cork",
-      patientlho == 27  ~ "Kerry",
-      patientlho == 28  ~ "North Cork",
-      patientlho == 29  ~ "Carlow/Kilkenny",
-      patientlho == 30  ~ "Waterford",
-      patientlho == 31  ~ "South Tipperary",
-      patientlho == 32  ~ "Wexford",
-      TRUE ~ NA_character_
-    ),
-    CHO_area = case_when(
-      # CHO 1
-      patientlho %in% c(13, 19, 20) ~ "1",
-      
-      # CHO 2
-      patientlho %in% c(16, 17, 18) ~ "2",
-      
-      # CHO 3
-      patientlho %in% c(21, 22, 23) ~ "3",
-      
-      # CHO 4
-      patientlho %in% c(24, 25, 26, 27, 28) ~ "4",
-      
-      # CHO 5
-      patientlho %in% c(29, 30, 31, 32) ~ "5",
-      
-      # CHO 6
-      patientlho %in% c(1, 2, 7) ~ "6",
-      
-      # CHO 7
-      patientlho %in% c(3, 4, 5, 6) ~ "7",
-      
-      # CHO 8
-      patientlho %in% c(8, 9, 14, 15) ~ "8",
-      
-      # CHO 9
-      patientlho %in% c(10, 11, 12) ~ "9",
-      
-      TRUE ~ NA_character_
+  # LHO / CHO mapping
+  df_chunk <- df_chunk %>%
+    mutate(
+      LHO_area = case_when(
+        patientlho == 1  ~ "Dun Laoghaire",
+        patientlho == 2  ~ "Dublin South East",
+        patientlho == 3  ~ "Dublin South City",
+        patientlho == 4  ~ "Dublin South West",
+        patientlho == 5  ~ "Dublin West",
+        patientlho == 6  ~ "Kildare/West Wicklow",
+        patientlho == 7  ~ "Wicklow",
+        patientlho == 8  ~ "Laois/Offaly",
+        patientlho == 9  ~ "Longford/Westmeath",
+        patientlho == 10  ~ "Dublin North West",
+        patientlho == 11  ~ "Dublin North Central",
+        patientlho == 12  ~ "Dublin North",
+        patientlho == 13  ~ "Cavan/Monaghan",
+        patientlho == 14  ~ "Louth",
+        patientlho == 15  ~ "Meath",
+        patientlho == 16  ~ "Galway",
+        patientlho == 17  ~ "Mayo",
+        patientlho == 18  ~ "Roscommon",
+        patientlho == 19  ~ "Donegal",
+        patientlho == 20  ~ "Sligo/Leitrim/West Cavan",
+        patientlho == 21  ~ "Clare",
+        patientlho == 22  ~ "North Tipperary/East Limerick",
+        patientlho == 23  ~ "Limerick",
+        patientlho == 24  ~ "South Lee",
+        patientlho == 25  ~ "North Lee",
+        patientlho == 26  ~ "West Cork",
+        patientlho == 27  ~ "Kerry",
+        patientlho == 28  ~ "North Cork",
+        patientlho == 29  ~ "Carlow/Kilkenny",
+        patientlho == 30  ~ "Waterford",
+        patientlho == 31  ~ "South Tipperary",
+        patientlho == 32  ~ "Wexford",
+        TRUE ~ NA_character_
+      ),
+      CHO_area = case_when(
+        patientlho %in% c(13, 19, 20) ~ "1",
+        patientlho %in% c(16, 17, 18) ~ "2",
+        patientlho %in% c(21, 22, 23) ~ "3",
+        patientlho %in% c(24, 25, 26, 27, 28) ~ "4",
+        patientlho %in% c(29, 30, 31, 32) ~ "5",
+        patientlho %in% c(1, 2, 7) ~ "6",
+        patientlho %in% c(3, 4, 5, 6) ~ "7",
+        patientlho %in% c(8, 9, 14, 15) ~ "8",
+        patientlho %in% c(10, 11, 12) ~ "9",
+        TRUE ~ NA_character_
+      )
     )
-  )
-# =================================================================================================================================================================================
-# Drug categorisation
-# =================================================================================================================================================================================
-df <- df %>%
-  mutate(
-    opioid = str_sub(atccode,1,4)=="N02A" | atccode=="R05DA04",
-    morphine = atccode %in% c("N02AA01","N02AA51"),
-    hydromorphone = atccode=="N02AA03",
-    oxycodone = atccode %in% c("N02AA05","N02AA55"),
-    pethidine = atccode=="N02AB02",
-    codeine = atccode %in% c("N02AJ06","R05DA04"),
-    dihydrocodeine = atccode %in% c("N02AA08","N02AJ01"),
-    fentanyl = atccode=="N02AB03",
-    buprenorphine = atccode=="N02AE01",
-    tramadol = atccode %in% c("N02AX02","N02AJ13","N02AJ14"),
-    tapentadol = atccode=="N02AX06",
-    meptazinol = atccode=="N02AX05"
-  )
-
-df <- df %>%
-  mutate(
-    strongop = morphine | hydromorphone | oxycodone |
-      pethidine | fentanyl | buprenorphine |
-      tapentadol | tramadol,
-    strongop = ifelse(!opioid, NA, strongop)
-  )
-
-# =================================================================================================================================================================================
-# Systemic NSAIDs
-# =================================================================================================================================================================================
-df <- df %>%
-  mutate(
-    sysnsaid = str_sub(atccode,1,4)=="M01A" | atccode=="N02AJ14",
-    coxib = str_sub(atccode,1,5)=="M01AH",
-    nsnsaid = sysnsaid & !coxib
-  )
-
-# =================================================================================================================================================================================
-# Paracetamol
-# =================================================================================================================================================================================
-df <- df %>%
-  mutate(
-    paracetamol = atccode %in% c("N02BE01","N02BE51","N02AJ01","N02AJ06","N02AJ13"),
-    paraonly = atccode %in% c("N02BE01","N02BE51")
-  )
-
-# =================================================================================================================================================================================
-# Strength extraction
-# =================================================================================================================================================================================
-df <- df %>%
-  mutate(strength = as.numeric(str_extract(medicationname, "\\d+\\.?\\d*(?= Mg)")))
-
-# Fentanyl mcg conversion
-df <- df %>%
-  mutate(
-    strength = case_when(
+  
+  # Drug categorisation
+  df_chunk <- df_chunk %>%
+    mutate(
+      opioid = str_sub(atccode,1,4)=="N02A" | atccode=="R05DA04",
+      morphine = atccode %in% c("N02AA01","N02AA51"),
+      hydromorphone = atccode=="N02AA03",
+      oxycodone = atccode %in% c("N02AA05","N02AA55"),
+      pethidine = atccode=="N02AB02",
+      codeine = atccode %in% c("N02AJ06","R05DA04"),
+      dihydrocodeine = atccode %in% c("N02AA08","N02AJ01"),
+      fentanyl = atccode=="N02AB03",
+      buprenorphine = atccode=="N02AE01",
+      tramadol = atccode %in% c("N02AX02","N02AJ13","N02AJ14"),
+      tapentadol = atccode=="N02AX06",
+      meptazinol = atccode=="N02AX05"
+    ) %>%
+    mutate(
+      strongop = morphine | hydromorphone | oxycodone |
+        pethidine | fentanyl | buprenorphine |
+        tapentadol | tramadol,
+      strongop = ifelse(!opioid, NA, strongop)
+    ) %>%
+    mutate(
+      sysnsaid = str_sub(atccode,1,4)=="M01A" | atccode=="N02AJ14",
+      coxib = str_sub(atccode,1,5)=="M01AH",
+      nsnsaid = sysnsaid & !coxib
+    ) %>%
+    mutate(
+      paracetamol = atccode %in% c("N02BE01","N02BE51","N02AJ01","N02AJ06","N02AJ13"),
+      paraonly = atccode %in% c("N02BE01","N02BE51")
+    ) %>%
+    mutate(strength = as.numeric(str_extract(medicationname, "\\d+\\.?\\d*(?= Mg)"))) %>%
+    mutate(strength = case_when(
       str_detect(medicationname,"50 Mcg") ~ 0.05,
       str_detect(medicationname,"100 Mcg") ~ 0.1,
       TRUE ~ strength
+    )) %>%
+    mutate(
+      DDD = case_when(
+        atccode=="N02BE01" ~ quantity*strength/3000,
+        atccode=="N02AX02" ~ quantity*strength/300,
+        atccode=="N02BF01" ~ quantity*strength/1800,
+        TRUE ~ NA_real_
+      )
+    ) %>%
+    mutate(
+      ome = case_when(
+        (codeine == 1 | dihydrocodeine == 1) & !is.na(quantity) & !is.na(strength) ~ quantity * strength * 0.1,
+        hydromorphone == 1 & !is.na(quantity) & !is.na(strength) ~ quantity * strength * 5,
+        oxycodone == 1 & !is.na(quantity) & !is.na(strength) ~ quantity * strength * 1.5,
+        tramadol == 1 & !is.na(quantity) & !is.na(strength) ~ quantity * strength * 0.2,
+        morphine == 1 & !is.na(quantity) & !is.na(strength) ~ quantity * strength * 1,
+        TRUE ~ NA_real_
+      )
     )
-  )
+  
+  # Append processed chunk to global list
+  chunks_list[[length(chunks_list) + 1]] <<- df_chunk
+}
 
 # =================================================================================================================================================================================
-# DDD calculation
+# Read CSV in chunks
 # =================================================================================================================================================================================
-df <- df %>%
-  mutate(DDD = NA_real_)
+read_csv_chunked(
+  file = data_file_path,
+  callback = SideEffectChunkCallback$new(process_chunk),
+  chunk_size = 10000,
+  col_types = cols()
+)
 
-df <- df %>%
-  mutate(
-    DDD = case_when(
-      atccode=="N02BE01" ~ quantity*strength/3000,
-      atccode=="N02AX02" ~ quantity*strength/300,
-      atccode=="N02BF01" ~ quantity*strength/1800,
-      TRUE ~ DDD
-    )
-  )
+# Combine all chunks into final df
+df <- bind_rows(chunks_list)
 
-# =================================================================================================================================================================================
-# Old OME calculation, new one below for codeine specifically
-# =================================================================================================================================================================================
-df <- df %>%
-  mutate(
-    ome = case_when(
-      (codeine == 1 | dihydrocodeine == 1) & !is.na(quantity) & !is.na(strength) ~ quantity * strength * 0.1,
-      hydromorphone == 1 & !is.na(quantity) & !is.na(strength) ~ quantity * strength * 5,
-      oxycodone == 1 & !is.na(quantity) & !is.na(strength) ~ quantity * strength * 1.5,
-      tramadol == 1 & !is.na(quantity) & !is.na(strength) ~ quantity * strength * 0.2,
-      morphine == 1 & !is.na(quantity) & !is.na(strength) ~ quantity * strength * 1,
-      TRUE ~ NA_real_
-    )
-  )
+
 # =================================================================================================================================================================================
 # Rolling 30-day OME (asrol equivalent)
 # =================================================================================================================================================================================
 setDT(df)
 setorder(df, indID, dateofdispensing)
 
-df[, sum30_ome := frollsum(ome, n = 30, align = "right"), by = indID]
-df[, avg30ome := sum30_ome/30]
-df[, high_risk_ome := avg30ome > 90 & opioid == TRUE]
+#df[, sum30_ome := frollsum(ome, n = 30, align = "right"), by = indID]
+#df[, avg30ome := sum30_ome/30]
+#df[, high_risk_ome := avg30ome > 90 & opioid == TRUE]
 
 # =================================================================================================================================================================================
 # Keep final analytic sample
@@ -367,7 +264,7 @@ objective_two <- df %>%
 
 
 monthly_ome_codeine <-rbind(monthly_ome_codeine)
-}
+
 
 
 # =================================================================================================================================================================================
@@ -1743,49 +1640,6 @@ or_results
 tbl_regression(model, exponentiate = TRUE)
 
 
-plot_data <- or_results %>%
-  filter(term != "(Intercept)") %>%
-  mutate(
-    term = recode(term,
-                  "sexFemale" = "Female",
-                  "age_group25-34" = "Age 25-34",
-                  "age_group35-44" = "Age 35-44",
-                  "age_group45-54" = "Age 45-54",
-                  "age_group55-64" = "Age 55-64",
-                  "age_group65-69" = "Age 65-69",
-                  "age_group70-74" = "Age 70-74",
-                  "age_group75+" = "Age 75+",
-                  "ach_burden_medYes" = "ACB: Yes",
-                  "other_analgesic_y_nYes" = "Other analgesics: Yes"
-    ),
-    
-    # Assign variable groups (for colour)
-    group = case_when(
-      grepl("Age", term) ~ "Age",
-      term == "Female" ~ "Sex",
-      grepl("ACB", term) ~ "ACB",
-      grepl("Analgesics", term) ~ "Other analgesics"
-    ),
-    
-    term = factor(
-      term,
-      levels = rev(c(
-        "Female",
-        "Age 25-34",
-        "Age 35-44",
-        "Age 45-54",
-        "Age 55-64",
-        "Age 65-69",
-        "Age 70-74",
-        "Age 75+",
-        "ACB: Yes",
-        "Other analgesics: Yes"
-      ))
-    ),
-    
-    or_label = sprintf("%.2f", estimate),
-    ci_label = sprintf("%.2f–%.2f", conf.low, conf.high)
-  )
 
 
 
@@ -2042,7 +1896,7 @@ p6<- ggplot(monthly_ome_codeine, aes(x = month, y = normrx)) +
 
 print(p6)
 
-ome_over_time <- ggplot(monthly_ome_codeine, aes(x = month, y = total_ome)) +
+ome_over_time_plot <- ggplot(monthly_ome_codeine, aes(x = month, y = total_ome)) +
   geom_col(fill = "blue", width = 25) + # clean blue
   geom_smooth(color = "red", linewidth = 1.2) + #can also use geom_line for a direct overlay#
   scale_y_continuous(labels = comma) +       # remove scientific notation
@@ -2058,7 +1912,7 @@ ome_over_time <- ggplot(monthly_ome_codeine, aes(x = month, y = total_ome)) +
     panel.grid.minor = element_blank(),
     panel.grid.major.x = element_blank()
   )
-print(ome_over_time)
+print(ome_over_time_plot)
 
 
 
@@ -2997,6 +2851,49 @@ g30_cho_distribution_2022 <- ggplot(
 
 print(g30_cho_distribution_2022)
 
+plot_data <- or_results %>%
+  filter(term != "(Intercept)") %>%
+  mutate(
+    term = recode(term,
+                  "sexFemale" = "Female",
+                  "age_group25-34" = "Age 25-34",
+                  "age_group35-44" = "Age 35-44",
+                  "age_group45-54" = "Age 45-54",
+                  "age_group55-64" = "Age 55-64",
+                  "age_group65-69" = "Age 65-69",
+                  "age_group70-74" = "Age 70-74",
+                  "age_group75+" = "Age 75+",
+                  "ach_burden_medYes" = "ACB: Yes",
+                  "other_analgesic_y_nYes" = "Other analgesics: Yes"
+    ),
+    
+    # Assign variable groups (for colour)
+    group = case_when(
+      grepl("Age", term) ~ "Age",
+      term == "Female" ~ "Sex",
+      grepl("ACB", term) ~ "ACB",
+      grepl("Analgesics", term) ~ "Other analgesics"
+    ),
+    
+    term = factor(
+      term,
+      levels = rev(c(
+        "Female",
+        "Age 25-34",
+        "Age 35-44",
+        "Age 45-54",
+        "Age 55-64",
+        "Age 65-69",
+        "Age 70-74",
+        "Age 75+",
+        "ACB: Yes",
+        "Other analgesics: Yes"
+      ))
+    ),
+    
+    or_label = sprintf("%.2f", estimate),
+    ci_label = sprintf("%.2f–%.2f", conf.low, conf.high)
+  )
 
 or_polot1 <- ggplot(plot_data, aes(x = estimate, y = term, colour = group)) +
   geom_vline(xintercept = 1, linetype = "dashed", linewidth = 0.6, colour = "black") +
@@ -3031,59 +2928,4 @@ or_polot1 <- ggplot(plot_data, aes(x = estimate, y = term, colour = group)) +
 
 print(or_polot1)
 
-forest_plot_clean <- ggplot(
-  plot_data,
-  aes(
-    x = estimate,
-    y = variable,
-    colour = year,
-    group = year
-  )
-) +
-  geom_vline(xintercept = 1, linetype = "dashed", linewidth = 0.7) +
-  
-  geom_errorbarh(
-    aes(xmin = conf.low, xmax = conf.high),
-    height = 0.2,
-    linewidth = 1,
-    position = pd
-  ) +
-  
-  geom_point(
-    size = 3,
-    position = pd
-  ) +
-  
-  scale_colour_manual(
-    values = c(
-      "2014" = "red",
-      "2015" = "blue",
-      "2016" = "darkgreen",
-      "2017" = "purple",
-      "2018" = "orange",
-      "2019" = "brown",
-      "2020" = "pink",
-      "2021" = "cyan4",
-      "2022" = "goldenrod"
-    )
-  ) +
-  
-  coord_cartesian(xlim = c(0, 10)) +
-  
-  labs(
-    title = "Adjusted Odds of High-Dose Codeine Prescribing by Year",
-    subtitle = "Age shown as odds ratio per 10-year increase",
-    x = "Odds Ratio",
-    y = "Factor",
-    colour = "Year"
-  ) +
-  
-  theme_bw(base_size = 12) +
-  theme(
-    plot.title = element_text(face = "bold"),
-    legend.position = "bottom",
-    panel.grid.minor = element_blank(),
-    panel.grid.major.y = element_blank()
-  )
 
-print(forest_plot_clean)
