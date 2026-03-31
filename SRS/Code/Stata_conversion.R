@@ -25,30 +25,52 @@ here::i_am("SRS project/DIAMOND/SRS/Code/Stata_conversion.r")
 # =================================================================================================================================================================================
 # Load data
 # =================================================================================================================================================================================
-data_file_path<- here("SRS project/Data/sample_data.csv")
+library(here)  # if you use here()
+
+library(dplyr)
+library(here)
+
+data_file_path <- here("SRS project/Data")
+
+# File lists
+list1_files  <- list.files(data_file_path, pattern = "^LIST1_[0-9]{4}\\.txt$", full.names = TRUE)
+list1a_files <- list.files(data_file_path, pattern = "^LIST1A_[0-9]{4}\\.txt$", full.names = TRUE)
+list2_files  <- list.files(data_file_path, pattern = "^LIST2_[0-9]{4}\\.txt$", full.names = TRUE)
+list4_files  <- list.files(data_file_path, pattern = "^LIST4_[0-9]{4}\\.txt$", full.names = TRUE)
+
+all_files <- c(list1_files, list1a_files, list2_files, list4_files)
+
+# Placeholder for merged yearly data
+data_list <- list()
 
 
-library(readr)
-chunk_size <- 100000
-skip_rows <-1
+df<-data.frame()
+# Assume analgesic_ind is already loaded
 
-col_names <- read_csv(data_file_path,skip = 0, n_max = 1,col_names = FALSE)
-
-while(TRUE) {
-  analgesic_ind <- read_csv(data_file_path,skip = skip_rows, n_max = chunk_size,col_names = as.character(col_names)) 
-  print(1)
-  if(nrow(analgesic_ind) == 0) break
-  # Process the chunk here
+# Loop through each year found in filenames
+for (yr in unique(sub(".*_([0-9]{4})\\.txt$", "\\1", basename(all_files)))) {
   
-  first = 1
+  yearly_dfs <- list()  # temporary list for this year's dataframes
   
-  skip_rows <- skip_rows + chunk_size - first
+  # LIST files for this year (combine all LIST types)
+  for (file_vec in list(list1_files, list1a_files, list2_files, list4_files)) {
+    files <- file_vec[grepl(paste0("_", yr, "\\.txt$"), file_vec)]
+    
+    for (f in files) {
+      df <- read.csv(f, header = TRUE)
+      
+      # Parse dateofdispensing (dd/mm/yyyy) and extract year
+      df$year <- year(dmy(df$dateofdispensing))
+      
+      yearly_dfs <- c(yearly_dfs, list(df))
+    }
+  }
   
-  first = 0
-
-
-
-
+  # Combine all LISTs for this year by stacking rows
+  combined_year <- bind_rows(yearly_dfs)
+  
+  # Store in data_list
+  analgesic_ind <- combined_year
 
 
 
@@ -264,9 +286,6 @@ df <- df %>%
 setDT(df)
 setorder(df, indID, dateofdispensing)
 
-df[, sum30_ome := frollsum(ome, n = 30, align = "right"), by = indID]
-df[, avg30ome := sum30_ome/30]
-df[, high_risk_ome := avg30ome > 90 & opioid == TRUE]
 
 # =================================================================================================================================================================================
 # Keep final analytic sample
@@ -322,7 +341,7 @@ monthly_ome_codeine <- df %>%
 # Grading codeine OME's as high or low
 # =================================================================================================================================================================================
 
-df <- df %>%
+df1 <- df %>%
   mutate(
     codeine_ranking = case_when(
       codeine_dose <= 15 ~ "Low",
@@ -330,6 +349,13 @@ df <- df %>%
       TRUE ~ NA_character_
     )
   )
+
+df <- merge(df,df1)
+
+}
+
+
+
 
 # =================================================================================================================================================================================
 # Generating Objective 2 Table (05/03/26)
@@ -367,7 +393,7 @@ objective_two <- df %>%
 
 
 monthly_ome_codeine <-rbind(monthly_ome_codeine)
-}
+
 
 
 # =================================================================================================================================================================================
