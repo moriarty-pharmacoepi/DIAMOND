@@ -2877,4 +2877,201 @@ objective_three_cho_table %>%
 print(objective_three_cho_table)
 
 
-#test push
+
+# ================================================================================================================
+# CHOROPLETH MAP: PROPORTION OF HIGH-DOSE CODEINE DISPENSING OVER ALL DISPENSING
+# ================================================================================================================
+
+library(sf)
+library(RColorBrewer)
+
+# ------------------------------------------------------------------------------------------------
+# STEP 1: CREATE 2022 LHO SUMMARY TABLE
+# ------------------------------------------------------------------------------------------------
+
+objective_three_lho_table_2022 <- df %>%
+  filter(year(dateofdispensing) == 2022) %>%
+  group_by(LHO_area, CHO_area) %>%
+  summarise(
+    total_dispensings = n(),
+    codeine_dispensings = sum(codeine == TRUE, na.rm = TRUE),
+    high_codeine_dispensings = sum(codeine == TRUE & codeine_ranking == "High", na.rm = TRUE),
+    .groups = "drop"
+  ) %>%
+  mutate(
+    pct_high_of_all_codeine = if_else(
+      codeine_dispensings > 0,
+      100 * high_codeine_dispensings / codeine_dispensings,
+      NA_real_
+    )
+  )
+
+# ------------------------------------------------------------------------------------------------
+# STEP 2: READ AND CLEAN GEOJSON
+# ------------------------------------------------------------------------------------------------
+
+lho_geo <- st_read("/Users/padraicdonoghue/Library/CloudStorage/OneDrive-SharedLibraries-RoyalCollegeofSurgeonsinIreland/Frank Moriarty - RSS 2025/SRS/LHO georef.geojson", quiet = TRUE)
+
+lho_geo <- lho_geo %>%
+  mutate(
+    LHO_area = case_when(
+      LHO == "Tipperary South" ~ "South Tipperary",
+      LHO == "Tipperary North/East Limerick" ~ "North Tipperary/East Limerick",
+      TRUE ~ as.character(LHO)
+    )
+  ) %>%
+  filter(!is.na(LHO_area))
+
+# Dissolve to one geometry per LHO
+lho_geo_clean <- lho_geo %>%
+  group_by(LHO_area) %>%
+  summarise(geometry = st_union(geometry), .groups = "drop")
+
+# ------------------------------------------------------------------------------------------------
+# STEP 3: JOIN DATA TO MAP
+# ------------------------------------------------------------------------------------------------
+
+lho_map_data <- lho_geo_clean %>%
+  left_join(objective_three_lho_table_2022, by = "LHO_area")
+
+# Optional check (very useful)
+print(
+  lho_map_data %>%
+    st_drop_geometry() %>%
+    select(LHO_area, codeine_dispensings, high_codeine_dispensings, pct_high_of_all_codeine) %>%
+    arrange(desc(pct_high_of_all_codeine))
+)
+
+# ------------------------------------------------------------------------------------------------
+# STEP 4: GRAPH GALLERY STYLE MAP (BASE R)
+# ------------------------------------------------------------------------------------------------
+
+# Create colour palette
+my_colors <- brewer.pal(9, "Reds")
+my_colors <- colorRampPalette(my_colors)(30)
+
+# Bin the data
+class_of_lho <- cut(lho_map_data$pct_high_of_all_codeine, 30)
+
+# Assign colours
+map_colors <- my_colors[as.numeric(class_of_lho)]
+
+# Plot
+plot(
+  st_geometry(lho_map_data),
+  col = map_colors,
+  border = "white",
+  lwd = 0.7,
+  main = "High-Dose Codeine as % of All Codeine Dispensing (2022)\nLHO Level"
+)
+
+# ------------------------------------------------------------------------------------------------
+# STEP 5: GGPLOT VERSION (RECOMMENDED FOR REPORTS)
+# ------------------------------------------------------------------------------------------------
+
+high_codeine_map <- ggplot(lho_map_data) +
+  geom_sf(aes(fill = pct_high_of_all_codeine), colour = "white", linewidth = 0.3) +
+  scale_fill_distiller(
+    palette = "Reds",
+    direction = 1,
+    na.value = "grey90",
+    name = "% High-dose\nof codeine (2022)"
+  ) +
+  labs(
+    title = "Proportion of High-Dose Codeine Dispensing (2022)",
+    subtitle = "As % of all codeine dispensing (High + Low)\nLHO level"
+  ) +
+  theme_minimal(base_size = 14) +
+  theme(
+    plot.title = element_text(face = "bold"),
+    axis.text = element_blank(),
+    axis.title = element_blank(),
+    panel.grid = element_blank()
+  )
+
+print(high_codeine_map)
+
+# ================================================================================================================
+# 100-SQUARE GP TILE PLOT (2022) — MATCHED CHOROPLETH COLOUR SCHEME
+# Updated bands: 0–24, 25–49, 50–74, 75–100
+# ================================================================================================================
+
+gp_codeine_2022 <- df %>%
+  filter(
+    year(dateofdispensing) == 2022,
+    !is.na(gpidentifiernumber),
+    codeine == TRUE,
+    !is.na(codeine_ranking),
+    codeine_ranking %in% c("High", "Low")
+  ) %>%
+  group_by(gpidentifiernumber) %>%
+  summarise(
+    total_codeine = n(),
+    high_codeine = sum(codeine_ranking == "High", na.rm = TRUE),
+    prop_high = 100 * high_codeine / total_codeine,
+    .groups = "drop"
+  ) %>%
+  arrange(prop_high) %>%
+  mutate(
+    percentile_group = ntile(prop_high, 100)
+  ) %>%
+  group_by(percentile_group) %>%
+  summarise(
+    mean_prop_high = mean(prop_high, na.rm = TRUE),
+    .groups = "drop"
+  ) %>%
+  mutate(
+    prop_band = case_when(
+      mean_prop_high >= 0  & mean_prop_high <= 24  ~ "0–24%",
+      mean_prop_high >= 25 & mean_prop_high <= 49  ~ "25–49%",
+      mean_prop_high >= 50 & mean_prop_high <= 74  ~ "50–74%",
+      mean_prop_high >= 75 & mean_prop_high <= 100 ~ "75–100%",
+      TRUE ~ NA_character_
+    )
+  )
+
+# ------------------------------------------------------------------------------------------------
+# CREATE 10x10 GRID
+# ------------------------------------------------------------------------------------------------
+
+tile_data <- gp_codeine_2022 %>%
+  arrange(percentile_group) %>%
+  mutate(
+    tile_id = row_number(),
+    x = ((tile_id - 1) %% 10) + 1,
+    y = 10 - ((tile_id - 1) %/% 10)
+  )
+
+# ------------------------------------------------------------------------------------------------
+# PLOT (MATCHED TO CHOROPLETH COLOUR SCALE)
+# ------------------------------------------------------------------------------------------------
+
+gp_square_plot <- ggplot(tile_data, aes(x = x, y = y, fill = mean_prop_high)) +
+  geom_tile(colour = "white", linewidth = 0.6) +
+  coord_equal() +
+  scale_fill_gradientn(
+    colours = c(
+      "#FBE4D8",  # light
+      "#F4A582",
+      "#F46D43",
+      "#D73027",
+      "#7F0000"   # dark
+    ),
+    limits = c(0, 100),
+    name = "% High-dose\nof codeine"
+  ) +
+  labs(
+    title = "Distribution of High-Dose Codeine Prescribing Across GPs (2022)",
+    subtitle = "100 squares = 100 percentile groups (low → high)",
+    x = NULL,
+    y = NULL
+  ) +
+  theme_minimal(base_size = 13) +
+  theme(
+    plot.title = element_text(face = "bold"),
+    axis.text = element_blank(),
+    axis.ticks = element_blank(),
+    panel.grid = element_blank()
+  )
+
+print(gp_square_plot)
