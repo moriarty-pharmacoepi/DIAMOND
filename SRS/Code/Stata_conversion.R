@@ -19,7 +19,8 @@ library(gtsummary)
 library(tidyr)
 library(gt)
 
-
+script_path <- rstudioapi::getActiveDocumentContext()$path
+setwd(dirname(script_path))
 #library(gtsummary)
 here::i_am("SRS project/DIAMOND/SRS/Code/Stata_conversion.r") 
 # =================================================================================================================================================================================
@@ -44,12 +45,12 @@ all_files <- c(list1_files, list1a_files, list2_files, list4_files)
 data_list <- list()
 
 
-df<-data.frame()
+lst <- vector("list", length(unique(sub(".*_([0-9]{4})\\.txt$", "\\1", basename(all_files)))))
 # Assume analgesic_ind is already loaded
 
 # Loop through each year found in filenames
 for (yr in unique(sub(".*_([0-9]{4})\\.txt$", "\\1", basename(all_files)))) {
-  
+ # print(yr)
   yearly_dfs <- list()  # temporary list for this year's dataframes
   
   # LIST files for this year (combine all LIST types)
@@ -60,7 +61,7 @@ for (yr in unique(sub(".*_([0-9]{4})\\.txt$", "\\1", basename(all_files)))) {
       df <- read.csv(f, header = TRUE)
       
       # Parse dateofdispensing (dd/mm/yyyy) and extract year
-      df$year <- year(dmy(df$dateofdispensing))
+      df$year <- as.numeric(yr)
       
       yearly_dfs <- c(yearly_dfs, list(df))
     }
@@ -73,7 +74,7 @@ for (yr in unique(sub(".*_([0-9]{4})\\.txt$", "\\1", basename(all_files)))) {
   analgesic_ind <- combined_year
 
 
-
+#print(analgesic_ind$year[1])
 
 
 
@@ -290,8 +291,8 @@ setorder(df, indID, dateofdispensing)
 # =================================================================================================================================================================================
 # Keep final analytic sample
 # =================================================================================================================================================================================
-df <- df %>%
-  filter(between(dateofdispensing, 19724, 23010))
+#df <- df %>%
+ # filter(between(dateofdispensing, 19724, 23010))
 
 #Ensure date is a real Date (dd/mm/yyyy)
 df <- df %>%
@@ -341,7 +342,7 @@ monthly_ome_codeine <- df %>%
 # Grading codeine OME's as high or low
 # =================================================================================================================================================================================
 
-df1 <- df %>%
+df <- df %>%
   mutate(
     codeine_ranking = case_when(
       codeine_dose <= 15 ~ "Low",
@@ -350,10 +351,10 @@ df1 <- df %>%
     )
   )
 
-df <- merge(df,df1)
+lst[[yr]]<-df
 
 }
-
+df <- do.call(rbind, lst)
 
 
 
