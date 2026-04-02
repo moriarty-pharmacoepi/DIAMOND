@@ -3113,3 +3113,68 @@ gp_square_plot <- ggplot(tile_data, aes(x = x, y = y, fill = mean_prop_high)) +
   )
 
 print(gp_square_plot)
+
+
+# ================================================================================================================
+# SCATTER PLOT — TRUE PRACTICE SIZE vs HIGH-DOSE CODEINE (%)
+# ================================================================================================================
+
+gp_scatter_2022 <- df %>%
+  filter(
+    year(dateofdispensing) == 2022,
+    codeine == TRUE,
+    !is.na(gpidentifiernumber),
+    !is.na(codeine_ranking),
+    codeine_ranking %in% c("High", "Low"),
+    !is.na(indID)
+  ) %>%
+  group_by(gpidentifiernumber) %>%
+  summarise(
+    total_codeine_users = n_distinct(indID),
+    high_users = n_distinct(indID[codeine_ranking == "High"]),
+    pct_high = 100 * high_users / total_codeine_users,
+    .groups = "drop"
+  ) %>%
+  filter(total_codeine_users > 0)
+
+gp_scatter_plot <- ggplot(gp_scatter_2022,
+                          aes(x = total_codeine_users, y = pct_high)) +
+  geom_jitter(width = 0.2, height = 1, alpha = 0.6, size = 2.5) +
+  geom_smooth(method = "lm", se = FALSE, colour = "red", linewidth = 1) +
+  labs(
+    title = "High-Dose Codeine Use by GP Practice (2022)",
+    subtitle = "Each point = one GP practice",
+    x = "Number of Codeine Users",
+    y = "% of Users Receiving High-Dose Codeine"
+  ) +
+  theme_minimal(base_size = 13) +
+  theme(
+    plot.title = element_text(face = "bold"),
+    panel.grid.minor = element_blank()
+  )
+
+print(gp_scatter_plot)
+
+gp_counts <- gp_scatter_2022 %>%
+  count(total_codeine_users, pct_high)
+
+ggplot(gp_counts,
+       aes(x = total_codeine_users, y = pct_high, size = n)) +
+  geom_point(alpha = 0.7) +
+  geom_smooth(
+    data = gp_scatter_2022,
+    aes(x = total_codeine_users, y = pct_high),
+    method = "lm",
+    se = FALSE,
+    colour = "red",
+    linewidth = 1,
+    inherit.aes = FALSE
+  ) +
+  scale_size_continuous(name = "Number of GP Practices") +
+  labs(
+    title = "High-Dose Codeine Use by GP Practice (2022)",
+    subtitle = "Point size = number of practices with identical values",
+    x = "Number of Codeine Users",
+    y = "% High-Dose Codeine Users"
+  ) +
+  theme_minimal(base_size = 13)
