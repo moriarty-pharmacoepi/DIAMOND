@@ -74,10 +74,9 @@ for (yr in unique(sub(".*_([0-9]{4})\\.txt$", "\\1", basename(all_files)))) {
   analgesic_ind <- combined_year
 
 
-#print(analgesic_ind$year[1])
-
-
-
+analgesic_ind <- analgesic_ind %>%
+  filter(year(as.Date(dateofdispensing)) != year) %>%
+  filter(!grepl("^C10AA", atccode))
 
 # Preserve equivalent.
 subset_dates <- analgesic_ind %>%
@@ -356,8 +355,8 @@ lst[[yr]]<-df
 }
 df <- do.call(rbind, lst)
 
-
-
+rm(lst, yearly_dfs, combined_year)
+gc()
 # =================================================================================================================================================================================
 # Generating Objective 2 Table (05/03/26)
 # =================================================================================================================================================================================  
