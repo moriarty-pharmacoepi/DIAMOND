@@ -2477,8 +2477,8 @@ print(g30_cho_distribution_2022)
 # ---------------------------------------------------------------------------------------------------------
 analysis <- objective_two %>%
   mutate(
-    high_codeine_dose = factor(high_codeine_dose, levels = c(0,1), labels = c("Low","High")),
-    sex = factor(sex, levels = c("M","F"), labels = c("Male","Female")),
+    high_codeine_dose = factor(high_codeine_dose, levels = c(0, 1), labels = c("Low", "High")),
+    sex = factor(sex, levels = c("M", "F"), labels = c("Male", "Female")),
     age_group = case_when(
       age >= 16 & age <= 24 ~ "16-24",
       age >= 25 & age <= 34 ~ "25-34",
@@ -2488,13 +2488,45 @@ analysis <- objective_two %>%
       age >= 65 & age <= 69 ~ "65-69",
       age >= 70 & age <= 74 ~ "70-74",
       age >= 75 ~ "75+"
-    ) %>% factor(),
-    ach_burden_med = factor(ifelse(is.na(ach_burden_med), 0, ach_burden_med), levels = c(0,1), labels = c("No","Yes")),
-    other_analgesic_y_n = factor(ifelse(is.na(other_analgesic_y_n), 0, other_analgesic_y_n), levels = c(0,1), labels = c("No","Yes"))
+    ) %>% factor(
+      levels = c("16-24", "25-34", "35-44", "45-54", "55-64", "65-69", "70-74", "75+")
+    ),
+    ach_burden_med = factor(
+      ifelse(is.na(ach_burden_med), 0, ach_burden_med),
+      levels = c(0, 1),
+      labels = c("No", "Yes")
+    ),
+    Oral_NSAIDs = factor(
+      ifelse(is.na(Oral_NSAIDs), 0, Oral_NSAIDs),
+      levels = c(0, 1),
+      labels = c("No", "Yes")
+    ),
+    Topical_analgesics = factor(
+      ifelse(is.na(Topical_analgesics), 0, Topical_analgesics),
+      levels = c(0, 1),
+      labels = c("No", "Yes")
+    ),
+    Benzodiazepines_sedatives = factor(
+      ifelse(is.na(Benzodiazepines_sedatives), 0, Benzodiazepines_sedatives),
+      levels = c(0, 1),
+      labels = c("No", "Yes")
+    ),
+    Anti_migraines = factor(
+      ifelse(is.na(Anti_migraines), 0, Anti_migraines),
+      levels = c(0, 1),
+      labels = c("No", "Yes")
+    ),
+    Other_Opioids = factor(
+      ifelse(is.na(Other_Opioids), 0, Other_Opioids),
+      levels = c(0, 1),
+      labels = c("No", "Yes")
+    )
   )
 
 model <- glm(
-  high_codeine_dose ~ age_group + sex + ach_burden_med + other_analgesic_y_n,
+  high_codeine_dose ~ age_group + sex + ach_burden_med +
+    Oral_NSAIDs + Topical_analgesics + Benzodiazepines_sedatives +
+    Anti_migraines + Other_Opioids,
   data = analysis,
   family = binomial()
 )
@@ -2506,31 +2538,36 @@ or_results
 # Clean publication table
 tbl_regression(model, exponentiate = TRUE)
 
-
 plot_data <- or_results %>%
   filter(term != "(Intercept)") %>%
   mutate(
-    term = recode(term,
-                  "sexFemale" = "Female",
-                  "age_group25-34" = "Age 25-34",
-                  "age_group35-44" = "Age 35-44",
-                  "age_group45-54" = "Age 45-54",
-                  "age_group55-64" = "Age 55-64",
-                  "age_group65-69" = "Age 65-69",
-                  "age_group70-74" = "Age 70-74",
-                  "age_group75+" = "Age 75+",
-                  "ach_burden_medYes" = "ACB: Yes",
-                  "other_analgesic_y_nYes" = "Other analgesics: Yes"
+    term = recode(
+      term,
+      "sexFemale" = "Female",
+      "age_group25-34" = "Age 25-34",
+      "age_group35-44" = "Age 35-44",
+      "age_group45-54" = "Age 45-54",
+      "age_group55-64" = "Age 55-64",
+      "age_group65-69" = "Age 65-69",
+      "age_group70-74" = "Age 70-74",
+      "age_group75+" = "Age 75+",
+      "ach_burden_medYes" = "ACB: Yes",
+      "Oral_NSAIDsYes" = "Oral NSAIDs: Yes",
+      "Topical_analgesicsYes" = "Topical analgesics: Yes",
+      "Benzodiazepines_sedativesYes" = "Benzodiazepines/sedatives: Yes",
+      "Anti_migrainesYes" = "Anti-migraines: Yes",
+      "Other_OpioidsYes" = "Other opioids: Yes"
     ),
-    
-    # Assign variable groups (for colour)
     group = case_when(
-      grepl("Age", term) ~ "Age",
       term == "Female" ~ "Sex",
-      grepl("ACB", term) ~ "ACB",
-      grepl("Analgesics", term) ~ "Other analgesics"
+      grepl("Age", term) ~ "Age",
+      term == "ACB: Yes" ~ "ACB",
+      term == "Oral NSAIDs: Yes" ~ "Oral NSAIDs",
+      term == "Topical analgesics: Yes" ~ "Topical analgesics",
+      term == "Benzodiazepines/sedatives: Yes" ~ "Benzodiazepines/sedatives",
+      term == "Anti-migraines: Yes" ~ "Anti-migraines",
+      term == "Other opioids: Yes" ~ "Other opioids"
     ),
-    
     term = factor(
       term,
       levels = rev(c(
@@ -2543,37 +2580,39 @@ plot_data <- or_results %>%
         "Age 70-74",
         "Age 75+",
         "ACB: Yes",
-        "Other analgesics: Yes"
+        "Oral NSAIDs: Yes",
+        "Topical analgesics: Yes",
+        "Benzodiazepines/sedatives: Yes",
+        "Anti-migraines: Yes",
+        "Other opioids: Yes"
       ))
     ),
-    
     or_label = sprintf("%.2f", estimate),
     ci_label = sprintf("%.2f–%.2f", conf.low, conf.high)
   )
 
-or_polot1 <- ggplot(plot_data, aes(x = estimate, y = term, colour = group)) +
+or_plot1 <- ggplot(plot_data, aes(x = estimate, y = term, colour = group)) +
   geom_vline(xintercept = 1, linetype = "dashed", linewidth = 0.6, colour = "black") +
-  
   geom_errorbarh(aes(xmin = conf.low, xmax = conf.high), height = 0.2, linewidth = 1) +
   geom_point(size = 3) +
   annotation_logticks(sides = "b") +
-  
   scale_x_log10() +
-  
   scale_colour_manual(values = c(
     "Sex" = "#1b9e77",
     "Age" = "#7570b3",
     "ACB" = "#d95f02",
-    "Other analgesics" = "#66a61e"
+    "Oral NSAIDs" = "#66a61e",
+    "Topical analgesics" = "#e7298a",
+    "Benzodiazepines/sedatives" = "#e6ab02",
+    "Anti-migraines" = "#a6761d",
+    "Other opioids" = "#666666"
   )) +
-  
   labs(
     title = "Adjusted Odds of High-Dose Codeine Prescribing (2022)",
     x = "Odds Ratio",
     y = NULL,
     colour = "Variable"
   ) +
-  
   theme_bw(base_size = 12) +
   theme(
     plot.title = element_text(face = "bold"),
@@ -2582,9 +2621,7 @@ or_polot1 <- ggplot(plot_data, aes(x = estimate, y = term, colour = group)) +
     panel.grid.major.y = element_blank()
   )
 
-print(or_polot1)
-
-
+print(or_plot1)
 # ---------------------------------------------------------------------------------------------------------
 # Create yearly other analgesic flags
 # ---------------------------------------------------------------------------------------------------------
@@ -2974,9 +3011,10 @@ high_codeine_map <- ggplot(lho_map_data) +
   scale_fill_distiller(
     palette = "Reds",
     direction = 1,
+    limits = c(0, 100),   # 🔥 FORCE 0–100 scale
     na.value = "grey90",
     name = "% High-dose\nof codeine (2022)"
-  ) +
+  )+
   labs(
     title = "Proportion of High-Dose Codeine Dispensing (2022)",
     subtitle = "As % of all codeine dispensing (High + Low)\nLHO level"
