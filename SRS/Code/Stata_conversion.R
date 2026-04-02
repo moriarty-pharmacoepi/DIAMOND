@@ -3136,14 +3136,24 @@ gp_scatter_2022 <- df %>%
     .groups = "drop"
   ) %>%
   filter(total_codeine_users > 0)
-
 gp_scatter_plot <- ggplot(gp_scatter_2022,
                           aes(x = total_codeine_users, y = pct_high)) +
-  geom_jitter(width = 0.2, height = 1, alpha = 0.6, size = 2.5) +
-  geom_smooth(method = "lm", se = FALSE, colour = "red", linewidth = 1) +
+  geom_jitter(
+    width = 0.3, 
+    height = 1.5, 
+    alpha = 0.5, 
+    size = 2,
+    colour = "black"
+  ) +
+  geom_smooth(
+    method = "lm",
+    se = FALSE,
+    colour = "red",
+    linewidth = 1
+  ) +
   labs(
     title = "High-Dose Codeine Use by GP Practice (2022)",
-    subtitle = "Each point = one GP practice",
+    subtitle = "Each point represents one GP practice (jittered to reduce overlap)",
     x = "Number of Codeine Users",
     y = "% of Users Receiving High-Dose Codeine"
   ) +
@@ -3154,27 +3164,3 @@ gp_scatter_plot <- ggplot(gp_scatter_2022,
   )
 
 print(gp_scatter_plot)
-
-gp_counts <- gp_scatter_2022 %>%
-  count(total_codeine_users, pct_high)
-
-ggplot(gp_counts,
-       aes(x = total_codeine_users, y = pct_high, size = n)) +
-  geom_point(alpha = 0.7) +
-  geom_smooth(
-    data = gp_scatter_2022,
-    aes(x = total_codeine_users, y = pct_high),
-    method = "lm",
-    se = FALSE,
-    colour = "red",
-    linewidth = 1,
-    inherit.aes = FALSE
-  ) +
-  scale_size_continuous(name = "Number of GP Practices") +
-  labs(
-    title = "High-Dose Codeine Use by GP Practice (2022)",
-    subtitle = "Point size = number of practices with identical values",
-    x = "Number of Codeine Users",
-    y = "% High-Dose Codeine Users"
-  ) +
-  theme_minimal(base_size = 13)
