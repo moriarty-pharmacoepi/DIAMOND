@@ -18,289 +18,352 @@ library(broom)
 library(gtsummary)
 library(tidyr)
 library(gt)
+
+#script_path <- rstudioapi::getActiveDocumentContext()$path
+#setwd(dirname(script_path))
 #library(gtsummary)
-here::i_am("SRS project/DIAMOND/SRS/Code/Stata_conversion.r") 
+#here::i_am("SRS project/DIAMOND/SRS/Code/Stata_conversion.r") 
 # =================================================================================================================================================================================
 # Load data
 # =================================================================================================================================================================================
-data_file_path<- here("SRS project/Data/sample_data.csv")
+#library(here)  # if you use here()
 
-analgesic_ind <- read_csv(data_file_path) 
+library(dplyr)
+library(here)
 
-# Preserve equivalent.
-subset_dates <- analgesic_ind %>%
-  filter(
-    (str_detect(atccode, "N06A") & atccode != "N06AA09") |
-      str_detect(atccode, "N05") |
-      str_detect(atccode, "N03")
-  )
+data_file_path <- here("C:/Users/frankmoriarty/OneDrive - Royal College of Surgeons in Ireland/PCRS data")
 
-analgesic_ind_dates <- analgesic_ind
+# File lists
+list1_files  <- list.files(data_file_path, pattern = "^LIST1_[0-9]{4}\\.txt$", full.names = TRUE)
+list1a_files <- list.files(data_file_path, pattern = "^LIST1A_[0-9]{4}\\.txt$", full.names = TRUE)
+list2_files  <- list.files(data_file_path, pattern = "^LIST2_[0-9]{4}\\.txt$", full.names = TRUE)
+list4_files  <- list.files(data_file_path, pattern = "^LIST4_[0-9]{4}\\.txt$", full.names = TRUE)
+list4_2NEWATCS_files  <- list.files(data_file_path, pattern = "^LIST4_2NEWATCS_[0-9]{4}\\.txt$", full.names = TRUE)
 
-subset_dates <- bind_rows(subset_dates, analgesic_ind_dates) %>%
-  distinct(dateofdispensing, individualidentifiernumber, .keep_all = TRUE)
+all_files <- c(list1_files, list1a_files, list2_files, list4_files, list4_2NEWATCS_files)
 
-#write_csv(subset_dates,
-#          "~/Desktop/test.csv")
+# Placeholder for merged yearly data
+data_list <- list()
 
-# Restore equivalent
-analgesic_ind <- subset_dates %>%
-  filter(!(
-    (str_detect(atccode, "N06A") & atccode != "N06AA09") |
-      str_detect(atccode, "N05") |
-      str_detect(atccode, "N03")
-  ))
 
-analgesic_ind_dates <- analgesic_ind
-analgesic_ind_A <- analgesic_ind_dates
+lst <- vector("list", length(unique(sub(".*_([0-9]{4})\\.txt$", "\\1", basename(all_files)))))
+# Assume analgesic_ind is already loaded
 
-df <- analgesic_ind
-
-df <- df %>%
-  rename(indID = individualidentifiernumber)
-
-# =================================================================================================================================================================================
-# Create 30 quantiles (xtile)
-# =================================================================================================================================================================================
-df <- df %>%
-  mutate(ID_d = ntile(indID, 30))
-
-# =================================================================================================================================================================================
-# LHO to LHO_Area mapping
-# =================================================================================================================================================================================
-
-df <- df %>%
-  mutate(
-    LHO_area = case_when(
-      patientlho == 1  ~ "Dun Laoghaire",
-      patientlho == 2  ~ "Dublin South East",
-      patientlho == 3  ~ "Dublin South City",
-      patientlho == 4  ~ "Dublin South West",
-      patientlho == 5  ~ "Dublin West",
-      patientlho == 6  ~ "Kildare/West Wicklow",
-      patientlho == 7  ~ "Wicklow",
-      patientlho == 8  ~ "Laois/Offaly",
-      patientlho == 9  ~ "Longford/Westmeath",
-      patientlho == 10  ~ "Dublin North West",
-      patientlho == 11  ~ "Dublin North Central",
-      patientlho == 12  ~ "Dublin North",
-      patientlho == 13  ~ "Cavan/Monaghan",
-      patientlho == 14  ~ "Louth",
-      patientlho == 15  ~ "Meath",
-      patientlho == 16  ~ "Galway",
-      patientlho == 17  ~ "Mayo",
-      patientlho == 18  ~ "Roscommon",
-      patientlho == 19  ~ "Donegal",
-      patientlho == 20  ~ "Sligo/Leitrim/West Cavan",
-      patientlho == 21  ~ "Clare",
-      patientlho == 22  ~ "North Tipperary/East Limerick",
-      patientlho == 23  ~ "Limerick",
-      patientlho == 24  ~ "South Lee",
-      patientlho == 25  ~ "North Lee",
-      patientlho == 26  ~ "West Cork",
-      patientlho == 27  ~ "Kerry",
-      patientlho == 28  ~ "North Cork",
-      patientlho == 29  ~ "Carlow/Kilkenny",
-      patientlho == 30  ~ "Waterford",
-      patientlho == 31  ~ "South Tipperary",
-      patientlho == 32  ~ "Wexford",
-      TRUE ~ NA_character_
-    ),
-    CHO_area = case_when(
-      # CHO 1
-      patientlho %in% c(13, 19, 20) ~ "1",
-      
-      # CHO 2
-      patientlho %in% c(16, 17, 18) ~ "2",
-      
-      # CHO 3
-      patientlho %in% c(21, 22, 23) ~ "3",
-      
-      # CHO 4
-      patientlho %in% c(24, 25, 26, 27, 28) ~ "4",
-      
-      # CHO 5
-      patientlho %in% c(29, 30, 31, 32) ~ "5",
-      
-      # CHO 6
-      patientlho %in% c(1, 2, 7) ~ "6",
-      
-      # CHO 7
-      patientlho %in% c(3, 4, 5, 6) ~ "7",
-      
-      # CHO 8
-      patientlho %in% c(8, 9, 14, 15) ~ "8",
-      
-      # CHO 9
-      patientlho %in% c(10, 11, 12) ~ "9",
-      
-      TRUE ~ NA_character_
-    )
-  )
-# =================================================================================================================================================================================
-# Drug categorisation
-# =================================================================================================================================================================================
-df <- df %>%
-  mutate(
-    opioid = str_sub(atccode,1,4)=="N02A" | atccode=="R05DA04",
-    morphine = atccode %in% c("N02AA01","N02AA51"),
-    hydromorphone = atccode=="N02AA03",
-    oxycodone = atccode %in% c("N02AA05","N02AA55"),
-    pethidine = atccode=="N02AB02",
-    codeine = atccode %in% c("N02AJ06","R05DA04"),
-    dihydrocodeine = atccode %in% c("N02AA08","N02AJ01"),
-    fentanyl = atccode=="N02AB03",
-    buprenorphine = atccode=="N02AE01",
-    tramadol = atccode %in% c("N02AX02","N02AJ13","N02AJ14"),
-    tapentadol = atccode=="N02AX06",
-    meptazinol = atccode=="N02AX05"
-  )
-
-df <- df %>%
-  mutate(
-    strongop = morphine | hydromorphone | oxycodone |
-      pethidine | fentanyl | buprenorphine |
-      tapentadol | tramadol,
-    strongop = ifelse(!opioid, NA, strongop)
-  )
-
-# =================================================================================================================================================================================
-# Systemic NSAIDs
-# =================================================================================================================================================================================
-df <- df %>%
-  mutate(
-    sysnsaid = str_sub(atccode,1,4)=="M01A" | atccode=="N02AJ14",
-    coxib = str_sub(atccode,1,5)=="M01AH",
-    nsnsaid = sysnsaid & !coxib
-  )
-
-# =================================================================================================================================================================================
-# Paracetamol
-# =================================================================================================================================================================================
-df <- df %>%
-  mutate(
-    paracetamol = atccode %in% c("N02BE01","N02BE51","N02AJ01","N02AJ06","N02AJ13"),
-    paraonly = atccode %in% c("N02BE01","N02BE51")
-  )
-
-# =================================================================================================================================================================================
-# Strength extraction
-# =================================================================================================================================================================================
-df <- df %>%
-  mutate(strength = as.numeric(str_extract(medicationname, "\\d+\\.?\\d*(?= Mg)")))
-
-# Fentanyl mcg conversion
-df <- df %>%
-  mutate(
-    strength = case_when(
-      str_detect(medicationname,"50 Mcg") ~ 0.05,
-      str_detect(medicationname,"100 Mcg") ~ 0.1,
-      TRUE ~ strength
-    )
-  )
-
-# =================================================================================================================================================================================
-# DDD calculation
-# =================================================================================================================================================================================
-df <- df %>%
-  mutate(DDD = NA_real_)
-
-df <- df %>%
-  mutate(
-    DDD = case_when(
-      atccode=="N02BE01" ~ quantity*strength/3000,
-      atccode=="N02AX02" ~ quantity*strength/300,
-      atccode=="N02BF01" ~ quantity*strength/1800,
-      TRUE ~ DDD
-    )
-  )
-
-# =================================================================================================================================================================================
-# Old OME calculation, new one below for codeine specifically
-# =================================================================================================================================================================================
-df <- df %>%
-  mutate(
-    ome = case_when(
-      (codeine == 1 | dihydrocodeine == 1) & !is.na(quantity) & !is.na(strength) ~ quantity * strength * 0.1,
-      hydromorphone == 1 & !is.na(quantity) & !is.na(strength) ~ quantity * strength * 5,
-      oxycodone == 1 & !is.na(quantity) & !is.na(strength) ~ quantity * strength * 1.5,
-      tramadol == 1 & !is.na(quantity) & !is.na(strength) ~ quantity * strength * 0.2,
-      morphine == 1 & !is.na(quantity) & !is.na(strength) ~ quantity * strength * 1,
-      TRUE ~ NA_real_
-    )
-  )
-# =================================================================================================================================================================================
-# Rolling 30-day OME (asrol equivalent)
-# =================================================================================================================================================================================
-setDT(df)
-setorder(df, indID, dateofdispensing)
-
-df[, sum30_ome := frollsum(ome, n = 30, align = "right"), by = indID]
-df[, avg30ome := sum30_ome/30]
-df[, high_risk_ome := avg30ome > 90 & opioid == TRUE]
-
-# =================================================================================================================================================================================
-# Keep final analytic sample
-# =================================================================================================================================================================================
-df <- df %>%
-  filter(between(dateofdispensing, 19724, 23010))
-
-#Ensure date is a real Date (dd/mm/yyyy)
-df <- df %>%
-  mutate(
-    dateofdispensing = as.Date(dateofdispensing, format = "%d/%m/%Y"),
-    ome = as.numeric(ome)  # just in case it's character
-  )
-# ================================================================================================================================================================================
-# Hard coding codeine content to drug names
-# =================================================================================================================================================================================
-codeine_products <-  df %>%
-  filter(str_detect(atccode, "N02AJ0")) %>%
-  arrange(medicationname) 
-
-df <- df %>%
-  mutate(codeine_dose = case_when(
-    medicationname == "Tylex Caps" ~ 30,
-    medicationname == "Solpadeine Caps" ~ 8,
-    medicationname == "Solpadol Eff Tabs" ~ 30,
-    medicationname == "Solpadeine Sol. Tabs" ~ 8,
-    medicationname == "Solpadol Caplets" ~ 30,
-    medicationname == "Codipar Caps 15/500 Mg" ~ 15,
-    medicationname == "Kapake Tabs 30/500 Mg" ~ 30,
-    medicationname == "Maxilief Eff Tabs" ~ 8,
-    medicationname == "Kapake Tabs 15/500 Mg" ~ 15,
-    medicationname == "Kapake (Imbat Ltd.) Tabs 30/500 Mg" ~ 30,
-    medicationname == "Codipar  Eff Tabs 15/500 Mg" ~ 15,
-    medicationname == "Tylex Effervescent  Tabs 30/500 Mg" ~ 30,
+# Loop through each year found in filenames
+for (yr in unique(sub(".*_([0-9]{4})\\.txt$", "\\1", basename(all_files)))) {
+  # print(yr)
+  yearly_dfs <- list()  # temporary list for this year's dataframes
+  
+  # LIST files for this year (combine all LIST types)
+  for (file_vec in list(list1_files, list1a_files, list2_files, list4_files, list4_2NEWATCS_files)) {
+    files <- file_vec[grepl(paste0("_", yr, "\\.txt$"), file_vec)]
     
-    TRUE ~ NA_real_
-  ))
+    for (f in files) {
+      df <- read.csv(f, header = TRUE)
+      
+      # Parse dateofdispensing (dd/mm/yyyy) and extract year
+      df$year <- as.numeric(yr)
+      
+      df$year <- year(dmy(df$Date.of.dispensing))
+      print(yr)     
+      
+      df <- df %>%
+        rename(individualidentifiernumber = Individual.identifier.number) %>%
+        rename(atccode = ATC.Code) %>%
+        rename(age = Age) %>%
+        rename(sex = Sex) %>%
+        rename(dateofdispensing = Date.of.dispensing) %>%
+        rename(gpidentifiernumber = GP.identifier.number) %>%
+        rename(medicationname = Medication.name) %>%
+        rename(code = Code) %>%
+        rename(quantity = Quantity) %>%
+        rename(cost = Cost) %>%
+        rename(patientlho = Patient.LHO) 
+      
+      
+      yearly_dfs <- c(yearly_dfs, list(df))
+    }
+  }
+  
+  # Combine all LISTs for this year by stacking rows
+  analgesic_ind <- bind_rows(yearly_dfs)
+  
 
-# =================================================================================================================================================================================
-# Calculating OME's for codeine specifically
-# =================================================================================================================================================================================
-df <- df %>%
-  mutate(ome = ifelse(!is.na(codeine_dose), quantity * codeine_dose * 0.1, NA))
+  
+  #print(analgesic_ind$year[1])
+  
+  analgesic_ind <- analgesic_ind %>%
+    filter(year(as.Date(dateofdispensing)) != year) %>%
+    filter(!grepl("^C10AA", atccode))
+  
+  
+  # Preserve equivalent.
+  subset_dates <- analgesic_ind %>%
+    filter(!(
+      (str_detect(atccode, "N02AJ06")
+    )))
 
-monthly_ome_codeine <- df %>%
-  filter(!is.na(ome), !is.na(dateofdispensing)) %>%
-  mutate(month = floor_date(dateofdispensing, "month")) %>%
-  group_by(month) %>%
-  summarise(total_ome = sum(ome, na.rm = TRUE), 
-            total_rx = n(),
-            normrx = total_ome/total_rx)
-# =================================================================================================================================================================================
-# Grading codeine OME's as high or low
-# =================================================================================================================================================================================
+  analgesic_ind <- analgesic_ind %>%
+    filter((
+      (str_detect(atccode, "N02AJ06")
+      )))
+  
+  subset_dates <- subset_dates %>%
+    distinct(year, atccode, individualidentifiernumber, .keep_all = TRUE)
+  
+  
+  analgesic_ind <- bind_rows(subset_dates, analgesic_ind)
+    
 
-df <- df %>%
-  mutate(
-    codeine_ranking = case_when(
-      codeine_dose <= 15 ~ "Low",
-      codeine_dose > 15 ~ "High",
-      TRUE ~ NA_character_
+  df <- analgesic_ind
+  
+  df <- df %>%
+    rename(indID = individualidentifiernumber)
+  
+  # =================================================================================================================================================================================
+  # Create 30 quantiles (xtile)
+  # =================================================================================================================================================================================
+  df <- df %>%
+    mutate(ID_d = ntile(indID, 30))
+  
+  # =================================================================================================================================================================================
+  # LHO to LHO_Area mapping
+  # =================================================================================================================================================================================
+  
+  df <- df %>%
+    mutate(
+      LHO_area = case_when(
+        patientlho == 1  ~ "Dun Laoghaire",
+        patientlho == 2  ~ "Dublin South East",
+        patientlho == 3  ~ "Dublin South City",
+        patientlho == 4  ~ "Dublin South West",
+        patientlho == 5  ~ "Dublin West",
+        patientlho == 6  ~ "Kildare/West Wicklow",
+        patientlho == 7  ~ "Wicklow",
+        patientlho == 8  ~ "Laois/Offaly",
+        patientlho == 9  ~ "Longford/Westmeath",
+        patientlho == 10  ~ "Dublin North West",
+        patientlho == 11  ~ "Dublin North Central",
+        patientlho == 12  ~ "Dublin North",
+        patientlho == 13  ~ "Cavan/Monaghan",
+        patientlho == 14  ~ "Louth",
+        patientlho == 15  ~ "Meath",
+        patientlho == 16  ~ "Galway",
+        patientlho == 17  ~ "Mayo",
+        patientlho == 18  ~ "Roscommon",
+        patientlho == 19  ~ "Donegal",
+        patientlho == 20  ~ "Sligo/Leitrim/West Cavan",
+        patientlho == 21  ~ "Clare",
+        patientlho == 22  ~ "North Tipperary/East Limerick",
+        patientlho == 23  ~ "Limerick",
+        patientlho == 24  ~ "South Lee",
+        patientlho == 25  ~ "North Lee",
+        patientlho == 26  ~ "West Cork",
+        patientlho == 27  ~ "Kerry",
+        patientlho == 28  ~ "North Cork",
+        patientlho == 29  ~ "Carlow/Kilkenny",
+        patientlho == 30  ~ "Waterford",
+        patientlho == 31  ~ "South Tipperary",
+        patientlho == 32  ~ "Wexford",
+        TRUE ~ NA_character_
+      ),
+      CHO_area = case_when(
+        # CHO 1
+        patientlho %in% c(13, 19, 20) ~ "1",
+        
+        # CHO 2
+        patientlho %in% c(16, 17, 18) ~ "2",
+        
+        # CHO 3
+        patientlho %in% c(21, 22, 23) ~ "3",
+        
+        # CHO 4
+        patientlho %in% c(24, 25, 26, 27, 28) ~ "4",
+        
+        # CHO 5
+        patientlho %in% c(29, 30, 31, 32) ~ "5",
+        
+        # CHO 6
+        patientlho %in% c(1, 2, 7) ~ "6",
+        
+        # CHO 7
+        patientlho %in% c(3, 4, 5, 6) ~ "7",
+        
+        # CHO 8
+        patientlho %in% c(8, 9, 14, 15) ~ "8",
+        
+        # CHO 9
+        patientlho %in% c(10, 11, 12) ~ "9",
+        
+        TRUE ~ NA_character_
+      )
     )
-  )
+  # =================================================================================================================================================================================
+  # Drug categorisation
+  # =================================================================================================================================================================================
+  df <- df %>%
+    mutate(
+      opioid = str_sub(atccode,1,4)=="N02A" | atccode=="R05DA04",
+      morphine = atccode %in% c("N02AA01","N02AA51"),
+      hydromorphone = atccode=="N02AA03",
+      oxycodone = atccode %in% c("N02AA05","N02AA55"),
+      pethidine = atccode=="N02AB02",
+      codeine = atccode %in% c("N02AJ06","R05DA04"),
+      dihydrocodeine = atccode %in% c("N02AA08","N02AJ01"),
+      fentanyl = atccode=="N02AB03",
+      buprenorphine = atccode=="N02AE01",
+      tramadol = atccode %in% c("N02AX02","N02AJ13","N02AJ14"),
+      tapentadol = atccode=="N02AX06",
+      meptazinol = atccode=="N02AX05"
+    )
+  
+  df <- df %>%
+    mutate(
+      strongop = morphine | hydromorphone | oxycodone |
+        pethidine | fentanyl | buprenorphine |
+        tapentadol | tramadol,
+      strongop = ifelse(!opioid, NA, strongop)
+    )
+  
+  # =================================================================================================================================================================================
+  # Systemic NSAIDs
+  # =================================================================================================================================================================================
+  df <- df %>%
+    mutate(
+      sysnsaid = str_sub(atccode,1,4)=="M01A" | atccode=="N02AJ14",
+      coxib = str_sub(atccode,1,5)=="M01AH",
+      nsnsaid = sysnsaid & !coxib
+    )
+  
+  # =================================================================================================================================================================================
+  # Paracetamol
+  # =================================================================================================================================================================================
+  df <- df %>%
+    mutate(
+      paracetamol = atccode %in% c("N02BE01","N02BE51","N02AJ01","N02AJ06","N02AJ13"),
+      paraonly = atccode %in% c("N02BE01","N02BE51")
+    )
+  
+  # =================================================================================================================================================================================
+  # Strength extraction
+  # =================================================================================================================================================================================
+  df <- df %>%
+    mutate(strength = as.numeric(str_extract(medicationname, "\\d+\\.?\\d*(?= Mg)")))
+  
+  # Fentanyl mcg conversion
+  df <- df %>%
+    mutate(
+      strength = case_when(
+        str_detect(medicationname,"50 Mcg") ~ 0.05,
+        str_detect(medicationname,"100 Mcg") ~ 0.1,
+        TRUE ~ strength
+      )
+    )
+  
+  # =================================================================================================================================================================================
+  # DDD calculation
+  # =================================================================================================================================================================================
+  df <- df %>%
+    mutate(DDD = NA_real_)
+  
+  df <- df %>%
+    mutate(
+      DDD = case_when(
+        atccode=="N02BE01" ~ quantity*strength/3000,
+        atccode=="N02AX02" ~ quantity*strength/300,
+        atccode=="N02BF01" ~ quantity*strength/1800,
+        TRUE ~ DDD
+      )
+    )
+  
+  # =================================================================================================================================================================================
+  # Old OME calculation, new one below for codeine specifically
+  # =================================================================================================================================================================================
+  df <- df %>%
+    mutate(
+      ome = case_when(
+        (codeine == 1 | dihydrocodeine == 1) & !is.na(quantity) & !is.na(strength) ~ quantity * strength * 0.1,
+        hydromorphone == 1 & !is.na(quantity) & !is.na(strength) ~ quantity * strength * 5,
+        oxycodone == 1 & !is.na(quantity) & !is.na(strength) ~ quantity * strength * 1.5,
+        tramadol == 1 & !is.na(quantity) & !is.na(strength) ~ quantity * strength * 0.2,
+        morphine == 1 & !is.na(quantity) & !is.na(strength) ~ quantity * strength * 1,
+        TRUE ~ NA_real_
+      )
+    )
+  # =================================================================================================================================================================================
+  # Rolling 30-day OME (asrol equivalent)
+  # =================================================================================================================================================================================
+  setDT(df)
+  setorder(df, indID, dateofdispensing)
+  
+  
+  # =================================================================================================================================================================================
+  # Keep final analytic sample
+  # =================================================================================================================================================================================
+  df <- df %>%
+   filter(    year >= 2014, year <= 2022)
+  
+  #Ensure date is a real Date (dd/mm/yyyy)
+  df <- df %>%
+    mutate(
+      dateofdispensing = as.Date(dateofdispensing, format = "%d/%m/%Y"),
+      ome = as.numeric(ome)  # just in case it's character
+    )
+  # ================================================================================================================================================================================
+  # Hard coding codeine content to drug names
+  # =================================================================================================================================================================================
+  codeine_products <-  df %>%
+    filter(str_detect(atccode, "N02AJ0")) %>%
+    arrange(medicationname) 
+  
+  df <- df %>%
+    mutate(codeine_dose = case_when(
+      (str_detect(medicationname, "Co-Codamol") |
+         (str_detect(medicationname, "Kapake") & str_detect(medicationname, "Tabs 30")) |
+         str_detect(medicationname, "Kapake Tabs 30") |
+         str_detect(medicationname, "Solpadol") |
+         str_detect(medicationname, "Tylex")) ~ 30,
+      (str_detect(medicationname, "Solpadeine") |
+         str_detect(medicationname, "Maxilief")) ~ 8,
+      (str_detect(medicationname, "Kapake Tabs 15") |
+         str_detect(medicationname, "Codipar") ~ 15),
+      
+      TRUE ~ NA_real_
+    ))
+  
+  # =================================================================================================================================================================================
+  # Calculating OME's for codeine specifically
+  # =================================================================================================================================================================================
+  df <- df %>%
+    mutate(ome = ifelse(!is.na(codeine_dose), quantity * codeine_dose * 0.1, NA))
+  
+  monthly_ome_codeine <- df %>%
+    filter(!is.na(ome), !is.na(dateofdispensing)) %>%
+    mutate(month = floor_date(dateofdispensing, "month")) %>%
+    group_by(month) %>%
+    summarise(total_ome = sum(ome, na.rm = TRUE), 
+              total_rx = n(),
+              normrx = total_ome/total_rx)
+  # =================================================================================================================================================================================
+  # Grading codeine OME's as high or low
+  # =================================================================================================================================================================================
+  
+  df <- df %>%
+    mutate(
+      codeine_ranking = case_when(
+        codeine_dose <= 15 ~ "Low",
+        codeine_dose > 15 ~ "High",
+        TRUE ~ NA_character_
+      )
+    )
+  
+  lst[[yr]]<-df
+  
+}
+df <- do.call(rbind, lst)
+
+rm(lst, analgesic_ind, subset_dates, yearly_dfs, codeine_products)
+gc()
 
 # =================================================================================================================================================================================
 # Generating Objective 2 Table (05/03/26)
@@ -334,37 +397,12 @@ objective_two <- df %>%
     )
   )
 
-# =================================================================================================================================================================================
-# Graphing Codeine OME's per month
-# =================================================================================================================================================================================
-p6<- ggplot(monthly_ome_codeine, aes(x = month, y = normrx)) +
-  geom_line() +
-  labs(
-    title = "Total Codeine OME Over Time",
-    x = "Month",
-    y = "Total OME"
-  ) +
-  theme_minimal()
 
-print(p6)
 
-ome_over_time <- ggplot(monthly_ome_codeine, aes(x = month, y = total_ome)) +
-  geom_col(fill = "blue", width = 25) + # clean blue
-  geom_smooth(color = "red", linewidth = 1.2) + #can also use geom_line for a direct overlay#
-  scale_y_continuous(labels = comma) +       # remove scientific notation
-  labs(
-    title = "Average Codeine OME per Prescription Over Time",
-    x = "Month",
-    y = "Average OME per Prescription"
-  ) +
-  theme_minimal(base_size = 14) +
-  theme(
-    plot.title = element_text(face = "bold", size = 16),
-    axis.text.x = element_text(angle = 45, hjust = 1),
-    panel.grid.minor = element_blank(),
-    panel.grid.major.x = element_blank()
-  )
-print(ome_over_time)
+
+monthly_ome_codeine <-rbind(monthly_ome_codeine)
+
+
 
 # =================================================================================================================================================================================
 # Graphing Codeine OME's per month and subplotting based on HIGH or LOW dose preparations
@@ -376,25 +414,7 @@ monthly_total_ome_by_dose <- df %>%
   summarise(total_ome = sum(ome, na.rm = TRUE), .groups = "drop")
 
 
-ranking_graph <- ggplot(monthly_total_ome_by_dose,
-                        aes(x = month, y = total_ome, color = codeine_ranking, group = codeine_ranking)) +
-  geom_line(linewidth = 1.3) +
-  scale_color_manual(values = c("Low" = "blue", "High" = "red")) +
-  scale_y_continuous(labels = comma) +
-  labs(
-    title = "Total Codeine OME per Month: High vs Low Dose",
-    x = "Month",
-    y = "Total OME",
-    color = "Codeine Dose"
-  ) +
-  theme_minimal(base_size = 14) +
-  theme(
-    plot.title = element_text(face = "bold", size = 16),
-    axis.text.x = element_text(angle = 45, hjust = 1),
-    panel.grid.minor = element_blank(),
-    panel.grid.major.x = element_blank()
-  )
-print(ranking_graph)
+
 # =================================================================================================================================================================================
 # Graphing Codeine OME's by sex
 # =================================================================================================================================================================================
@@ -403,17 +423,7 @@ ome_by_sex <- df %>%
   group_by(sex, codeine_ranking) %>%
   summarise(avg_ome = mean(ome, na.rm = TRUE), .groups = "drop")
 
-ome_by_sex_plot <- ggplot(ome_by_sex, aes(x = sex, y = avg_ome, fill = codeine_ranking)) +
-  geom_col(position = "dodge", alpha = 0.8) +
-  labs(
-    title = "Average Codeine OME per Prescription by Sex and Dose",
-    x = "Sex",
-    y = "Average OME",
-    fill = "Codeine Dose"
-  ) +
-  theme_minimal(base_size = 14)
 
-print(ome_by_sex_plot)
 # =================================================================================================================================================================================
 # Graphing Codeine OME's by medication name
 # =================================================================================================================================================================================
@@ -423,16 +433,7 @@ ome_by_med <- df %>%
   summarise(avg_ome = mean(ome, na.rm = TRUE)) %>%
   arrange(desc(avg_ome))
 
-ome_by_product <- ggplot(ome_by_med, aes(x = reorder(medicationname, avg_ome), y = avg_ome)) +
-  geom_col(fill = "blue", alpha = 0.8) +
-  coord_flip() +
-  labs(
-    title = "Average Codeine OME per Prescription by Product",
-    x = "Medication",
-    y = "Average OME"
-  ) +
-  theme_minimal(base_size = 14)
-print(ome_by_product)
+
 # =================================================================================================================================================================================
 # Graphing Codeine OME's by GP practice
 # =================================================================================================================================================================================
@@ -450,21 +451,7 @@ ome_by_gp <- df %>%
   group_by(gpidentifiernumber, codeine_ranking) %>%
   summarise(avg_ome = mean(ome, na.rm = TRUE), .groups = "drop")
 
-ome_by_gp <- ggplot(ome_by_gp,
-                    aes(x = reorder(gpidentifiernumber, avg_ome),
-                        y = avg_ome,
-                        fill = codeine_ranking)) +
-  geom_col(position = "dodge", alpha = 0.8) +
-  coord_flip() +
-  labs(
-    title = "Average Codeine OME per Prescription by GP (Top 20)",
-    x = "GP Identifier",
-    y = "Average OME",
-    fill = "Codeine Dose"
-  ) +
-  theme_minimal(base_size = 14)
 
-print(ome_by_gp)
 # =================================================================================================================================================================================
 # Boxplot of total OME proportions by sex in high vs low dose
 # ================================================================================================================================================================================= 
@@ -475,44 +462,8 @@ ome_by_sex_dose <- df %>%
   group_by(codeine_ranking, sex) %>%
   summarise(total_ome = sum(ome, na.rm = TRUE), .groups = "drop")
 
-# Stacked bar chart
-ome_by_sex_barchart <- ggplot(ome_by_sex_dose, aes(x = codeine_ranking, y = total_ome, fill = sex)) +
-  geom_col(width = 0.6) +
-  scale_y_continuous(labels = comma) +
-  labs(
-    title = "Total Codeine OME by Dose Category and Sex in 2022",
-    x = "Codeine Dose Category",
-    y = "Total OME",
-    fill = "Sex"
-  ) +
-  theme_minimal(base_size = 14) +
-  theme(
-    plot.title = element_text(face = "bold", size = 16),
-    panel.grid.minor = element_blank(),
-    panel.grid.major.x = element_blank()
-  )
 
-print(ome_by_sex_barchart)
 
-#normalised
-# Stacked proportional bar chart
-proportional_sex_bar <- ggplot(ome_by_sex_dose,
-                               aes(x = codeine_ranking, y = total_ome, fill = sex)) +
-  geom_col(position = "fill", width = 0.6) +
-  labs(
-    title = "Proportion of Codeine OME by Dose Category and Sex in 2022",
-    x = "Codeine Dose Category",
-    y = "Proportion of Total OME",
-    fill = "Sex"
-  ) +
-  theme_minimal(base_size = 14) +
-  theme(
-    plot.title = element_text(face = "bold", size = 16),
-    panel.grid.minor = element_blank(),
-    panel.grid.major.x = element_blank()
-  )
-
-print(proportional_sex_bar)
 
 # =================================================================================================================================================================================
 # Boxplot and violin of total OME proportions by age in high vs low dose
@@ -522,30 +473,7 @@ boxplot_data <- df %>%
   filter(!is.na(ome), !is.na(age), !is.na(codeine_ranking), !is.na(sex)) %>% 
   filter(year(dateofdispensing) == 2022)
 
-violin_box_plot <- ggplot(boxplot_data,
-                          aes(x = codeine_ranking, y = age, fill = sex)) +
-  geom_violin(alpha = 0.4, trim = FALSE, scale = "width",
-              position = position_dodge(width = 1)) +
-  geom_boxplot(width = 0.2, outlier.alpha = 0.3,
-               position = position_dodge(width = 1)) +
-  labs(
-    title = "Distribution of Age by Codeine Dose and Sex in 2022",
-    x = "Codeine Dose",
-    y = "Age",
-    fill = "Sex"
-  ) +
-  scale_fill_manual(values = c(
-    "M" = "blue",
-    "F" = "red"
-  )) +
-  theme_minimal(base_size = 14) +
-  theme(
-    plot.title = element_text(face = "bold", size = 16),
-    axis.text.x = element_text(angle = 45, hjust = 1),
-    panel.grid.minor = element_blank()
-  )
 
-print(violin_box_plot)
 # =================================================================================================================================================================================
 # Creating new data frame to perform chi squared test on sex vs codeine consumption
 # ================================================================================================================================================================================= 
@@ -598,23 +526,7 @@ ome_by_ageband_codeine <- df %>%
   ) %>%
   mutate(age_band = factor(age_band, levels = levels(age_band)))
 
-ome_by_age_graph <- ggplot(
-  ome_by_ageband_codeine,
-  aes(x = age_band, y = avg_ome, fill = sex)
-) +
-  geom_col() +
-  facet_wrap(~sex, ncol = 1) +
-  scale_fill_manual(values = c("M" = "blue", "F" = "red")) +
-  labs(
-    title = "Average OME by Age Band (18–80 in 10-year brackets, 80–110 in 5-year brackets) — Codeine only",
-    x = "Age band (years)",
-    y = "Average OME",
-    fill = "Sex"
-  ) +
-  theme_minimal(base_size = 12) +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
-print(ome_by_age_graph)
 # =================================================================================================================================================================================
 # Graphing average Codeine OME by time for males and females
 # =================================================================================================================================================================================  
@@ -637,40 +549,7 @@ ome_over_time <- df %>%
     .groups = "drop"
   )
 
-p <- ggplot(
-  ome_over_time,
-  aes(
-    x = month,
-    y = avg_ome,
-    color = sex,
-    linetype = codeine_ranking,
-    group = interaction(sex, codeine_ranking)
-  )
-) +
-  geom_smooth(se = FALSE, linewidth = 1.2) +
-  scale_color_manual(
-    values = c("M" = "blue", "F" = "red"),
-    labels = c("M" = "Male", "F" = "Female"),
-    name = "Sex"
-  ) +
-  scale_linetype_manual(
-    values = c("High" = "solid", "Low" = "longdash"),
-    labels = c("High" = "High dose",
-               "Low" = "Low dose"),
-    name = "Dose level"
-  ) +
-  guides(
-    linetype = guide_legend(override.aes = list(linewidth = 2)),
-    color = guide_legend(override.aes = list(linewidth = 2))
-  ) +
-  labs(
-    title = "Average OME Over Time (Codeine Prescriptions Only)",
-    x = "Month",
-    y = "Average OME"
-  ) +
-  theme_minimal()
 
-print(p)
 
 # =================================================================================================================================================================================
 # Average quantity of tablets by sex and codeine dose
@@ -699,18 +578,7 @@ avg_quantity_sex_dose <- df %>%
     )
   )
 
-# Plot
-avg_quantity_sex_graph <- ggplot(avg_quantity_sex_dose, aes(x = sex, y = avg_quantity, fill = high_codeine_dose)) +
-  geom_col(position = position_dodge(width = 0.7), width = 0.6) +
-  labs(
-    title = "Average Quantity of Codeine Prescriptions by Sex and Dose (All Years)",
-    x = "Sex",
-    y = "Average Quantity",
-    fill = "Codeine Dose"
-  ) +
-  theme_minimal(base_size = 13)
 
-print(avg_quantity_sex_graph)
 
 # =================================================================================================================================================================================
 # Average quantity sex boxplot
@@ -798,19 +666,7 @@ avg_quantity_age_dose <- df %>%
     )
   )
 
-# Plot
-avg_quantity_age_graph <- ggplot(avg_quantity_age_dose, aes(x = age_group, y = avg_quantity, fill = high_codeine_dose)) +
-  geom_col(position = position_dodge(width = 0.7), width = 0.6) +
-  labs(
-    title = "Average Quantity of Codeine Prescriptions by Age Group and Dose",
-    x = "Age Group",
-    y = "Average Quantity",
-    fill = "Codeine Dose"
-  ) +
-  theme_minimal(base_size = 13) +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
-print(avg_quantity_age_graph)
 
 # =================================================================================================================================================================================
 # Quantity by age boxplot
@@ -861,17 +717,7 @@ boxplot_age_dose <- df %>%
     )
   )
 
-age_boxplot_dose <- ggplot(boxplot_age_dose, aes(x = age_group, y = quantity, fill = high_codeine_dose)) +
-  geom_boxplot(position = position_dodge(width = 0.8), outlier.alpha = 0.3) +
-  labs(
-    title = "Distribution of Codeine Quantity by Age Group and Dose",
-    x = "Age Group",
-    y = "Quantity",
-    fill = "Codeine Dose"
-  ) +
-  theme_minimal(base_size = 13) +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1))
-print(age_boxplot_dose)
+
 # =================================================================================================================================================================================
 # Hard-Coding oral NSAID's,topical NSAID's, sedatives, gabapentinoids and anti-migraines
 # =================================================================================================================================================================================  
@@ -984,8 +830,9 @@ ach1_codes <- c(
   "C07AB02","C07FX03","C07FB13","C07FB02","C07FX05","C07CB02","C07BB02","C07BB52",
   "R05DA05","C08CA05","C07FB03","C08GA01","C08CA55","H02AB07","A07EA03","C01BA01",
   "C01BA51","C01BA71","A02BA02","A02BA07","R03DA04","R03DB04","R03DA54","R03DA74",
-  "C03DB02","B01AA03"
+  "C03DB02","N06AX05","N05AX08","B01AA03"
 )
+
 
 ach2_codes <- c(
   "N04BB01","A03BA01","A03BA04","A03BB01","A03BB02",
@@ -1004,8 +851,10 @@ ach3_codes <- c(
   "N04AB02","M03BC01","M03BC51","G04BD04","N06AB05",
   "N05AB03","N04AA04","N05AA03","A03CA34","A04AD01",
   "A04AD51","N05CM05","N05AC02","G04BD07","N05AB06",
-  "N04AA01","N06AA06"
+  "N04AA01","N05AH03","N05AH03","R06AD02","N06AA12","N06AA06"
 )
+
+
 
 all_ach_codes <- c(ach1_codes, ach2_codes, ach3_codes)
 
@@ -1078,17 +927,7 @@ ome_by_LHO_area <- df %>%
   summarise(total_ome = sum(ome, na.rm = TRUE), .groups = "drop") %>%
   arrange(desc(total_ome))
 
-ome_by_LHO_area_plot <- ggplot(ome_by_LHO_area, aes(x = reorder(LHO_area, total_ome), y = total_ome)) +
-  geom_col(fill = "blue", alpha = 0.8) +
-  coord_flip() +
-  labs(
-    title = "Total OME by LHO_area (Codeine only)",
-    x = "LHO_area",
-    y = "Total Codeine OME"
-  ) +
-  theme_minimal(base_size = 14)
 
-print(ome_by_LHO_area_plot)
 
 # ================================================================================================================================================================================
 # OME by LHO_area proportional pi chart
@@ -1102,23 +941,7 @@ ome_by_LHO_area_pi <- df %>%
     label = paste0(round(prop_ome * 100, 1), "%")
   )
 
-pie_chart <- ggplot(ome_by_LHO_area_pi, aes(x = "", y = prop_ome, fill = LHO_area)) +
-  geom_col(width = 1, colour = "black", linewidth = 0.6) +
-  coord_polar(theta = "y") +
-  geom_text(
-    aes(label = label),
-    position = position_stack(vjust = 0.5),
-    color = "white",
-    size = 3
-  ) +
-  scale_fill_manual(values = rainbow(length(unique(ome_by_LHO_area_pi$LHO_area)))) +
-  labs(
-    title = "Proportion of Total OME by LHO area (Codeine only)",
-    fill = "LHO"
-  ) +
-  theme_void()
 
-print(pie_chart)
 
 # ================================================================================================================================================================================
 # Pie carts of most commonly prescribed otehr analgesics across high and low dose users fo codeine
@@ -1155,28 +978,7 @@ pie_data <- objective_two %>%
   ) %>%
   ungroup()
 
-pie_other_analgesics <- ggplot(pie_data, aes(x = "", y = prop, fill = analgesic_type)) +
-  geom_col(width = 1, colour = "white") +
-  coord_polar(theta = "y") +
-  geom_text(
-    aes(label = label),
-    position = position_stack(vjust = 0.5),
-    size = 4,
-    color = "white"
-  ) +
-  facet_wrap(~codeine_group) +
-  labs(
-    title = "Most Commonly Prescribed Other Analgesics by Codeine Dose Group",
-    fill = "Other Analgesic"
-  ) +
-  theme_void() +
-  theme(
-    plot.title = element_text(face = "bold", size = 14, hjust = 0.5),
-    strip.text = element_text(face = "bold", size = 12),
-    legend.position = "right"
-  )
 
-print(pie_other_analgesics)
 
 # ================================================================================================================================================================================
 # proportional bar chart for high and low dose codine user ACH burden
@@ -1196,18 +998,7 @@ ach_plot_data <- objective_two %>%
   ) %>%
   filter(!is.na(ach_burden))
 
-achb_porp <-ggplot(ach_plot_data, aes(x = codeine_group, fill = ach_burden)) +
-  geom_bar(position = "fill", width = 0.7) +
-  scale_y_continuous(labels = scales::percent) +
-  labs(
-    title = "Proportional ACH Burden in High- vs Low-Dose Codeine Users",
-    x = "Codeine dose group",
-    y = "Proportion of users",
-    fill = "ACH burden"
-  ) +
-  theme_minimal(base_size = 14)
 
-print(achb_porp)
 
 # ================================================================================================================================================================================
 # gp level trends
@@ -1240,25 +1031,7 @@ pie_high_codeine <- tibble(
     label = paste0(round(value * 100, 1), "%")
   )
 
-pie_one <- ggplot(pie_high_codeine, aes(x = "", y = value, fill = category)) +
-  geom_col(width = 1, colour = "white") +
-  coord_polar(theta = "y") +
-  geom_text(
-    aes(label = label),
-    position = position_stack(vjust = 0.5),
-    color = "white",
-    size = 5
-  ) +
-  labs(
-    title = "Average High-Dose Codeine as a Proportion of All Codeine Prescribing Across GPs",
-    fill = ""
-  ) +
-  theme_void() +
-  theme(
-    plot.title = element_text(face = "bold", size = 14, hjust = 0.5)
-  )
 
-print(pie_one)
 
 # ================================================================================================================================================================================
 # Pie chart 2: Any-dose codeine over all analgesics
@@ -1275,25 +1048,7 @@ pie_any_codeine <- tibble(
     label = paste0(round(value * 100, 1), "%")
   )
 
-pie_two <- ggplot(pie_any_codeine, aes(x = "", y = value, fill = category)) +
-  geom_col(width = 1, colour = "white") +
-  coord_polar(theta = "y") +
-  geom_text(
-    aes(label = label),
-    position = position_stack(vjust = 0.5),
-    color = "white",
-    size = 5
-  ) +
-  labs(
-    title = "Average Any-Dose Codeine as a Proportion of All Analgesic Prescribing Across GPs",
-    fill = ""
-  ) +
-  theme_void() +
-  theme(
-    plot.title = element_text(face = "bold", size = 14, hjust = 0.5)
-  )
 
-print(pie_two)
 
 # ================================================================================================================================================================================
 # Create objective_three
@@ -1472,9 +1227,12 @@ objective_three_annual <- objective_three_annual %>%
 # Merging Excel
 # ================================================================================================================================================================================
 # Read Excel exactly as it is
-here::i_am("SRS project/Data/age_sex_lho_eligibility_2017-2021.xlsx")
-merge_one_path <- here("SRS project/Data/age_sex_lho_eligibility_2017-2021.xlsx")
+#here::i_am("SRS project/Data/age_sex_lho_eligibility_2017-2021.xlsx")
+merge_one_path <- here("C:/Users/frankmoriarty/OneDrive - Royal College of Surgeons in Ireland/PCRS data/age_sex_lho_eligibility_2017-2021.xlsx")
 eligibility <- read_excel(merge_one_path)
+
+eligibility <- eligibility %>%
+  rename(Age_Classification = '"Age Classification"')
 
 # Create April-only lookup from the Excel
 eligibility_april_lookup <- eligibility %>%
@@ -1546,8 +1304,8 @@ objective_three_annual <- objective_three_annual %>%
 # =========================================================================================================
 # importing 2022 eligibility numbers
 # =========================================================================================================
-here::i_am("SRS project/Data/Monthly GMS Medical Cards - Number of Eligible Persons.csv")
-merge_one_path <- here("SRS project/Data/Monthly GMS Medical Cards - Number of Eligible Persons.csv")
+#here::i_am("SRS project/Data/Monthly GMS Medical Cards - Number of Eligible Persons.csv")
+merge_one_path <- here("C:/Users/frankmoriarty/OneDrive - Royal College of Surgeons in Ireland/PCRS data/Monthly GMS Medical Cards - Number of Eligible Persons.csv")
 gms_april_lookup <- read_csv(merge_one_path)
 # Rename columns
 gms_april_lookup <- gms_april_lookup %>%
@@ -1725,21 +1483,7 @@ obj1_dispensing_over_time <- codeine_all_years %>%
     .groups = "drop"
   )
 
-g1_dispensing_over_time <- ggplot(
-  obj1_dispensing_over_time,
-  aes(x = month, y = n_prescriptions, color = codeine_ranking)
-) +
-  geom_smooth(se = FALSE, linewidth = 1.2) +
-  scale_color_manual(values = c("Low" = "blue", "High" = "red")) +
-  labs(
-    title = "Monthly Number of Codeine Prescriptions Over Time",
-    x = "Month",
-    y = "Number of prescriptions",
-    color = "Dose group"
-  ) +
-  theme_minimal()
 
-print(g1_dispensing_over_time)
 
 # ---------------------------------------------------------------------------------------------------------
 # 2. Monthly unique people over time: High vs Low dose
@@ -1752,21 +1496,7 @@ obj1_people_over_time <- codeine_all_years %>%
     .groups = "drop"
   )
 
-g2_people_over_time <- ggplot(
-  obj1_people_over_time,
-  aes(x = month, y = n_people, color = codeine_ranking)
-) +
-  geom_smooth(se = FALSE, linewidth = 1.2) +
-  scale_color_manual(values = c("Low" = "blue", "High" = "red")) +
-  labs(
-    title = "Monthly Number of People Receiving Codeine Over Time",
-    x = "Month",
-    y = "Number of unique people",
-    color = "Dose group"
-  ) +
-  theme_minimal()
 
-print(g2_people_over_time)
 
 # ---------------------------------------------------------------------------------------------------------
 # 3. Monthly average quantity over time: High vs Low dose
@@ -1779,21 +1509,7 @@ obj1_quantity_over_time <- codeine_all_years %>%
     .groups = "drop"
   )
 
-g3_quantity_over_time <- ggplot(
-  obj1_quantity_over_time,
-  aes(x = month, y = avg_quantity, color = codeine_ranking)
-) +
-  geom_smooth(se = FALSE, linewidth = 1.2) +
-  scale_color_manual(values = c("Low" = "blue", "High" = "red")) +
-  labs(
-    title = "Average Quantity of Codeine Prescriptions Over Time",
-    x = "Month",
-    y = "Average quantity",
-    color = "Dose group"
-  ) +
-  theme_minimal()
 
-print(g3_quantity_over_time)
 
 # ---------------------------------------------------------------------------------------------------------
 # 4. Monthly total quantity over time: High vs Low dose
@@ -1806,22 +1522,7 @@ obj1_total_quantity_over_time <- codeine_all_years %>%
     .groups = "drop"
   )
 
-g4_total_quantity_over_time <- ggplot(
-  obj1_total_quantity_over_time,
-  aes(x = month, y = total_quantity, color = codeine_ranking)
-) +
-  geom_smooth(se = FALSE, linewidth = 1.2) +
-  scale_y_continuous(labels = comma) +
-  scale_color_manual(values = c("Low" = "blue", "High" = "red")) +
-  labs(
-    title = "Total Quantity of Codeine Dispensed Over Time",
-    x = "Month",
-    y = "Total quantity",
-    color = "Dose group"
-  ) +
-  theme_minimal()
 
-print(g4_total_quantity_over_time)
 
 # ---------------------------------------------------------------------------------------------------------
 # 5. Monthly average OME over time: High vs Low dose
@@ -1834,21 +1535,7 @@ obj1_ome_over_time <- codeine_all_years %>%
     .groups = "drop"
   )
 
-g5_ome_over_time <- ggplot(
-  obj1_ome_over_time,
-  aes(x = month, y = avg_ome, color = codeine_ranking)
-) +
-  geom_smooth(se = FALSE, linewidth = 1.2) +
-  scale_color_manual(values = c("Low" = "blue", "High" = "red")) +
-  labs(
-    title = "Average Codeine OME Over Time",
-    x = "Month",
-    y = "Average OME",
-    color = "Dose group"
-  ) +
-  theme_minimal()
 
-print(g5_ome_over_time)
 
 # ---------------------------------------------------------------------------------------------------------
 # 6. Monthly total OME over time: High vs Low dose
@@ -1861,22 +1548,7 @@ obj1_total_ome_over_time <- codeine_all_years %>%
     .groups = "drop"
   )
 
-g6_total_ome_over_time <- ggplot(
-  obj1_total_ome_over_time,
-  aes(x = month, y = total_ome, color = codeine_ranking)
-) +
-  geom_smooth(se = FALSE, linewidth = 1.2) +
-  scale_y_continuous(labels = comma) +
-  scale_color_manual(values = c("Low" = "blue", "High" = "red")) +
-  labs(
-    title = "Total Codeine OME Over Time",
-    x = "Month",
-    y = "Total OME",
-    color = "Dose group"
-  ) +
-  theme_minimal()
 
-print(g6_total_ome_over_time)
 
 # ---------------------------------------------------------------------------------------------------------
 # 7. Proportion high-dose over time
@@ -1889,20 +1561,7 @@ obj1_prop_high_over_time <- codeine_all_years %>%
     .groups = "drop"
   )
 
-g7_prop_high_over_time <- ggplot(
-  obj1_prop_high_over_time,
-  aes(x = month, y = prop_high)
-) +
-  geom_smooth(se = FALSE, color = "darkred", linewidth = 1.2) +
-  scale_y_continuous(labels = percent) +
-  labs(
-    title = "Proportion of Codeine Prescriptions That Are High Dose Over Time",
-    x = "Month",
-    y = "Proportion high dose"
-  ) +
-  theme_minimal()
 
-print(g7_prop_high_over_time)
 
 # ---------------------------------------------------------------------------------------------------------
 # 8. Average quantity by sex and dose
@@ -1915,39 +1574,9 @@ obj1_quantity_by_sex <- codeine_all_years %>%
     .groups = "drop"
   )
 
-g8_quantity_by_sex <- ggplot(
-  obj1_quantity_by_sex,
-  aes(x = sex_label, y = avg_quantity, fill = high_codeine_dose_f)
-) +
-  geom_col(position = position_dodge(width = 0.7), width = 0.6) +
-  labs(
-    title = "Average Quantity by Sex and Codeine Dose",
-    x = "Sex",
-    y = "Average quantity",
-    fill = "Dose group"
-  ) +
-  theme_minimal()
 
-print(g8_quantity_by_sex)
 
-# ---------------------------------------------------------------------------------------------------------
-# 9. Quantity distribution by sex and dose
-# ---------------------------------------------------------------------------------------------------------
-g9_quantity_boxplot_sex <- ggplot(
-  codeine_all_years %>%
-    filter(!is.na(sex_label), !is.na(quantity), sex_label %in% c("Male", "Female")),
-  aes(x = sex_label, y = quantity, fill = high_codeine_dose_f)
-) +
-  geom_boxplot(position = position_dodge(width = 0.8), outlier.alpha = 0.25) +
-  labs(
-    title = "Distribution of Quantity by Sex and Codeine Dose",
-    x = "Sex",
-    y = "Quantity",
-    fill = "Dose group"
-  ) +
-  theme_minimal()
 
-print(g9_quantity_boxplot_sex)
 
 # ---------------------------------------------------------------------------------------------------------
 # 10. Average quantity by age group and dose
@@ -1960,41 +1589,6 @@ obj1_quantity_by_age <- codeine_all_years %>%
     .groups = "drop"
   )
 
-g10_quantity_by_age <- ggplot(
-  obj1_quantity_by_age,
-  aes(x = age_group, y = avg_quantity, fill = high_codeine_dose_f)
-) +
-  geom_col(position = position_dodge(width = 0.7), width = 0.6) +
-  labs(
-    title = "Average Quantity by Age Group and Codeine Dose",
-    x = "Age group",
-    y = "Average quantity",
-    fill = "Dose group"
-  ) +
-  theme_minimal() +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1))
-
-print(g10_quantity_by_age)
-
-# ---------------------------------------------------------------------------------------------------------
-# 11. Quantity distribution by age group and dose
-# ---------------------------------------------------------------------------------------------------------
-g11_quantity_boxplot_age <- ggplot(
-  codeine_all_years %>%
-    filter(!is.na(age_group), !is.na(quantity)),
-  aes(x = age_group, y = quantity, fill = high_codeine_dose_f)
-) +
-  geom_boxplot(position = position_dodge(width = 0.8), outlier.alpha = 0.25) +
-  labs(
-    title = "Distribution of Quantity by Age Group and Codeine Dose",
-    x = "Age group",
-    y = "Quantity",
-    fill = "Dose group"
-  ) +
-  theme_minimal() +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1))
-
-print(g11_quantity_boxplot_age)
 
 # ---------------------------------------------------------------------------------------------------------
 # 12. Average OME by sex and dose
@@ -2007,39 +1601,8 @@ obj1_ome_by_sex <- codeine_all_years %>%
     .groups = "drop"
   )
 
-g12_ome_by_sex <- ggplot(
-  obj1_ome_by_sex,
-  aes(x = sex_label, y = avg_ome, fill = high_codeine_dose_f)
-) +
-  geom_col(position = position_dodge(width = 0.7), width = 0.6) +
-  labs(
-    title = "Average OME by Sex and Codeine Dose",
-    x = "Sex",
-    y = "Average OME",
-    fill = "Dose group"
-  ) +
-  theme_minimal()
 
-print(g12_ome_by_sex)
 
-# ---------------------------------------------------------------------------------------------------------
-# 13. OME distribution by sex and dose
-# ---------------------------------------------------------------------------------------------------------
-g13_ome_boxplot_sex <- ggplot(
-  codeine_all_years %>%
-    filter(!is.na(sex_label), !is.na(ome), sex_label %in% c("Male", "Female")),
-  aes(x = sex_label, y = ome, fill = high_codeine_dose_f)
-) +
-  geom_boxplot(position = position_dodge(width = 0.8), outlier.alpha = 0.25) +
-  labs(
-    title = "Distribution of OME by Sex and Codeine Dose",
-    x = "Sex",
-    y = "OME",
-    fill = "Dose group"
-  ) +
-  theme_minimal()
-
-print(g13_ome_boxplot_sex)
 
 # ---------------------------------------------------------------------------------------------------------
 # 14. Average OME by age group and dose
@@ -2052,41 +1615,7 @@ obj1_ome_by_age <- codeine_all_years %>%
     .groups = "drop"
   )
 
-g14_ome_by_age <- ggplot(
-  obj1_ome_by_age,
-  aes(x = age_group, y = avg_ome, fill = high_codeine_dose_f)
-) +
-  geom_col(position = position_dodge(width = 0.7), width = 0.6) +
-  labs(
-    title = "Average OME by Age Group and Codeine Dose",
-    x = "Age group",
-    y = "Average OME",
-    fill = "Dose group"
-  ) +
-  theme_minimal() +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
-print(g14_ome_by_age)
-
-# ---------------------------------------------------------------------------------------------------------
-# 15. OME distribution by age group and dose
-# ---------------------------------------------------------------------------------------------------------
-g15_ome_boxplot_age <- ggplot(
-  codeine_all_years %>%
-    filter(!is.na(age_group), !is.na(ome)),
-  aes(x = age_group, y = ome, fill = high_codeine_dose_f)
-) +
-  geom_boxplot(position = position_dodge(width = 0.8), outlier.alpha = 0.25) +
-  labs(
-    title = "Distribution of OME by Age Group and Codeine Dose",
-    x = "Age group",
-    y = "OME",
-    fill = "Dose group"
-  ) +
-  theme_minimal() +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1))
-
-print(g15_ome_boxplot_age)
 
 # ---------------------------------------------------------------------------------------------------------
 # 16. Proportion high vs low dose by sex
@@ -2098,22 +1627,7 @@ obj1_prop_by_sex <- codeine_all_years %>%
   mutate(prop = n / sum(n)) %>%
   ungroup()
 
-g16_prop_by_sex <- ggplot(
-  obj1_prop_by_sex,
-  aes(x = sex_label, y = prop, fill = codeine_ranking)
-) +
-  geom_col(position = "fill", width = 0.6) +
-  scale_y_continuous(labels = percent) +
-  scale_fill_manual(values = c("Low" = "blue", "High" = "red")) +
-  labs(
-    title = "Proportion of High- and Low-Dose Codeine by Sex",
-    x = "Sex",
-    y = "Proportion",
-    fill = "Dose group"
-  ) +
-  theme_minimal()
 
-print(g16_prop_by_sex)
 
 # ---------------------------------------------------------------------------------------------------------
 # 17. Proportion high vs low dose by age group
@@ -2125,23 +1639,7 @@ obj1_prop_by_age <- codeine_all_years %>%
   mutate(prop = n / sum(n)) %>%
   ungroup()
 
-g17_prop_by_age <- ggplot(
-  obj1_prop_by_age,
-  aes(x = age_group, y = prop, fill = codeine_ranking)
-) +
-  geom_col(position = "fill", width = 0.7) +
-  scale_y_continuous(labels = percent) +
-  scale_fill_manual(values = c("Low" = "blue", "High" = "red")) +
-  labs(
-    title = "Proportion of High- and Low-Dose Codeine by Age Group",
-    x = "Age group",
-    y = "Proportion",
-    fill = "Dose group"
-  ) +
-  theme_minimal() +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
-print(g17_prop_by_age)
 
 # =========================================================================================================
 # OBJECTIVE 2: 2022 ONLY
@@ -2165,120 +1663,7 @@ obj2_sex_dist <- obj2_users_2022 %>%
   mutate(prop = n / sum(n)) %>%
   ungroup()
 
-g18_sex_distribution_2022 <- ggplot(
-  obj2_sex_dist,
-  aes(x = high_codeine_dose_f, y = prop, fill = sex_label)
-) +
-  geom_col(position = "fill", width = 0.6) +
-  scale_y_continuous(labels = percent) +
-  labs(
-    title = "Sex Distribution by Codeine Dose Group in 2022",
-    x = "Dose group",
-    y = "Proportion",
-    fill = "Sex"
-  ) +
-  theme_minimal()
 
-print(g18_sex_distribution_2022)
-
-# ---------------------------------------------------------------------------------------------------------
-# 19. Age distribution by dose group (2022)
-# ---------------------------------------------------------------------------------------------------------
-g19_age_distribution_2022 <- ggplot(
-  obj2_users_2022 %>% filter(!is.na(age)),
-  aes(x = high_codeine_dose_f, y = age, fill = high_codeine_dose_f)
-) +
-  geom_boxplot(outlier.alpha = 0.25) +
-  labs(
-    title = "Age Distribution by Codeine Dose Group in 2022",
-    x = "Dose group",
-    y = "Age",
-    fill = "Dose group"
-  ) +
-  theme_minimal()
-
-print(g19_age_distribution_2022)
-
-# ---------------------------------------------------------------------------------------------------------
-# 20. Age distribution by dose group and sex (2022)
-# ---------------------------------------------------------------------------------------------------------
-g20_age_violin_2022 <- ggplot(
-  obj2_users_2022 %>% filter(!is.na(age), !is.na(sex_label), sex_label %in% c("Male", "Female")),
-  aes(x = high_codeine_dose_f, y = age, fill = sex_label)
-) +
-  geom_violin(alpha = 0.35, trim = FALSE, position = position_dodge(width = 0.9)) +
-  geom_boxplot(width = 0.2, outlier.alpha = 0.2, position = position_dodge(width = 0.9)) +
-  labs(
-    title = "Age Distribution by Dose Group and Sex in 2022",
-    x = "Dose group",
-    y = "Age",
-    fill = "Sex"
-  ) +
-  theme_minimal()
-
-print(g20_age_violin_2022)
-
-# ---------------------------------------------------------------------------------------------------------
-# 21. Age-group composition by dose group (2022)
-# ---------------------------------------------------------------------------------------------------------
-obj2_age_comp <- obj2_users_2022 %>%
-  filter(!is.na(age_group)) %>%
-  count(high_codeine_dose_f, age_group) %>%
-  group_by(high_codeine_dose_f) %>%
-  mutate(prop = n / sum(n)) %>%
-  ungroup()
-
-g21_age_group_composition_2022 <- ggplot(
-  obj2_age_comp,
-  aes(x = high_codeine_dose_f, y = prop, fill = age_group)
-) +
-  geom_col(position = "fill", width = 0.65) +
-  scale_y_continuous(labels = percent) +
-  labs(
-    title = "Age-Group Composition by Codeine Dose Group in 2022",
-    x = "Dose group",
-    y = "Proportion",
-    fill = "Age group"
-  ) +
-  theme_minimal()
-
-print(g21_age_group_composition_2022)
-
-# ---------------------------------------------------------------------------------------------------------
-# 22. Quantity distribution by dose group (2022)
-# ---------------------------------------------------------------------------------------------------------
-g22_quantity_boxplot_2022 <- ggplot(
-  codeine_2022 %>% filter(!is.na(quantity)),
-  aes(x = high_codeine_dose_f, y = quantity, fill = high_codeine_dose_f)
-) +
-  geom_boxplot(outlier.alpha = 0.25) +
-  labs(
-    title = "Quantity Distribution by Codeine Dose Group in 2022",
-    x = "Dose group",
-    y = "Quantity",
-    fill = "Dose group"
-  ) +
-  theme_minimal()
-
-print(g22_quantity_boxplot_2022)
-
-# ---------------------------------------------------------------------------------------------------------
-# 23. Codeine-specific OME distribution by dose group (2022)
-# ---------------------------------------------------------------------------------------------------------
-g23_codeine_ome_boxplot_2022 <- ggplot(
-  codeine_2022 %>% filter(!is.na(codeine_ome)),
-  aes(x = high_codeine_dose_f, y = codeine_ome, fill = high_codeine_dose_f)
-) +
-  geom_boxplot(outlier.alpha = 0.25) +
-  labs(
-    title = "Codeine OME Distribution by Dose Group in 2022",
-    x = "Dose group",
-    y = "Codeine OME",
-    fill = "Dose group"
-  ) +
-  theme_minimal()
-
-print(g23_codeine_ome_boxplot_2022)
 
 # ---------------------------------------------------------------------------------------------------------
 # 24. Mean co-prescribed medicine flags by dose group (2022)
@@ -2305,40 +1690,6 @@ obj2_comeds <- obj2_users_2022 %>%
     .groups = "drop"
   )
 
-g24_comed_bar_2022 <- ggplot(
-  obj2_comeds,
-  aes(x = fct_reorder(medicine_group, prop_present), y = prop_present, fill = high_codeine_dose_f)
-) +
-  geom_col(position = position_dodge(width = 0.7), width = 0.6) +
-  coord_flip() +
-  scale_y_continuous(labels = percent) +
-  labs(
-    title = "Co-Prescribed Medicine Groups by Codeine Dose Group in 2022",
-    x = "Medicine group",
-    y = "Proportion of users",
-    fill = "Dose group"
-  ) +
-  theme_minimal()
-
-print(g24_comed_bar_2022)
-
-# ---------------------------------------------------------------------------------------------------------
-# 25. Number of co-prescribed medicine groups per user (2022)
-# ---------------------------------------------------------------------------------------------------------
-g25_other_analgesic_total_2022 <- ggplot(
-  obj2_users_2022 %>% filter(!is.na(other_analgesic_total)),
-  aes(x = high_codeine_dose_f, y = other_analgesic_total, fill = high_codeine_dose_f)
-) +
-  geom_boxplot(outlier.alpha = 0.25) +
-  labs(
-    title = "Number of Co-Prescribed Medicine Groups by Codeine Dose Group in 2022",
-    x = "Dose group",
-    y = "Number of co-prescribed medicine groups",
-    fill = "Dose group"
-  ) +
-  theme_minimal()
-
-print(g25_other_analgesic_total_2022)
 
 # ---------------------------------------------------------------------------------------------------------
 # 26. Any co-prescribed medicine: yes/no by dose group (2022)
@@ -2350,21 +1701,7 @@ obj2_any_comed <- obj2_users_2022 %>%
   mutate(prop = n / sum(n)) %>%
   ungroup()
 
-g26_any_comed_2022 <- ggplot(
-  obj2_any_comed,
-  aes(x = high_codeine_dose_f, y = prop, fill = any_other_med)
-) +
-  geom_col(position = "fill", width = 0.6) +
-  scale_y_continuous(labels = percent) +
-  labs(
-    title = "Any Co-Prescribed Medicine by Codeine Dose Group in 2022",
-    x = "Dose group",
-    y = "Proportion",
-    fill = "Any co-prescribed medicine"
-  ) +
-  theme_minimal()
 
-print(g26_any_comed_2022)
 
 # ---------------------------------------------------------------------------------------------------------
 # 27. ACB burden category by dose group (2022)
@@ -2384,39 +1721,7 @@ obj2_acb <- obj2_users_2022 %>%
   mutate(prop = n / sum(n)) %>%
   ungroup()
 
-g27_acb_2022 <- ggplot(
-  obj2_acb,
-  aes(x = high_codeine_dose_f, y = prop, fill = acb_group)
-) +
-  geom_col(position = "fill", width = 0.6) +
-  scale_y_continuous(labels = percent) +
-  labs(
-    title = "Anticholinergic Burden by Codeine Dose Group in 2022",
-    x = "Dose group",
-    y = "Proportion",
-    fill = "ACB category"
-  ) +
-  theme_minimal()
 
-print(g27_acb_2022)
-
-# ---------------------------------------------------------------------------------------------------------
-# 28. Total ACB score distribution by dose group (2022)
-# ---------------------------------------------------------------------------------------------------------
-g28_acb_score_boxplot_2022 <- ggplot(
-  obj2_users_2022 %>% filter(!is.na(total_acb_score)),
-  aes(x = high_codeine_dose_f, y = total_acb_score, fill = high_codeine_dose_f)
-) +
-  geom_boxplot(outlier.alpha = 0.25) +
-  labs(
-    title = "Total ACB Score by Codeine Dose Group in 2022",
-    x = "Dose group",
-    y = "Total ACB score",
-    fill = "Dose group"
-  ) +
-  theme_minimal()
-
-print(g28_acb_score_boxplot_2022)
 
 # ---------------------------------------------------------------------------------------------------------
 # 29. LHO distribution by dose group (2022)
@@ -2428,22 +1733,7 @@ obj2_lho <- obj2_users_2022 %>%
   mutate(prop = n / sum(n)) %>%
   ungroup()
 
-g29_lho_distribution_2022 <- ggplot(
-  obj2_lho,
-  aes(x = fct_reorder(LHO_area, prop), y = prop, fill = high_codeine_dose_f)
-) +
-  geom_col(position = position_dodge(width = 0.7), width = 0.6) +
-  coord_flip() +
-  scale_y_continuous(labels = percent) +
-  labs(
-    title = "LHO Distribution by Codeine Dose Group in 2022",
-    x = "LHO area",
-    y = "Proportion of users",
-    fill = "Dose group"
-  ) +
-  theme_minimal()
 
-print(g29_lho_distribution_2022)
 
 # ---------------------------------------------------------------------------------------------------------
 # 30. CHO distribution by dose group (2022)
@@ -2455,21 +1745,7 @@ obj2_cho <- obj2_users_2022 %>%
   mutate(prop = n / sum(n)) %>%
   ungroup()
 
-g30_cho_distribution_2022 <- ggplot(
-  obj2_cho,
-  aes(x = CHO_area, y = prop, fill = high_codeine_dose_f)
-) +
-  geom_col(position = position_dodge(width = 0.7), width = 0.6) +
-  scale_y_continuous(labels = percent) +
-  labs(
-    title = "CHO Distribution by Codeine Dose Group in 2022",
-    x = "CHO area",
-    y = "Proportion of users",
-    fill = "Dose group"
-  ) +
-  theme_minimal()
 
-print(g30_cho_distribution_2022)
 
 
 # ---------------------------------------------------------------------------------------------------------
@@ -2516,6 +1792,11 @@ analysis <- objective_two %>%
       levels = c(0, 1),
       labels = c("No", "Yes")
     ),
+    Gabapentinoids = factor(
+      ifelse(is.na(Gabapentinoids), 0, Gabapentinoids),
+      levels = c(0, 1),
+      labels = c("No", "Yes")
+    ),
     Other_Opioids = factor(
       ifelse(is.na(Other_Opioids), 0, Other_Opioids),
       levels = c(0, 1),
@@ -2526,7 +1807,7 @@ analysis <- objective_two %>%
 model <- glm(
   high_codeine_dose ~ age_group + sex + ach_burden_med +
     Oral_NSAIDs + Topical_analgesics + Benzodiazepines_sedatives +
-    Anti_migraines + Other_Opioids,
+    Anti_migraines + Gabapentinoids + Other_Opioids,
   data = analysis,
   family = binomial()
 )
@@ -2556,6 +1837,7 @@ plot_data <- or_results %>%
       "Topical_analgesicsYes" = "Topical analgesics: Yes",
       "Benzodiazepines_sedativesYes" = "Benzodiazepines/sedatives: Yes",
       "Anti_migrainesYes" = "Anti-migraines: Yes",
+      "GabapentinoidsYes" = "Gabapentinoids: Yes",
       "Other_OpioidsYes" = "Other opioids: Yes"
     ),
     group = case_when(
@@ -2566,6 +1848,7 @@ plot_data <- or_results %>%
       term == "Topical analgesics: Yes" ~ "Topical analgesics",
       term == "Benzodiazepines/sedatives: Yes" ~ "Benzodiazepines/sedatives",
       term == "Anti-migraines: Yes" ~ "Anti-migraines",
+      term == "Gabapentinoids: Yes" ~ "Gabapentinoids",
       term == "Other opioids: Yes" ~ "Other opioids"
     ),
     term = factor(
@@ -2584,6 +1867,7 @@ plot_data <- or_results %>%
         "Topical analgesics: Yes",
         "Benzodiazepines/sedatives: Yes",
         "Anti-migraines: Yes",
+        "Gabapentinoids: Yes",
         "Other opioids: Yes"
       ))
     ),
@@ -2591,37 +1875,7 @@ plot_data <- or_results %>%
     ci_label = sprintf("%.2f–%.2f", conf.low, conf.high)
   )
 
-or_plot1 <- ggplot(plot_data, aes(x = estimate, y = term, colour = group)) +
-  geom_vline(xintercept = 1, linetype = "dashed", linewidth = 0.6, colour = "black") +
-  geom_errorbarh(aes(xmin = conf.low, xmax = conf.high), height = 0.2, linewidth = 1) +
-  geom_point(size = 3) +
-  annotation_logticks(sides = "b") +
-  scale_x_log10() +
-  scale_colour_manual(values = c(
-    "Sex" = "#1b9e77",
-    "Age" = "#7570b3",
-    "ACB" = "#d95f02",
-    "Oral NSAIDs" = "#66a61e",
-    "Topical analgesics" = "#e7298a",
-    "Benzodiazepines/sedatives" = "#e6ab02",
-    "Anti-migraines" = "#a6761d",
-    "Other opioids" = "#666666"
-  )) +
-  labs(
-    title = "Adjusted Odds of High-Dose Codeine Prescribing (2022)",
-    x = "Odds Ratio",
-    y = NULL,
-    colour = "Variable"
-  ) +
-  theme_bw(base_size = 12) +
-  theme(
-    plot.title = element_text(face = "bold"),
-    legend.position = "bottom",
-    panel.grid.minor = element_blank(),
-    panel.grid.major.y = element_blank()
-  )
 
-print(or_plot1)
 # ---------------------------------------------------------------------------------------------------------
 # Create yearly other analgesic flags
 # ---------------------------------------------------------------------------------------------------------
@@ -2730,7 +1984,7 @@ results_by_year <- analysis_all_years %>%
 # Prepare plotting data
 # ---------------------------------------------------------------------------------------------------------
 
-plot_data <- results_by_year %>%
+plot_data2 <- results_by_year %>%
   mutate(
     variable = recode(
       term,
@@ -2757,8 +2011,1080 @@ plot_data <- results_by_year %>%
 
 pd <- position_dodge(width = 0.5)
 
+
+
+#### Graphing 
+# =================================================================================================================================================================================
+# Graphing Codeine OME's per month
+# =================================================================================================================================================================================
+p6<- ggplot(monthly_ome_codeine, aes(x = month, y = normrx)) +
+  geom_line() +
+  labs(
+    title = "Total Codeine OME Over Time",
+    x = "Month",
+    y = "Total OME"
+  ) +
+  theme_minimal()
+
+print(p6)
+
+ome_over_time <- ggplot(monthly_ome_codeine, aes(x = month, y = total_ome)) +
+  geom_col(fill = "blue", width = 25) + # clean blue
+  geom_smooth(color = "red", linewidth = 1.2) + #can also use geom_line for a direct overlay#
+  scale_y_continuous(labels = comma) +       # remove scientific notation
+  labs(
+    title = "Average Codeine OME per Prescription Over Time",
+    x = "Month",
+    y = "Average OME per Prescription"
+  ) +
+  theme_minimal(base_size = 14) +
+  theme(
+    plot.title = element_text(face = "bold", size = 16),
+    axis.text.x = element_text(angle = 45, hjust = 1),
+    panel.grid.minor = element_blank(),
+    panel.grid.major.x = element_blank()
+  )
+print(ome_over_time)
+
+
+
+ranking_graph <- ggplot(monthly_total_ome_by_dose,
+                        aes(x = month, y = total_ome, color = codeine_ranking, group = codeine_ranking)) +
+  geom_line(linewidth = 1.3) +
+  scale_color_manual(values = c("Low" = "blue", "High" = "red")) +
+  scale_y_continuous(labels = comma) +
+  labs(
+    title = "Total Codeine OME per Month: High vs Low Dose",
+    x = "Month",
+    y = "Total OME",
+    color = "Codeine Dose"
+  ) +
+  theme_minimal(base_size = 14) +
+  theme(
+    plot.title = element_text(face = "bold", size = 16),
+    axis.text.x = element_text(angle = 45, hjust = 1),
+    panel.grid.minor = element_blank(),
+    panel.grid.major.x = element_blank()
+  )
+print(ranking_graph)
+
+
+ome_by_sex_plot <- ggplot(ome_by_sex, aes(x = sex, y = avg_ome, fill = codeine_ranking)) +
+  geom_col(position = "dodge", alpha = 0.8) +
+  labs(
+    title = "Average Codeine OME per Prescription by Sex and Dose",
+    x = "Sex",
+    y = "Average OME",
+    fill = "Codeine Dose"
+  ) +
+  theme_minimal(base_size = 14)
+
+print(ome_by_sex_plot)
+
+ome_by_product <- ggplot(ome_by_med, aes(x = reorder(medicationname, avg_ome), y = avg_ome)) +
+  geom_col(fill = "blue", alpha = 0.8) +
+  coord_flip() +
+  labs(
+    title = "Average Codeine OME per Prescription by Product",
+    x = "Medication",
+    y = "Average OME"
+  ) +
+  theme_minimal(base_size = 14)
+print(ome_by_product)
+
+ome_by_gp <- ggplot(ome_by_gp,
+                    aes(x = reorder(gpidentifiernumber, avg_ome),
+                        y = avg_ome,
+                        fill = codeine_ranking)) +
+  geom_col(position = "dodge", alpha = 0.8) +
+  coord_flip() +
+  labs(
+    title = "Average Codeine OME per Prescription by GP (Top 20)",
+    x = "GP Identifier",
+    y = "Average OME",
+    fill = "Codeine Dose"
+  ) +
+  theme_minimal(base_size = 14)
+
+print(ome_by_gp)
+
+
+# Stacked bar chart
+ome_by_sex_barchart <- ggplot(ome_by_sex_dose, aes(x = codeine_ranking, y = total_ome, fill = sex)) +
+  geom_col(width = 0.6) +
+  scale_y_continuous(labels = comma) +
+  labs(
+    title = "Total Codeine OME by Dose Category and Sex in 2022",
+    x = "Codeine Dose Category",
+    y = "Total OME",
+    fill = "Sex"
+  ) +
+  theme_minimal(base_size = 14) +
+  theme(
+    plot.title = element_text(face = "bold", size = 16),
+    panel.grid.minor = element_blank(),
+    panel.grid.major.x = element_blank()
+  )
+
+print(ome_by_sex_barchart)
+
+
+#normalised
+# Stacked proportional bar chart
+proportional_sex_bar <- ggplot(ome_by_sex_dose,
+                               aes(x = codeine_ranking, y = total_ome, fill = sex)) +
+  geom_col(position = "fill", width = 0.6) +
+  labs(
+    title = "Proportion of Codeine OME by Dose Category and Sex in 2022",
+    x = "Codeine Dose Category",
+    y = "Proportion of Total OME",
+    fill = "Sex"
+  ) +
+  theme_minimal(base_size = 14) +
+  theme(
+    plot.title = element_text(face = "bold", size = 16),
+    panel.grid.minor = element_blank(),
+    panel.grid.major.x = element_blank()
+  )
+
+print(proportional_sex_bar)
+
+violin_box_plot <- ggplot(boxplot_data,
+                          aes(x = codeine_ranking, y = age, fill = sex)) +
+  geom_violin(alpha = 0.4, trim = FALSE, scale = "width",
+              position = position_dodge(width = 1)) +
+  geom_boxplot(width = 0.2, outlier.alpha = 0.3,
+               position = position_dodge(width = 1)) +
+  labs(
+    title = "Distribution of Age by Codeine Dose and Sex in 2022",
+    x = "Codeine Dose",
+    y = "Age",
+    fill = "Sex"
+  ) +
+  scale_fill_manual(values = c(
+    "M" = "blue",
+    "F" = "red"
+  )) +
+  theme_minimal(base_size = 14) +
+  theme(
+    plot.title = element_text(face = "bold", size = 16),
+    axis.text.x = element_text(angle = 45, hjust = 1),
+    panel.grid.minor = element_blank()
+  )
+
+print(violin_box_plot)
+
+
+ome_by_age_graph <- ggplot(
+  ome_by_ageband_codeine,
+  aes(x = age_band, y = avg_ome, fill = sex)
+) +
+  geom_col() +
+  facet_wrap(~sex, ncol = 1) +
+  scale_fill_manual(values = c("M" = "blue", "F" = "red")) +
+  labs(
+    title = "Average OME by Age Band (18–80 in 10-year brackets, 80–110 in 5-year brackets) — Codeine only",
+    x = "Age band (years)",
+    y = "Average OME",
+    fill = "Sex"
+  ) +
+  theme_minimal(base_size = 12) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+print(ome_by_age_graph)
+
+# 
+# p <- ggplot(
+#   obj1_ome_over_time,
+#   aes(
+#     x = month,
+#     y = avg_ome,
+#     color = sex,
+#     linetype = codeine_ranking,
+#     group = interaction(sex, codeine_ranking)
+#   )
+# ) +
+#   geom_smooth(se = FALSE, linewidth = 1.2) +
+#   scale_color_manual(
+#     values = c("M" = "blue", "F" = "red"),
+#     labels = c("M" = "Male", "F" = "Female"),
+#     name = "Sex"
+#   ) +
+#   scale_linetype_manual(
+#     values = c("High" = "solid", "Low" = "longdash"),
+#     labels = c("High" = "High dose",
+#                "Low" = "Low dose"),
+#     name = "Dose level"
+#   ) +
+#   guides(
+#     linetype = guide_legend(override.aes = list(linewidth = 2)),
+#     color = guide_legend(override.aes = list(linewidth = 2))
+#   ) +
+#   labs(
+#     title = "Average OME Over Time (Codeine Prescriptions Only)",
+#     x = "Month",
+#     y = "Average OME"
+#   ) +
+#   theme_minimal()
+# 
+# print(p)
+
+
+# Plot
+avg_quantity_sex_graph <- ggplot(avg_quantity_sex_dose, aes(x = sex, y = avg_quantity, fill = high_codeine_dose)) +
+  geom_col(position = position_dodge(width = 0.7), width = 0.6) +
+  labs(
+    title = "Average Quantity of Codeine Prescriptions by Sex and Dose (All Years)",
+    x = "Sex",
+    y = "Average Quantity",
+    fill = "Codeine Dose"
+  ) +
+  theme_minimal(base_size = 13)
+
+print(avg_quantity_sex_graph)
+
+# Plot
+avg_quantity_age_graph <- ggplot(avg_quantity_age_dose, aes(x = age_group, y = avg_quantity, fill = high_codeine_dose)) +
+  geom_col(position = position_dodge(width = 0.7), width = 0.6) +
+  labs(
+    title = "Average Quantity of Codeine Prescriptions by Age Group and Dose",
+    x = "Age Group",
+    y = "Average Quantity",
+    fill = "Codeine Dose"
+  ) +
+  theme_minimal(base_size = 13) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+print(avg_quantity_age_graph)
+
+
+age_boxplot_dose <- ggplot(boxplot_age_dose, aes(x = age_group, y = quantity, fill = high_codeine_dose)) +
+  geom_boxplot(position = position_dodge(width = 0.8), outlier.alpha = 0.3) +
+  labs(
+    title = "Distribution of Codeine Quantity by Age Group and Dose",
+    x = "Age Group",
+    y = "Quantity",
+    fill = "Codeine Dose"
+  ) +
+  theme_minimal(base_size = 13) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+print(age_boxplot_dose)
+
+
+ome_by_LHO_area_plot <- ggplot(ome_by_LHO_area, aes(x = reorder(LHO_area, total_ome), y = total_ome)) +
+  geom_col(fill = "blue", alpha = 0.8) +
+  coord_flip() +
+  labs(
+    title = "Total OME by LHO_area (Codeine only)",
+    x = "LHO_area",
+    y = "Total Codeine OME"
+  ) +
+  theme_minimal(base_size = 14)
+
+print(ome_by_LHO_area_plot)
+
+
+pie_chart <- ggplot(ome_by_LHO_area_pi, aes(x = "", y = prop_ome, fill = LHO_area)) +
+  geom_col(width = 1, colour = "black", linewidth = 0.6) +
+  coord_polar(theta = "y") +
+  geom_text(
+    aes(label = label),
+    position = position_stack(vjust = 0.5),
+    color = "white",
+    size = 3
+  ) +
+  scale_fill_manual(values = rainbow(length(unique(ome_by_LHO_area_pi$LHO_area)))) +
+  labs(
+    title = "Proportion of Total OME by LHO area (Codeine only)",
+    fill = "LHO"
+  ) +
+  theme_void()
+
+print(pie_chart)
+
+pie_other_analgesics <- ggplot(pie_data, aes(x = "", y = prop, fill = analgesic_type)) +
+  geom_col(width = 1, colour = "white") +
+  coord_polar(theta = "y") +
+  geom_text(
+    aes(label = label),
+    position = position_stack(vjust = 0.5),
+    size = 4,
+    color = "white"
+  ) +
+  facet_wrap(~codeine_group) +
+  labs(
+    title = "Most Commonly Prescribed Other Analgesics by Codeine Dose Group",
+    fill = "Other Analgesic"
+  ) +
+  theme_void() +
+  theme(
+    plot.title = element_text(face = "bold", size = 14, hjust = 0.5),
+    strip.text = element_text(face = "bold", size = 12),
+    legend.position = "right"
+  )
+
+print(pie_other_analgesics)
+
+
+
+pie_other_analgesics <- ggplot(pie_data, aes(x = "", y = prop, fill = analgesic_type)) +
+  geom_col(width = 1, colour = "white") +
+  coord_polar(theta = "y") +
+  geom_text(
+    aes(label = label),
+    position = position_stack(vjust = 0.5),
+    size = 4,
+    color = "white"
+  ) +
+  facet_wrap(~codeine_group) +
+  labs(
+    title = "Most Commonly Prescribed Other Analgesics by Codeine Dose Group",
+    fill = "Other Analgesic"
+  ) +
+  theme_void() +
+  theme(
+    plot.title = element_text(face = "bold", size = 14, hjust = 0.5),
+    strip.text = element_text(face = "bold", size = 12),
+    legend.position = "right"
+  )
+
+print(pie_other_analgesics)
+
+achb_porp <-ggplot(ach_plot_data, aes(x = codeine_group, fill = ach_burden)) +
+  geom_bar(position = "fill", width = 0.7) +
+  scale_y_continuous(labels = scales::percent) +
+  labs(
+    title = "Proportional ACH Burden in High- vs Low-Dose Codeine Users",
+    x = "Codeine dose group",
+    y = "Proportion of users",
+    fill = "ACH burden"
+  ) +
+  theme_minimal(base_size = 14)
+
+print(achb_porp)
+
+pie_one <- ggplot(pie_high_codeine, aes(x = "", y = value, fill = category)) +
+  geom_col(width = 1, colour = "white") +
+  coord_polar(theta = "y") +
+  geom_text(
+    aes(label = label),
+    position = position_stack(vjust = 0.5),
+    color = "white",
+    size = 5
+  ) +
+  labs(
+    title = "Average High-Dose Codeine as a Proportion of All Codeine Prescribing Across GPs",
+    fill = ""
+  ) +
+  theme_void() +
+  theme(
+    plot.title = element_text(face = "bold", size = 14, hjust = 0.5)
+  )
+
+print(pie_one)
+
+
+pie_two <- ggplot(pie_any_codeine, aes(x = "", y = value, fill = category)) +
+  geom_col(width = 1, colour = "white") +
+  coord_polar(theta = "y") +
+  geom_text(
+    aes(label = label),
+    position = position_stack(vjust = 0.5),
+    color = "white",
+    size = 5
+  ) +
+  labs(
+    title = "Average Any-Dose Codeine as a Proportion of All Analgesic Prescribing Across GPs",
+    fill = ""
+  ) +
+  theme_void() +
+  theme(
+    plot.title = element_text(face = "bold", size = 14, hjust = 0.5)
+  )
+
+print(pie_two)
+
+
+g1_dispensing_over_time <- ggplot(
+  obj1_dispensing_over_time,
+  aes(x = month, y = n_prescriptions, color = codeine_ranking)
+) +
+  geom_smooth(se = FALSE, linewidth = 1.2) +
+  scale_color_manual(values = c("Low" = "blue", "High" = "red")) +
+  labs(
+    title = "Monthly Number of Codeine Prescriptions Over Time",
+    x = "Month",
+    y = "Number of prescriptions",
+    color = "Dose group"
+  ) +  
+  geom_line(alpha=0.3, linewidth = 1) +
+  scale_color_manual(values = c("Low" = "blue", "High" = "red")) +
+  labs(
+    title = "Monthly Number of Codeine Prescriptions Over Time",
+    x = "Month",
+    y = "Number of prescriptions",
+    color = "Dose group"
+  ) +  
+  coord_cartesian(ylim=c(0, 50000))+
+  theme_minimal()
+
+print(g1_dispensing_over_time)
+
+g2_people_over_time <- ggplot(
+  obj1_people_over_time,
+  aes(x = month, y = n_people, color = codeine_ranking)
+) +
+  geom_smooth(se = FALSE, linewidth = 1.2) +
+  scale_color_manual(values = c("Low" = "blue", "High" = "red")) +
+  labs(
+    title = "Monthly Number of People Receiving Codeine Over Time",
+    x = "Month",
+    y = "Number of unique people",
+    color = "Dose group"
+  ) +
+  geom_line(alpha=0.3, linewidth = 1) +
+  scale_color_manual(values = c("Low" = "blue", "High" = "red")) +
+  labs(
+    title = "Monthly Number of People Receiving Codeine Over Time",
+    x = "Month",
+    y = "Number of unique people",
+    color = "Dose group"
+  ) +
+  coord_cartesian(ylim=c(0, 45000))+
+  theme_minimal()
+
+print(g2_people_over_time)
+
+g3_quantity_over_time <- ggplot(
+  obj1_quantity_over_time,
+  aes(x = month, y = avg_quantity, color = codeine_ranking)
+) +
+  geom_smooth(se = FALSE, linewidth = 1.2) +
+  scale_color_manual(values = c("Low" = "blue", "High" = "red")) +
+  labs(
+    title = "Average Quantity of Codeine Prescriptions Over Time",
+    x = "Month",
+    y = "Average quantity",
+    color = "Dose group"
+  ) +
+  geom_line(alpha = 0.3, linewidth = 1) +
+  scale_color_manual(values = c("Low" = "blue", "High" = "red")) +
+  labs(
+    title = "Average Quantity of Codeine Prescriptions Over Time",
+    x = "Month",
+    y = "Average quantity",
+    color = "Dose group"
+  ) +
+  coord_cartesian(ylim=c(0, 90))+
+  theme_minimal()
+
+print(g3_quantity_over_time)
+
+
+g4_total_quantity_over_time <- ggplot(
+  obj1_total_quantity_over_time,
+  aes(x = month, y = total_quantity, color = codeine_ranking)
+) +
+  geom_smooth(se = FALSE, linewidth = 1.2) +
+  scale_y_continuous(labels = comma) +
+  scale_color_manual(values = c("Low" = "blue", "High" = "red")) +
+  labs(
+    title = "Total Quantity of Codeine Dispensed Over Time",
+    x = "Month",
+    y = "Total quantity",
+    color = "Dose group"
+  ) +
+  geom_line(alpha=0.3, linewidth = 1) +
+  scale_y_continuous(labels = comma) +
+  scale_color_manual(values = c("Low" = "blue", "High" = "red")) +
+  labs(
+    title = "Total Quantity of Codeine Dispensed Over Time",
+    x = "Month",
+    y = "Total quantity",
+    color = "Dose group"
+  ) +
+  coord_cartesian(ylim=c(0, 4000000))+
+  theme_minimal()
+
+print(g4_total_quantity_over_time)
+
+g5_ome_over_time <- ggplot(
+  obj1_ome_over_time,
+  aes(x = month, y = avg_ome, color = codeine_ranking)
+) +
+  geom_smooth(se = FALSE, linewidth = 1.2) +
+  scale_color_manual(values = c("Low" = "blue", "High" = "red")) +
+  labs(
+    title = "Average Codeine OME Over Time",
+    x = "Month",
+    y = "Average OME",
+    color = "Dose group"
+  ) +
+  geom_line(alpha=0.3, linewidth = 1) +
+  scale_color_manual(values = c("Low" = "blue", "High" = "red")) +
+  labs(
+    title = "Average Codeine OME Over Time",
+    x = "Month",
+    y = "Average OME",
+    color = "Dose group"
+  ) +
+  coord_cartesian(ylim=c(0, 250))+
+  theme_minimal()
+
+print(g5_ome_over_time)
+
+g6_total_ome_over_time <- ggplot(
+  obj1_total_ome_over_time,
+  aes(x = month, y = total_ome, color = codeine_ranking)
+) +
+  geom_smooth(se = FALSE, linewidth = 1.2) +
+  scale_y_continuous(labels = comma) +
+  scale_color_manual(values = c("Low" = "blue", "High" = "red")) +
+  labs(
+    title = "Total Codeine OME Over Time",
+    x = "Month",
+    y = "Total OME",
+    color = "Dose group"
+  ) + 
+  geom_line(alpha=0.3, linewidth = 1) +
+  scale_y_continuous(labels = comma) +
+  scale_color_manual(values = c("Low" = "blue", "High" = "red")) +
+  labs(
+    title = "Total Codeine OME Over Time",
+    x = "Month",
+    y = "Total OME",
+    color = "Dose group"
+  ) + 
+  coord_cartesian(ylim=c(0, 8000000))+
+  theme_minimal()
+
+print(g6_total_ome_over_time)
+
+g6_total_ome_over_time <- ggplot(
+  obj1_total_ome_over_time,
+  aes(x = month, y = total_ome, color = codeine_ranking)
+) +
+  geom_smooth(se = FALSE, linewidth = 1.2) +
+  scale_y_continuous(labels = comma) +
+  scale_color_manual(values = c("Low" = "blue", "High" = "red")) +
+  labs(
+    title = "Total Codeine OME Over Time",
+    x = "Month",
+    y = "Total OME",
+    color = "Dose group"
+  ) +
+  theme_minimal()
+
+print(g6_total_ome_over_time)
+
+g7_prop_high_over_time <- ggplot(
+  obj1_prop_high_over_time,
+  aes(x = month, y = prop_high)
+) +
+  geom_smooth(se = FALSE, color = "darkred", linewidth = 1.2) +
+  scale_y_continuous(labels = percent) +
+  labs(
+    title = "Proportion of Codeine Prescriptions That Are High Dose Over Time",
+    x = "Month",
+    y = "Proportion high dose"
+  ) +
+  geom_line(color = "darkred",alpha=0.4, linewidth = 1) +
+  scale_y_continuous(labels = percent) +
+  labs(
+    title = "Proportion of Codeine Prescriptions That Are High Dose Over Time",
+    x = "Month",
+    y = "Proportion high dose"
+  ) +
+  coord_cartesian(ylim=c(0, 0.48))+
+  theme_minimal()
+
+print(g7_prop_high_over_time)
+
+g8_quantity_by_sex <- ggplot(
+  obj1_quantity_by_sex,
+  aes(x = sex_label, y = avg_quantity, fill = high_codeine_dose_f)
+) +
+  geom_col(position = position_dodge(width = 0.7), width = 0.6) +
+  labs(
+    title = "Average Quantity by Sex and Codeine Dose",
+    x = "Sex",
+    y = "Average quantity",
+    fill = "Dose group"
+  ) +
+  theme_minimal()
+
+print(g8_quantity_by_sex)
+
+# ---------------------------------------------------------------------------------------------------------
+# 9. Quantity distribution by sex and dose
+# ---------------------------------------------------------------------------------------------------------
+g9_quantity_boxplot_sex <- ggplot(
+  codeine_all_years %>%
+    filter(!is.na(sex_label), !is.na(quantity), sex_label %in% c("Male", "Female")),
+  aes(x = sex_label, y = quantity, fill = high_codeine_dose_f)
+) +
+  geom_boxplot(position = position_dodge(width = 0.8), outlier.alpha = 0.25) +
+  labs(
+    title = "Distribution of Quantity by Sex and Codeine Dose",
+    x = "Sex",
+    y = "Quantity",
+    fill = "Dose group"
+  ) +
+  theme_minimal()
+
+print(g9_quantity_boxplot_sex)
+
+g10_quantity_by_age <- ggplot(
+  obj1_quantity_by_age,
+  aes(x = age_group, y = avg_quantity, fill = high_codeine_dose_f)
+) +
+  geom_col(position = position_dodge(width = 0.7), width = 0.6) +
+  labs(
+    title = "Average Quantity by Age Group and Codeine Dose",
+    x = "Age group",
+    y = "Average quantity",
+    fill = "Dose group"
+  ) +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+print(g10_quantity_by_age)
+
+g10_quantity_by_age <- ggplot(
+  obj1_quantity_by_age,
+  aes(x = age_group, y = avg_quantity, fill = high_codeine_dose_f)
+) +
+  geom_col(position = position_dodge(width = 0.7), width = 0.6) +
+  labs(
+    title = "Average Quantity by Age Group and Codeine Dose",
+    x = "Age group",
+    y = "Average quantity",
+    fill = "Dose group"
+  ) +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+print(g10_quantity_by_age)
+
+g10_quantity_by_age <- ggplot(
+  obj1_quantity_by_age,
+  aes(x = age_group, y = avg_quantity, fill = high_codeine_dose_f)
+) +
+  geom_col(position = position_dodge(width = 0.7), width = 0.6) +
+  labs(
+    title = "Average Quantity by Age Group and Codeine Dose",
+    x = "Age group",
+    y = "Average quantity",
+    fill = "Dose group"
+  ) +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+print(g10_quantity_by_age)
+
+# ---------------------------------------------------------------------------------------------------------
+# 11. Quantity distribution by age group and dose
+# ---------------------------------------------------------------------------------------------------------
+g11_quantity_boxplot_age <- ggplot(
+  codeine_all_years %>%
+    filter(!is.na(age_group), !is.na(quantity)),
+  aes(x = age_group, y = quantity, fill = high_codeine_dose_f)
+) +
+  geom_boxplot(position = position_dodge(width = 0.8), outlier.alpha = 0.25) +
+  labs(
+    title = "Distribution of Quantity by Age Group and Codeine Dose",
+    x = "Age group",
+    y = "Quantity",
+    fill = "Dose group"
+  ) +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+print(g11_quantity_boxplot_age)
+
+
+g12_ome_by_sex <- ggplot(
+  obj1_ome_by_sex,
+  aes(x = sex_label, y = avg_ome, fill = high_codeine_dose_f)
+) +
+  geom_col(position = position_dodge(width = 0.7), width = 0.6) +
+  labs(
+    title = "Average OME by Sex and Codeine Dose",
+    x = "Sex",
+    y = "Average OME",
+    fill = "Dose group"
+  ) +
+  theme_minimal()
+
+print(g12_ome_by_sex)
+
+# ---------------------------------------------------------------------------------------------------------
+# 13. OME distribution by sex and dose
+# ---------------------------------------------------------------------------------------------------------
+g13_ome_boxplot_sex <- ggplot(
+  codeine_all_years %>%
+    filter(!is.na(sex_label), !is.na(ome), sex_label %in% c("Male", "Female")),
+  aes(x = sex_label, y = ome, fill = high_codeine_dose_f)
+) +
+  geom_boxplot(position = position_dodge(width = 0.8), outlier.alpha = 0.25) +
+  labs(
+    title = "Distribution of OME by Sex and Codeine Dose",
+    x = "Sex",
+    y = "OME",
+    fill = "Dose group"
+  ) +
+  theme_minimal()
+
+print(g13_ome_boxplot_sex)
+
+
+g14_ome_by_age <- ggplot(
+  obj1_ome_by_age,
+  aes(x = age_group, y = avg_ome, fill = high_codeine_dose_f)
+) +
+  geom_col(position = position_dodge(width = 0.7), width = 0.6) +
+  labs(
+    title = "Average OME by Age Group and Codeine Dose",
+    x = "Age group",
+    y = "Average OME",
+    fill = "Dose group"
+  ) +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+print(g14_ome_by_age)
+
+# ---------------------------------------------------------------------------------------------------------
+# 15. OME distribution by age group and dose
+# ---------------------------------------------------------------------------------------------------------
+g15_ome_boxplot_age <- ggplot(
+  codeine_all_years %>%
+    filter(!is.na(age_group), !is.na(ome)),
+  aes(x = age_group, y = ome, fill = high_codeine_dose_f)
+) +
+  geom_boxplot(position = position_dodge(width = 0.8), outlier.alpha = 0.25) +
+  labs(
+    title = "Distribution of OME by Age Group and Codeine Dose",
+    x = "Age group",
+    y = "OME",
+    fill = "Dose group"
+  ) +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+print(g15_ome_boxplot_age)
+
+g16_prop_by_sex <- ggplot(
+  obj1_prop_by_sex,
+  aes(x = sex_label, y = prop, fill = codeine_ranking)
+) +
+  geom_col(position = "fill", width = 0.6) +
+  scale_y_continuous(labels = percent) +
+  scale_fill_manual(values = c("Low" = "blue", "High" = "red")) +
+  labs(
+    title = "Proportion of High- and Low-Dose Codeine by Sex",
+    x = "Sex",
+    y = "Proportion",
+    fill = "Dose group"
+  ) +
+  theme_minimal()
+
+print(g16_prop_by_sex)
+
+
+g17_prop_by_age <- ggplot(
+  obj1_prop_by_age,
+  aes(x = age_group, y = prop, fill = codeine_ranking)
+) +
+  geom_col(position = "fill", width = 0.7) +
+  scale_y_continuous(labels = percent) +
+  scale_fill_manual(values = c("Low" = "blue", "High" = "red")) +
+  labs(
+    title = "Proportion of High- and Low-Dose Codeine by Age Group",
+    x = "Age group",
+    y = "Proportion",
+    fill = "Dose group"
+  ) +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+print(g17_prop_by_age)
+
+g18_sex_distribution_2022 <- ggplot(
+  obj2_sex_dist,
+  aes(x = high_codeine_dose_f, y = prop, fill = sex_label)
+) +
+  geom_col(position = "fill", width = 0.6) +
+  scale_y_continuous(labels = percent) +
+  labs(
+    title = "Sex Distribution by Codeine Dose Group in 2022",
+    x = "Dose group",
+    y = "Proportion",
+    fill = "Sex"
+  ) +
+  theme_minimal()
+
+print(g18_sex_distribution_2022)
+
+
+# ---------------------------------------------------------------------------------------------------------
+# 19. Age distribution by dose group (2022)
+# ---------------------------------------------------------------------------------------------------------
+g19_age_distribution_2022 <- ggplot(
+  obj2_users_2022 %>% filter(!is.na(age)),
+  aes(x = high_codeine_dose_f, y = age, fill = high_codeine_dose_f)
+) +
+  geom_boxplot(outlier.alpha = 0.25) +
+  labs(
+    title = "Age Distribution by Codeine Dose Group in 2022",
+    x = "Dose group",
+    y = "Age",
+    fill = "Dose group"
+  ) +
+  theme_minimal()
+
+print(g19_age_distribution_2022)
+
+# ---------------------------------------------------------------------------------------------------------
+# 20. Age distribution by dose group and sex (2022)
+# ---------------------------------------------------------------------------------------------------------
+g20_age_violin_2022 <- ggplot(
+  obj2_users_2022 %>% filter(!is.na(age), !is.na(sex_label), sex_label %in% c("Male", "Female")),
+  aes(x = high_codeine_dose_f, y = age, fill = sex_label)
+) +
+  geom_violin(alpha = 0.35, trim = FALSE, position = position_dodge(width = 0.9)) +
+  geom_boxplot(width = 0.2, outlier.alpha = 0.2, position = position_dodge(width = 0.9)) +
+  labs(
+    title = "Age Distribution by Dose Group and Sex in 2022",
+    x = "Dose group",
+    y = "Age",
+    fill = "Sex"
+  ) +
+  theme_minimal()
+
+print(g20_age_violin_2022)
+
+
+
+# ---------------------------------------------------------------------------------------------------------
+# 21. Age-group composition by dose group (2022)
+# ---------------------------------------------------------------------------------------------------------
+obj2_age_comp <- obj2_users_2022 %>%
+  filter(!is.na(age_group)) %>%
+  count(high_codeine_dose_f, age_group) %>%
+  group_by(high_codeine_dose_f) %>%
+  mutate(prop = n / sum(n)) %>%
+  ungroup()
+
+g21_age_group_composition_2022 <- ggplot(
+  obj2_age_comp,
+  aes(x = high_codeine_dose_f, y = prop, fill = age_group)
+) +
+  geom_col(position = "fill", width = 0.65) +
+  scale_y_continuous(labels = percent) +
+  labs(
+    title = "Age-Group Composition by Codeine Dose Group in 2022",
+    x = "Dose group",
+    y = "Proportion",
+    fill = "Age group"
+  ) +
+  theme_minimal()
+
+print(g21_age_group_composition_2022)
+
+# ---------------------------------------------------------------------------------------------------------
+# 22. Quantity distribution by dose group (2022)
+# ---------------------------------------------------------------------------------------------------------
+g22_quantity_boxplot_2022 <- ggplot(
+  codeine_2022 %>% filter(!is.na(quantity)),
+  aes(x = high_codeine_dose_f, y = quantity, fill = high_codeine_dose_f)
+) +
+  geom_boxplot(outlier.alpha = 0.25) +
+  labs(
+    title = "Quantity Distribution by Codeine Dose Group in 2022",
+    x = "Dose group",
+    y = "Quantity",
+    fill = "Dose group"
+  ) +
+  theme_minimal()
+
+print(g22_quantity_boxplot_2022)
+
+# ---------------------------------------------------------------------------------------------------------
+# 23. Codeine-specific OME distribution by dose group (2022)
+# ---------------------------------------------------------------------------------------------------------
+g23_codeine_ome_boxplot_2022 <- ggplot(
+  codeine_2022 %>% filter(!is.na(codeine_ome)),
+  aes(x = high_codeine_dose_f, y = codeine_ome, fill = high_codeine_dose_f)
+) +
+  geom_boxplot(outlier.alpha = 0.25) +
+  labs(
+    title = "Codeine OME Distribution by Dose Group in 2022",
+    x = "Dose group",
+    y = "Codeine OME",
+    fill = "Dose group"
+  ) +
+  theme_minimal()
+
+print(g23_codeine_ome_boxplot_2022)
+
+
+g24_comed_bar_2022 <- ggplot(
+  obj2_comeds,
+  aes(x = fct_reorder(medicine_group, prop_present), y = prop_present, fill = high_codeine_dose_f)
+) +
+  geom_col(position = position_dodge(width = 0.7), width = 0.6) +
+  coord_flip() +
+  scale_y_continuous(labels = percent) +
+  labs(
+    title = "Co-Prescribed Medicine Groups by Codeine Dose Group in 2022",
+    x = "Medicine group",
+    y = "Proportion of users",
+    fill = "Dose group"
+  ) +
+  theme_minimal()
+
+print(g24_comed_bar_2022)
+
+# ---------------------------------------------------------------------------------------------------------
+# 25. Number of co-prescribed medicine groups per user (2022)
+# ---------------------------------------------------------------------------------------------------------
+g25_other_analgesic_total_2022 <- ggplot(
+  obj2_users_2022 %>% filter(!is.na(other_analgesic_total)),
+  aes(x = high_codeine_dose_f, y = other_analgesic_total, fill = high_codeine_dose_f)
+) +
+  geom_boxplot(outlier.alpha = 0.25) +
+  labs(
+    title = "Number of Co-Prescribed Medicine Groups by Codeine Dose Group in 2022",
+    x = "Dose group",
+    y = "Number of co-prescribed medicine groups",
+    fill = "Dose group"
+  ) +
+  theme_minimal()
+
+print(g25_other_analgesic_total_2022)
+
+g26_any_comed_2022 <- ggplot(
+  obj2_any_comed,
+  aes(x = high_codeine_dose_f, y = prop, fill = any_other_med)
+) +
+  geom_col(position = "fill", width = 0.6) +
+  scale_y_continuous(labels = percent) +
+  labs(
+    title = "Any Co-Prescribed Medicine by Codeine Dose Group in 2022",
+    x = "Dose group",
+    y = "Proportion",
+    fill = "Any co-prescribed medicine"
+  ) +
+  theme_minimal()
+
+print(g26_any_comed_2022)
+
+g27_acb_2022 <- ggplot(
+  obj2_acb,
+  aes(x = high_codeine_dose_f, y = prop, fill = acb_group)
+) +
+  geom_col(position = "fill", width = 0.6) +
+  scale_y_continuous(labels = percent) +
+  labs(
+    title = "Anticholinergic Burden by Codeine Dose Group in 2022",
+    x = "Dose group",
+    y = "Proportion",
+    fill = "ACB category"
+  ) +
+  theme_minimal()
+
+print(g27_acb_2022)
+
+# ---------------------------------------------------------------------------------------------------------
+# 28. Total ACB score distribution by dose group (2022)
+# ---------------------------------------------------------------------------------------------------------
+g28_acb_score_boxplot_2022 <- ggplot(
+  obj2_users_2022 %>% filter(!is.na(total_acb_score)),
+  aes(x = high_codeine_dose_f, y = total_acb_score, fill = high_codeine_dose_f)
+) +
+  geom_boxplot(outlier.alpha = 0.25) +
+  labs(
+    title = "Total ACB Score by Codeine Dose Group in 2022",
+    x = "Dose group",
+    y = "Total ACB score",
+    fill = "Dose group"
+  ) +
+  theme_minimal()
+
+print(g28_acb_score_boxplot_2022)
+
+g29_lho_distribution_2022 <- ggplot(
+  obj2_lho,
+  aes(x = fct_reorder(LHO_area, prop), y = prop, fill = high_codeine_dose_f)
+) +
+  geom_col(position = position_dodge(width = 0.7), width = 0.6) +
+  coord_flip() +
+  scale_y_continuous(labels = percent) +
+  labs(
+    title = "LHO Distribution by Codeine Dose Group in 2022",
+    x = "LHO area",
+    y = "Proportion of users",
+    fill = "Dose group"
+  ) +
+  theme_minimal()
+
+print(g29_lho_distribution_2022)
+
+g30_cho_distribution_2022 <- ggplot(
+  obj2_cho,
+  aes(x = CHO_area, y = prop, fill = high_codeine_dose_f)
+) +
+  geom_col(position = position_dodge(width = 0.7), width = 0.6) +
+  scale_y_continuous(labels = percent) +
+  labs(
+    title = "CHO Distribution by Codeine Dose Group in 2022",
+    x = "CHO area",
+    y = "Proportion of users",
+    fill = "Dose group"
+  ) +
+  theme_minimal()
+
+print(g30_cho_distribution_2022)
+
+
+or_plot1 <- ggplot(plot_data, aes(x = estimate, y = term, colour = group)) +
+  geom_vline(xintercept = 1, linetype = "dashed", linewidth = 0.6, colour = "black") +
+  geom_errorbar(aes(xmin = conf.low, xmax = conf.high), height = 0.2, linewidth = 1) +
+  geom_point(size = 3) +
+#  annotation_logticks(sides = "b") +
+#  scale_x_log10() +
+  scale_colour_manual(values = c(
+    "Sex" = "#1b9e77",
+    "Age" = "#7570b3",
+    "ACB" = "#d95f02",
+    "Oral NSAIDs" = "#66a61e",
+    "Topical analgesics" = "#e7298a",
+    "Benzodiazepines/sedatives" = "#e6ab02",
+    "Anti-migraines" = "#a6761d",
+    "Gabapentinoids" = "#a6769d",
+    "Other opioids" = "#666666"
+  )) +
+  labs(
+    title = "Adjusted Odds of High-Dose Codeine Prescribing (2022)",
+    x = "Odds Ratio",
+    y = NULL,
+    colour = "Variable"
+  ) +
+  coord_cartesian(xlim = c(0.7, 1.6)) +
+  theme_bw(base_size = 12) +
+  theme(
+    plot.title = element_text(face = "bold"),
+    legend.position = "bottom",
+    panel.grid.minor = element_blank(),
+    panel.grid.major.y = element_blank()
+  )
+
+print(or_plot1)
+
+cc <- scales::seq_gradient_pal("#e6ab02", "#7F0000", "Lab")(seq(0,1,length.out=9))
 forest_plot_clean <- ggplot(
-  plot_data,
+  plot_data2,
   aes(
     x = estimate,
     y = variable,
@@ -2767,34 +3093,23 @@ forest_plot_clean <- ggplot(
   )
 ) +
   geom_vline(xintercept = 1, linetype = "dashed", linewidth = 0.7) +
-  
-  geom_errorbarh(
+
+  geom_errorbar(
     aes(xmin = conf.low, xmax = conf.high),
     height = 0.2,
     linewidth = 1,
     position = pd
-  ) +
-  
+    ) +
+
   geom_point(
     size = 3,
     position = pd
   ) +
   
-  scale_colour_manual(
-    values = c(
-      "2014" = "red",
-      "2015" = "blue",
-      "2016" = "darkgreen",
-      "2017" = "purple",
-      "2018" = "orange",
-      "2019" = "brown",
-      "2020" = "pink",
-      "2021" = "cyan4",
-      "2022" = "goldenrod"
-    )
+  scale_colour_manual(values=cc  
   ) +
   
-  coord_cartesian(xlim = c(0, 10)) +
+  coord_cartesian(xlim = c(0.8, 1.5)) +
   
   labs(
     title = "Adjusted Odds of High-Dose Codeine Prescribing by Year",
@@ -2810,108 +3125,14 @@ forest_plot_clean <- ggplot(
     legend.position = "bottom",
     panel.grid.minor = element_blank(),
     panel.grid.major.y = element_blank()
-  )
+  ) 
 
 print(forest_plot_clean)
 
-# ================================================================================================================
-# OBJECTIVE 3: Explore geographic variation in high-dose codeine use
-# ALL YEARS COMBINED - NO YEAR FILTER
-# AREA-LEVEL TOTALS AND PERCENTAGES
-# ================================================================================================================
 
-# ================================================================================================================
-# STEP 1: PREP DATA
-# ================================================================================================================
 
-objective_three_amount <- df %>%
-  filter(!is.na(LHO_area)) %>%
-  mutate(
-    is_codeine = if_else(codeine == TRUE, 1L, 0L),
-    is_high_codeine = if_else(codeine == TRUE & codeine_ranking == "High", 1L, 0L)
-  )
 
-# ================================================================================================================
-# STEP 2: LHO-LEVEL RESULTS TABLE (VIEWER)
-# ================================================================================================================
 
-objective_three_lho_table <- objective_three_amount %>%
-  group_by(LHO_area, CHO_area) %>%
-  summarise(
-    total_dispensings = n(),
-    codeine_dispensings = sum(is_codeine, na.rm = TRUE),
-    high_codeine_dispensings = sum(is_high_codeine, na.rm = TRUE),
-    pct_codeine_of_all = 100 * codeine_dispensings / total_dispensings,
-    pct_high_of_codeine = 100 * high_codeine_dispensings / codeine_dispensings,
-    .groups = "drop"
-  ) %>%
-  mutate(
-    pct_codeine_of_all = round(pct_codeine_of_all, 1),
-    pct_high_of_codeine = round(pct_high_of_codeine, 1)
-  ) %>%
-  arrange(desc(pct_high_of_codeine))
-
-# DISPLAY IN VIEWER
-objective_three_lho_table %>%
-  gt() %>%
-  tab_header(
-    title = "Geographic Variation in Codeine Prescribing",
-    subtitle = "LHO Level (All Years Combined)"
-  ) %>%
-  cols_label(
-    LHO_area = "LHO",
-    CHO_area = "CHO",
-    total_dispensings = "Total dispensings",
-    codeine_dispensings = "Codeine dispensings",
-    pct_codeine_of_all = "% Codeine of all dispensing",
-    pct_high_of_codeine = "% High-dose of codeine"
-  ) %>%
-  fmt_number(
-    columns = where(is.numeric),
-    decimals = 1
-  )
-
-# ================================================================================================================
-# STEP 3: CHO-LEVEL RESULTS TABLE (VIEWER)
-# ================================================================================================================
-
-objective_three_cho_table <- objective_three_amount %>%
-  filter(!is.na(CHO_area)) %>%
-  group_by(CHO_area) %>%
-  summarise(
-    total_dispensings = n(),
-    codeine_dispensings = sum(is_codeine, na.rm = TRUE),
-    high_codeine_dispensings = sum(is_high_codeine, na.rm = TRUE),
-    pct_codeine_of_all = 100 * codeine_dispensings / total_dispensings,
-    pct_high_of_codeine = 100 * high_codeine_dispensings / codeine_dispensings,
-    .groups = "drop"
-  ) %>%
-  mutate(
-    pct_codeine_of_all = round(pct_codeine_of_all, 1),
-    pct_high_of_codeine = round(pct_high_of_codeine, 1)
-  ) %>%
-  arrange(desc(pct_high_of_codeine))
-print(objective_three_lho_table)
-
-# DISPLAY IN VIEWER
-objective_three_cho_table %>%
-  gt() %>%
-  tab_header(
-    title = "Geographic Variation in Codeine Prescribing",
-    subtitle = "CHO Level (All Years Combined)"
-  ) %>%
-  cols_label(
-    CHO_area = "CHO",
-    total_dispensings = "Total dispensings",
-    codeine_dispensings = "Codeine dispensings",
-    pct_codeine_of_all = "% Codeine of all dispensing",
-    pct_high_of_codeine = "% High-dose of codeine"
-  ) %>%
-  fmt_number(
-    columns = where(is.numeric),
-    decimals = 1
-  )
-print(objective_three_cho_table)
 
 
 
@@ -2947,7 +3168,7 @@ objective_three_lho_table_2022 <- df %>%
 # STEP 2: READ AND CLEAN GEOJSON
 # ------------------------------------------------------------------------------------------------
 
-lho_geo <- st_read("/Users/padraicdonoghue/Library/CloudStorage/OneDrive-SharedLibraries-RoyalCollegeofSurgeonsinIreland/Frank Moriarty - RSS 2025/SRS/LHO georef.geojson", quiet = TRUE)
+lho_geo <- st_read("C:/Users/frankmoriarty/OneDrive - Royal College of Surgeons in Ireland/PCRS data/LHO georef.geojson", quiet = TRUE)
 
 lho_geo <- lho_geo %>%
   mutate(
@@ -3011,7 +3232,7 @@ high_codeine_map <- ggplot(lho_map_data) +
   scale_fill_distiller(
     palette = "Reds",
     direction = 1,
-    limits = c(0, 100),   # 🔥 FORCE 0–100 scale
+ #   limits = c(0, 100),   # 🔥 FORCE 0–100 scale
     na.value = "grey90",
     name = "% High-dose\nof codeine (2022)"
   )+
@@ -3142,15 +3363,15 @@ gp_scatter_plot <- ggplot(gp_scatter_2022,
     width = 0.3, 
     height = 1.5, 
     alpha = 0.5, 
-    size = 2,
+    size = 1.5,
     colour = "black"
   ) +
-  geom_smooth(
-    method = "lm",
-    se = FALSE,
-    colour = "red",
-    linewidth = 1
-  ) +
+  # geom_smooth(
+  #   method = "lm",
+  #   se = FALSE,
+  #   colour = "red",
+  #   linewidth = 1
+  # ) +
   labs(
     title = "High-Dose Codeine Use by GP Practice (2022)",
     subtitle = "Each point represents one GP practice (jittered to reduce overlap)",
@@ -3164,3 +3385,126 @@ gp_scatter_plot <- ggplot(gp_scatter_2022,
   )
 
 print(gp_scatter_plot)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+rm(ach_plot_data, analysis_all_years, codeine_2022, objective_three, objective_three_annual, other_analgesic_flags_all_years,annual_codeine_sums, annual_other_analgesics, ach_flags_all_years, ach_flags_2022, boxplot_sex_dose, boxplot_age_dose, codeine_all_years, boxplot_data, codeine_products, objective_two, other_analgesic_flags_2022)
+gc()
+# ================================================================================================================
+# OBJECTIVE 3: Explore geographic variation in high-dose codeine use
+# ALL YEARS COMBINED - NO YEAR FILTER
+# AREA-LEVEL TOTALS AND PERCENTAGES
+# ================================================================================================================
+
+# ================================================================================================================
+# STEP 1: PREP DATA
+# ================================================================================================================
+
+objective_three_amount <- df %>%
+  filter(!is.na(LHO_area)) %>%
+   subset(select = c(LHO_area,CHO_area, indID, codeine,codeine_ranking)) %>%
+mutate(
+    is_codeine = if_else(codeine == TRUE, 1L, 0L),
+    is_high_codeine = if_else(codeine == TRUE & codeine_ranking == "High", 1L, 0L)
+  )
+
+# ================================================================================================================
+# STEP 2: LHO-LEVEL RESULTS TABLE (VIEWER)
+# ================================================================================================================
+
+objective_three_lho_table <- objective_three_amount %>%
+  group_by(LHO_area, CHO_area) %>%
+  summarise(
+    total_dispensings = n(),
+    codeine_dispensings = sum(is_codeine, na.rm = TRUE),
+    high_codeine_dispensings = sum(is_high_codeine, na.rm = TRUE),
+    pct_codeine_of_all = 100 * codeine_dispensings / total_dispensings,
+    pct_high_of_codeine = 100 * high_codeine_dispensings / codeine_dispensings,
+    .groups = "drop"
+  ) %>%
+  mutate(
+    pct_codeine_of_all = round(pct_codeine_of_all, 1),
+    pct_high_of_codeine = round(pct_high_of_codeine, 1)
+  ) %>%
+  arrange(desc(pct_high_of_codeine))
+
+# DISPLAY IN VIEWER
+objective_three_lho_table %>%
+  gt() %>%
+  tab_header(
+    title = "Geographic Variation in Codeine Prescribing",
+    subtitle = "LHO Level (All Years Combined)"
+  ) %>%
+  cols_label(
+    LHO_area = "LHO",
+    CHO_area = "CHO",
+    total_dispensings = "Total dispensings",
+    codeine_dispensings = "Codeine dispensings",
+    pct_codeine_of_all = "% Codeine of all dispensing",
+    pct_high_of_codeine = "% High-dose of codeine"
+  ) %>%
+  fmt_number(
+    columns = where(is.numeric),
+    decimals = 1
+  )
+
+# ================================================================================================================
+# STEP 3: CHO-LEVEL RESULTS TABLE (VIEWER)
+# ================================================================================================================
+
+objective_three_cho_table <- objective_three_amount %>%
+  filter(!is.na(CHO_area)) %>%
+  group_by(CHO_area) %>%
+  summarise(
+    total_dispensings = n(),
+    codeine_dispensings = sum(is_codeine, na.rm = TRUE),
+    high_codeine_dispensings = sum(is_high_codeine, na.rm = TRUE),
+    pct_codeine_of_all = 100 * codeine_dispensings / total_dispensings,
+    pct_high_of_codeine = 100 * high_codeine_dispensings / codeine_dispensings,
+    .groups = "drop"
+  ) %>%
+  mutate(
+    pct_codeine_of_all = round(pct_codeine_of_all, 1),
+    pct_high_of_codeine = round(pct_high_of_codeine, 1)
+  ) %>%
+  arrange(desc(pct_high_of_codeine))
+print(objective_three_lho_table)
+
+# DISPLAY IN VIEWER
+objective_three_cho_table %>%
+  gt() %>%
+  tab_header(
+    title = "Geographic Variation in Codeine Prescribing",
+    subtitle = "CHO Level (All Years Combined)"
+  ) %>%
+  cols_label(
+    CHO_area = "CHO",
+    total_dispensings = "Total dispensings",
+    codeine_dispensings = "Codeine dispensings",
+    pct_codeine_of_all = "% Codeine of all dispensing",
+    pct_high_of_codeine = "% High-dose of codeine"
+  ) %>%
+  fmt_number(
+    columns = where(is.numeric),
+    decimals = 1
+  )
+print(objective_three_cho_table)
+
+
