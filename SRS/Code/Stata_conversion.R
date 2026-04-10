@@ -3332,7 +3332,7 @@ print(gp_funnel_plot)
 # =========================================================
 # FULL TABLE FOR 2022
 # =========================================================
-# eligible population (>=16 years only)
+# eligible population = all people aged 16+
 table_df <- objective_two %>%
   filter(age >= 16)
 
@@ -3353,51 +3353,61 @@ table_df <- table_df %>%
     
     sex_label = case_when(
       sex == "F" ~ "Sex: Female",
-      sex == "M" ~ "Sex: Male"
+      sex == "M" ~ "Sex: Male",
+      TRUE ~ NA_character_
     ),
     
     acb_label = case_when(
       total_acb_score == 0 ~ "Anticholinergic Burden = 0",
-      total_acb_score > 0 ~ "Anticholinergic Burden > 0"
+      total_acb_score > 0 ~ "Anticholinergic Burden > 0",
+      TRUE ~ NA_character_
     ),
     
     topical_label = case_when(
       Topical_analgesics == 1 ~ "Topical NSAID’s: Yes",
-      Topical_analgesics == 0 ~ "Topical NSAID’s: No"
+      Topical_analgesics == 0 ~ "Topical NSAID’s: No",
+      TRUE ~ NA_character_
     ),
     
     oral_label = case_when(
       Oral_NSAIDs == 1 ~ "Oral NSAID’s: Yes",
-      Oral_NSAIDs == 0 ~ "Oral NSAID’s: No"
+      Oral_NSAIDs == 0 ~ "Oral NSAID’s: No",
+      TRUE ~ NA_character_
     ),
     
     gaba_label = case_when(
       Gabapentinoids == 1 ~ "Gabapentinoids: Yes",
-      Gabapentinoids == 0 ~ "Gabapentinoids: No"
+      Gabapentinoids == 0 ~ "Gabapentinoids: No",
+      TRUE ~ NA_character_
     ),
     
     triptan_label = case_when(
       Anti_migraines == 1 ~ "Triptans: Yes",
-      Anti_migraines == 0 ~ "Triptans: No"
+      Anti_migraines == 0 ~ "Triptans: No",
+      TRUE ~ NA_character_
     ),
     
     benzo_label = case_when(
       Benzodiazepines_sedatives == 1 ~ "Benzodiazepines & Sedatives: Yes",
-      Benzodiazepines_sedatives == 0 ~ "Benzodiazepines & Sedatives: No"
+      Benzodiazepines_sedatives == 0 ~ "Benzodiazepines & Sedatives: No",
+      TRUE ~ NA_character_
     ),
     
     opioid_label = case_when(
       Other_Opioids == 1 ~ "Other Opioids: Yes",
-      Other_Opioids == 0 ~ "Other Opioids: No"
+      Other_Opioids == 0 ~ "Other Opioids: No",
+      TRUE ~ NA_character_
     )
   )
 
-
 fmt_npct <- function(n, denom) {
-  paste0(n, " (", round(100 * n / denom, 1), "%)")
+  if (is.na(denom) || denom == 0) {
+    return(paste0(n, " (0%)"))
+  }
+  paste0(n, " (", round(100 * n / denom, 2), "%)")
 }
 
-make_row <- function(data, var, label){
+make_row <- function(data, var, label) {
   
   tmp <- data %>%
     filter({{ var }} == label)
@@ -3408,14 +3418,13 @@ make_row <- function(data, var, label){
   
   tibble(
     `Variable (2022)` = label,
-    `Total Number of High-Dose Users` = fmt_npct(high_n, eligible_denom),
-    `Total Number of Low-Dose Users`  = fmt_npct(low_n, eligible_denom),
+    `Total Number of High-Dose Users` = fmt_npct(high_n, tot_n),
+    `Total Number of Low-Dose Users`  = fmt_npct(low_n, tot_n),
     `Total Population`                = fmt_npct(tot_n, eligible_denom)
   )
 }
 
 final_table <- bind_rows(
-  
   make_row(table_df, age_group, "Age 16-24"),
   make_row(table_df, age_group, "Age 25-34"),
   make_row(table_df, age_group, "Age 35-44"),
