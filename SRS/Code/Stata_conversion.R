@@ -3324,3 +3324,151 @@ gp_funnel_plot <- funplot(
   )
 
 print(gp_funnel_plot)
+
+# ================================================================================================================
+# Table for Obj2
+# ================================================================================================================
+
+# =========================================================
+# FULL TABLE FOR 2022
+# =========================================================
+# eligible population (>=16 years only)
+table_df <- objective_two %>%
+  filter(age >= 16)
+
+eligible_denom <- nrow(table_df)
+
+table_df <- table_df %>%
+  mutate(
+    age_group = case_when(
+      age >= 16 & age <= 24 ~ "Age 16-24",
+      age >= 25 & age <= 34 ~ "Age 25-34",
+      age >= 35 & age <= 44 ~ "Age 35-44",
+      age >= 45 & age <= 54 ~ "Age 45-54",
+      age >= 55 & age <= 64 ~ "Age 55-64",
+      age >= 65 & age <= 74 ~ "Age 65-74",
+      age >= 75 ~ "Age 75+",
+      TRUE ~ NA_character_
+    ),
+    
+    sex_label = case_when(
+      sex == "F" ~ "Sex: Female",
+      sex == "M" ~ "Sex: Male"
+    ),
+    
+    acb_label = case_when(
+      total_acb_score == 0 ~ "Anticholinergic Burden = 0",
+      total_acb_score > 0 ~ "Anticholinergic Burden > 0"
+    ),
+    
+    topical_label = case_when(
+      Topical_analgesics == 1 ~ "Topical NSAID’s: Yes",
+      Topical_analgesics == 0 ~ "Topical NSAID’s: No"
+    ),
+    
+    oral_label = case_when(
+      Oral_NSAIDs == 1 ~ "Oral NSAID’s: Yes",
+      Oral_NSAIDs == 0 ~ "Oral NSAID’s: No"
+    ),
+    
+    gaba_label = case_when(
+      Gabapentinoids == 1 ~ "Gabapentinoids: Yes",
+      Gabapentinoids == 0 ~ "Gabapentinoids: No"
+    ),
+    
+    triptan_label = case_when(
+      Anti_migraines == 1 ~ "Triptans: Yes",
+      Anti_migraines == 0 ~ "Triptans: No"
+    ),
+    
+    benzo_label = case_when(
+      Benzodiazepines_sedatives == 1 ~ "Benzodiazepines & Sedatives: Yes",
+      Benzodiazepines_sedatives == 0 ~ "Benzodiazepines & Sedatives: No"
+    ),
+    
+    opioid_label = case_when(
+      Other_Opioids == 1 ~ "Other Opioids: Yes",
+      Other_Opioids == 0 ~ "Other Opioids: No"
+    )
+  )
+
+
+fmt_npct <- function(n, denom) {
+  paste0(n, " (", round(100 * n / denom, 1), "%)")
+}
+
+make_row <- function(data, var, label){
+  
+  tmp <- data %>%
+    filter({{ var }} == label)
+  
+  high_n <- sum(tmp$high_codeine_dose == 1, na.rm = TRUE)
+  low_n  <- sum(tmp$high_codeine_dose == 0, na.rm = TRUE)
+  tot_n  <- nrow(tmp)
+  
+  tibble(
+    `Variable (2022)` = label,
+    `Total Number of High-Dose Users` = fmt_npct(high_n, eligible_denom),
+    `Total Number of Low-Dose Users`  = fmt_npct(low_n, eligible_denom),
+    `Total Population`                = fmt_npct(tot_n, eligible_denom)
+  )
+}
+
+final_table <- bind_rows(
+  
+  make_row(table_df, age_group, "Age 16-24"),
+  make_row(table_df, age_group, "Age 25-34"),
+  make_row(table_df, age_group, "Age 35-44"),
+  make_row(table_df, age_group, "Age 45-54"),
+  make_row(table_df, age_group, "Age 55-64"),
+  make_row(table_df, age_group, "Age 65-74"),
+  make_row(table_df, age_group, "Age 75+"),
+  
+  make_row(table_df, sex_label, "Sex: Female"),
+  make_row(table_df, sex_label, "Sex: Male"),
+  
+  make_row(table_df, acb_label, "Anticholinergic Burden = 0"),
+  make_row(table_df, acb_label, "Anticholinergic Burden > 0"),
+  
+  make_row(table_df, topical_label, "Topical NSAID’s: Yes"),
+  make_row(table_df, topical_label, "Topical NSAID’s: No"),
+  
+  make_row(table_df, oral_label, "Oral NSAID’s: Yes"),
+  make_row(table_df, oral_label, "Oral NSAID’s: No"),
+  
+  make_row(table_df, gaba_label, "Gabapentinoids: Yes"),
+  make_row(table_df, gaba_label, "Gabapentinoids: No"),
+  
+  make_row(table_df, triptan_label, "Triptans: Yes"),
+  make_row(table_df, triptan_label, "Triptans: No"),
+  
+  make_row(table_df, benzo_label, "Benzodiazepines & Sedatives: Yes"),
+  make_row(table_df, benzo_label, "Benzodiazepines & Sedatives: No"),
+  
+  make_row(table_df, opioid_label, "Other Opioids: Yes"),
+  make_row(table_df, opioid_label, "Other Opioids: No")
+)
+
+final_table
+
+final_table %>%
+  gt()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
