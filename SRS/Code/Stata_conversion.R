@@ -2623,10 +2623,10 @@ or_plot1 <- ggplot(plot_data, aes(x = estimate, y = term, colour = group)) +
 
 print(or_plot1)
 # ---------------------------------------------------------------------------------------------------------
-# Create yearly other analgesic flags
+# Create yearly flags for each co-prescribed medicine group
 # ---------------------------------------------------------------------------------------------------------
 
-other_analgesic_flags_all_years <- df %>%
+other_medicine_flags_all_years <- df %>%
   mutate(
     dateofdispensing = ymd(dateofdispensing),
     year = year(dateofdispensing),
@@ -2635,14 +2635,11 @@ other_analgesic_flags_all_years <- df %>%
   filter(year >= 2014, year <= 2022) %>%
   group_by(indID, year) %>%
   summarise(
-    other_analgesic_y_n = as.integer(any(atccode %in% c(
-      oral_nsaids_codes,
-      topical_analgesics_codes,
-      gabapentinoids_codes,
-      benzodiazepines_sedatives_codes,
-      anti_migraine_codes,
-      Other_Opioids_codes
-    ))),
+    Oral_NSAIDs = as.integer(any(atccode %in% oral_nsaids_codes)),
+    Topical_analgesics = as.integer(any(atccode %in% topical_analgesics_codes)),
+    Benzodiazepines_sedatives = as.integer(any(atccode %in% benzodiazepines_sedatives_codes)),
+    Anti_migraines = as.integer(any(atccode %in% anti_migraine_codes)),
+    Other_Opioids = as.integer(any(atccode %in% Other_Opioids_codes)),
     .groups = "drop"
   )
 
@@ -2669,7 +2666,7 @@ ach_flags_all_years <- df %>%
   )
 
 # ---------------------------------------------------------------------------------------------------------
-# Build dataset
+# Build dataset with same variables as 2022 regression
 # ---------------------------------------------------------------------------------------------------------
 
 analysis_all_years <- df %>%
@@ -2692,20 +2689,42 @@ analysis_all_years <- df %>%
     sex,
     high_codeine_dose = if_else(codeine_ranking == "High", 1L, 0L)
   ) %>%
-  left_join(other_analgesic_flags_all_years, by = c("indID", "year")) %>%
+  left_join(other_medicine_flags_all_years, by = c("indID", "year")) %>%
   left_join(ach_flags_all_years, by = c("indID", "year")) %>%
   mutate(
-    other_analgesic_y_n = replace_na(other_analgesic_y_n, 0L),
+    Oral_NSAIDs = replace_na(Oral_NSAIDs, 0L),
+    Topical_analgesics = replace_na(Topical_analgesics, 0L),
+    Benzodiazepines_sedatives = replace_na(Benzodiazepines_sedatives, 0L),
+    Anti_migraines = replace_na(Anti_migraines, 0L),
+    Other_Opioids = replace_na(Other_Opioids, 0L),
     ach_burden_med = replace_na(ach_burden_med, 0L),
-    sex = factor(sex, levels = c("M", "F"), labels = c("Male", "Female")),
+    
     high_codeine_dose = factor(high_codeine_dose, levels = c(0, 1), labels = c("Low", "High")),
+    sex = factor(sex, levels = c("M", "F"), labels = c("Male", "Female")),
+    
+    age_group = case_when(
+      age >= 16 & age <= 24 ~ "16-24",
+      age >= 25 & age <= 34 ~ "25-34",
+      age >= 35 & age <= 44 ~ "35-44",
+      age >= 45 & age <= 54 ~ "45-54",
+      age >= 55 & age <= 64 ~ "55-64",
+      age >= 65 & age <= 69 ~ "65-69",
+      age >= 70 & age <= 74 ~ "70-74",
+      age >= 75 ~ "75+"
+    ) %>% factor(
+      levels = c("16-24", "25-34", "35-44", "45-54", "55-64", "65-69", "70-74", "75+")
+    ),
+    
     ach_burden_med = factor(ach_burden_med, levels = c(0, 1), labels = c("No", "Yes")),
-    other_analgesic_y_n = factor(other_analgesic_y_n, levels = c(0, 1), labels = c("No", "Yes")),
-    age_10 = age / 10
+    Oral_NSAIDs = factor(Oral_NSAIDs, levels = c(0, 1), labels = c("No", "Yes")),
+    Topical_analgesics = factor(Topical_analgesics, levels = c(0, 1), labels = c("No", "Yes")),
+    Benzodiazepines_sedatives = factor(Benzodiazepines_sedatives, levels = c(0, 1), labels = c("No", "Yes")),
+    Anti_migraines = factor(Anti_migraines, levels = c(0, 1), labels = c("No", "Yes")),
+    Other_Opioids = factor(Other_Opioids, levels = c(0, 1), labels = c("No", "Yes"))
   )
 
 # ---------------------------------------------------------------------------------------------------------
-# Run model per year
+# Run model per year using same variables as 2022 regression
 # ---------------------------------------------------------------------------------------------------------
 
 results_by_year <- analysis_all_years %>%
@@ -2716,70 +2735,99 @@ results_by_year <- analysis_all_years %>%
     current_year <- unique(data_year$year)
     
     model <- glm(
-      high_codeine_dose ~ age_10 + sex + ach_burden_med + other_analgesic_y_n,
+      high_codeine_dose ~ age_group + sex + ach_burden_med +
+        Oral_NSAIDs + Topical_analgesics + Benzodiazepines_sedatives +
+        Anti_migraines + Other_Opioids,
       data = data_year,
       family = binomial()
     )
     
     tidy(model, exponentiate = TRUE, conf.int = TRUE) %>%
-      filter(term %in% c("sexFemale", "age_10", "ach_burden_medYes", "other_analgesic_y_nYes")) %>%
+      filter(term != "(Intercept)") %>%
       mutate(year = current_year)
   })
 
 # ---------------------------------------------------------------------------------------------------------
-# Prepare plotting data
+# Prepare plotting data with same labels as original plot
 # ---------------------------------------------------------------------------------------------------------
 
-plot_data <- results_by_year %>%
+plot_data_all_years <- results_by_year %>%
   mutate(
-    variable = recode(
+    term = recode(
       term,
       "sexFemale" = "Female",
-      "age_10" = "Age (per 10 years)",
+      "age_group25-34" = "Age 25-34",
+      "age_group35-44" = "Age 35-44",
+      "age_group45-54" = "Age 45-54",
+      "age_group55-64" = "Age 55-64",
+      "age_group65-69" = "Age 65-69",
+      "age_group70-74" = "Age 70-74",
+      "age_group75+" = "Age 75+",
       "ach_burden_medYes" = "ACB: Yes",
-      "other_analgesic_y_nYes" = "Other analgesics: Yes"
+      "Oral_NSAIDsYes" = "Oral NSAIDs: Yes",
+      "Topical_analgesicsYes" = "Topical analgesics: Yes",
+      "Benzodiazepines_sedativesYes" = "Benzodiazepines/sedatives: Yes",
+      "Anti_migrainesYes" = "Anti-migraines: Yes",
+      "Other_OpioidsYes" = "Other opioids: Yes"
+    ),
+    group = case_when(
+      term == "Female" ~ "Sex",
+      grepl("Age", term) ~ "Age",
+      term == "ACB: Yes" ~ "ACB",
+      term == "Oral NSAIDs: Yes" ~ "Oral NSAIDs",
+      term == "Topical analgesics: Yes" ~ "Topical analgesics",
+      term == "Benzodiazepines/sedatives: Yes" ~ "Benzodiazepines/sedatives",
+      term == "Anti-migraines: Yes" ~ "Anti-migraines",
+      term == "Other opioids: Yes" ~ "Other opioids"
     ),
     year = factor(year, levels = 2014:2022),
-    variable = factor(
-      variable,
+    term = factor(
+      term,
       levels = rev(c(
         "Female",
-        "Age (per 10 years)",
+        "Age 25-34",
+        "Age 35-44",
+        "Age 45-54",
+        "Age 55-64",
+        "Age 65-69",
+        "Age 70-74",
+        "Age 75+",
         "ACB: Yes",
-        "Other analgesics: Yes"
+        "Oral NSAIDs: Yes",
+        "Topical analgesics: Yes",
+        "Benzodiazepines/sedatives: Yes",
+        "Anti-migraines: Yes",
+        "Other opioids: Yes"
       ))
     )
   )
 
 # ---------------------------------------------------------------------------------------------------------
-# Plot (colour by year)
+# Plot: same y-axis variables, one dot per year
 # ---------------------------------------------------------------------------------------------------------
 
-pd <- position_dodge(width = 0.5)
+pd <- position_dodge(width = 0.6)
 
-forest_plot_clean <- ggplot(
-  plot_data,
+forest_plot_by_year <- ggplot(
+  plot_data_all_years,
   aes(
     x = estimate,
-    y = variable,
+    y = term,
     colour = year,
     group = year
   )
 ) +
   geom_vline(xintercept = 1, linetype = "dashed", linewidth = 0.7) +
-  
   geom_errorbarh(
     aes(xmin = conf.low, xmax = conf.high),
-    height = 0.2,
-    linewidth = 1,
+    height = 0.18,
+    linewidth = 0.8,
     position = pd
   ) +
-  
   geom_point(
-    size = 3,
+    size = 2.8,
     position = pd
   ) +
-  
   scale_colour_manual(
     values = c(
       "2014" = "red",
@@ -2793,17 +2841,14 @@ forest_plot_clean <- ggplot(
       "2022" = "goldenrod"
     )
   ) +
-  
   coord_cartesian(xlim = c(0, 10)) +
-  
   labs(
     title = "Adjusted Odds of High-Dose Codeine Prescribing by Year",
-    subtitle = "Age shown as odds ratio per 10-year increase",
+    subtitle = "Same model variables as 2022 analysis; one point per year",
     x = "Odds Ratio",
-    y = "Factor",
+    y = NULL,
     colour = "Year"
   ) +
-  
   theme_bw(base_size = 12) +
   theme(
     plot.title = element_text(face = "bold"),
@@ -2812,7 +2857,7 @@ forest_plot_clean <- ggplot(
     panel.grid.major.y = element_blank()
   )
 
-print(forest_plot_clean)
+print(forest_plot_by_year)
 
 # ================================================================================================================
 # OBJECTIVE 3: Explore geographic variation in high-dose codeine use
@@ -2839,15 +2884,19 @@ objective_three_lho_table <- objective_three_amount %>%
   group_by(LHO_area, CHO_area) %>%
   summarise(
     total_dispensings = n(),
+    total_people = n_distinct(indID),
     codeine_dispensings = sum(is_codeine, na.rm = TRUE),
     high_codeine_dispensings = sum(is_high_codeine, na.rm = TRUE),
+    codeine_users = n_distinct(indID[is_codeine == 1]),
     pct_codeine_of_all = 100 * codeine_dispensings / total_dispensings,
     pct_high_of_codeine = 100 * high_codeine_dispensings / codeine_dispensings,
+    codeine_users_per_1000 = 1000 * codeine_users / total_people,
     .groups = "drop"
   ) %>%
   mutate(
     pct_codeine_of_all = round(pct_codeine_of_all, 1),
-    pct_high_of_codeine = round(pct_high_of_codeine, 1)
+    pct_high_of_codeine = round(pct_high_of_codeine, 1),
+    codeine_users_per_1000 = round(codeine_users_per_1000, 1)
   ) %>%
   arrange(desc(pct_high_of_codeine))
 
@@ -2864,7 +2913,8 @@ objective_three_lho_table %>%
     total_dispensings = "Total dispensings",
     codeine_dispensings = "Codeine dispensings",
     pct_codeine_of_all = "% Codeine of all dispensing",
-    pct_high_of_codeine = "% High-dose of codeine"
+    pct_high_of_codeine = "% High-dose of codeine",
+    codeine_users_per_1000 = "Codeine users per 1000 people"
   ) %>%
   fmt_number(
     columns = where(is.numeric),
@@ -2880,17 +2930,22 @@ objective_three_cho_table <- objective_three_amount %>%
   group_by(CHO_area) %>%
   summarise(
     total_dispensings = n(),
+    total_people = n_distinct(indID),
     codeine_dispensings = sum(is_codeine, na.rm = TRUE),
     high_codeine_dispensings = sum(is_high_codeine, na.rm = TRUE),
+    codeine_users = n_distinct(indID[is_codeine == 1]),
     pct_codeine_of_all = 100 * codeine_dispensings / total_dispensings,
     pct_high_of_codeine = 100 * high_codeine_dispensings / codeine_dispensings,
+    codeine_users_per_1000 = 1000 * codeine_users / total_people,
     .groups = "drop"
   ) %>%
   mutate(
     pct_codeine_of_all = round(pct_codeine_of_all, 1),
-    pct_high_of_codeine = round(pct_high_of_codeine, 1)
+    pct_high_of_codeine = round(pct_high_of_codeine, 1),
+    codeine_users_per_1000 = round(codeine_users_per_1000, 1)
   ) %>%
   arrange(desc(pct_high_of_codeine))
+
 print(objective_three_lho_table)
 
 # DISPLAY IN VIEWER
@@ -2905,15 +2960,15 @@ objective_three_cho_table %>%
     total_dispensings = "Total dispensings",
     codeine_dispensings = "Codeine dispensings",
     pct_codeine_of_all = "% Codeine of all dispensing",
-    pct_high_of_codeine = "% High-dose of codeine"
+    pct_high_of_codeine = "% High-dose of codeine",
+    codeine_users_per_1000 = "Codeine users per 1000 people"
   ) %>%
   fmt_number(
     columns = where(is.numeric),
     decimals = 1
   )
+
 print(objective_three_cho_table)
-
-
 
 # ================================================================================================================
 # CHOROPLETH MAP: PROPORTION OF HIGH-DOSE CODEINE DISPENSING OVER ALL DISPENSING
@@ -3030,6 +3085,110 @@ high_codeine_map <- ggplot(lho_map_data) +
 print(high_codeine_map)
 
 # ================================================================================================================
+# CHOROPLETH MAP: CODEINE USERS PER 1000 PEOPLE
+# ================================================================================================================
+# ------------------------------------------------------------------------------------------------
+# STEP 1: CREATE 2022 LHO SUMMARY TABLE
+# ------------------------------------------------------------------------------------------------
+
+objective_three_lho_table_2022 <- df %>%
+  filter(year(dateofdispensing) == 2022) %>%
+  group_by(LHO_area, CHO_area) %>%
+  summarise(
+    codeine_users = n_distinct(indID[codeine == TRUE]),
+    total_people = n_distinct(indID),
+    codeine_users_per_1000 = 1000 * codeine_users / total_people,
+    .groups = "drop"
+  )
+
+# ------------------------------------------------------------------------------------------------
+# STEP 2: JOIN DATA TO MAP
+# ------------------------------------------------------------------------------------------------
+
+lho_map_data <- lho_geo_clean %>%
+  left_join(objective_three_lho_table_2022, by = "LHO_area")
+
+print(
+  lho_map_data %>%
+    st_drop_geometry() %>%
+    select(LHO_area, codeine_users_per_1000) %>%
+    arrange(desc(codeine_users_per_1000))
+)
+
+# ------------------------------------------------------------------------------------------------
+# STEP 3: GRAPH GALLERY STYLE MAP (BASE R)
+# ------------------------------------------------------------------------------------------------
+
+my_colors <- brewer.pal(9, "Reds")
+my_colors <- colorRampPalette(my_colors)(30)
+
+class_of_lho <- cut(lho_map_data$codeine_users_per_1000, 30)
+map_colors <- my_colors[as.numeric(class_of_lho)]
+
+plot(
+  st_geometry(lho_map_data),
+  col = map_colors,
+  border = "white",
+  lwd = 0.7,
+  main = "Codeine Users per 1000 People (2022) at LHO Level"
+)
+
+# ------------------------------------------------------------------------------------------------
+# STEP 4: GGPLOT VERSION
+# ------------------------------------------------------------------------------------------------
+
+codeine_users_map <- ggplot(lho_map_data) +
+  geom_sf(aes(fill = codeine_users_per_1000), colour = "white", linewidth = 0.3) +
+  scale_fill_distiller(
+    palette = "Reds",
+    direction = 1,
+    na.value = "grey90",
+    name = "Codeine users\nper 1000 (2022)"
+  ) +
+  labs(
+    title = "Codeine Users per 1000 People (2022)",
+    subtitle = "LHO level"
+  ) +
+  theme_minimal(base_size = 14) +
+  theme(
+    plot.title = element_text(face = "bold"),
+    axis.text = element_blank(),
+    axis.title = element_blank(),
+    panel.grid = element_blank()
+  )
+
+print(codeine_users_map)
+
+# ================================================================================================================
+# TABLE: CODEINE USERS PER 1000 PEOPLE (VIEWER)
+# ================================================================================================================
+
+rates_per_1000_table_data <- objective_three_lho_table_2022 %>%
+  arrange(desc(codeine_users_per_1000)) %>%
+  mutate(
+    codeine_users_per_1000 = round(codeine_users_per_1000, 1)
+  )
+
+rates_per_1000_table <- gt(rates_per_1000_table_data) %>%
+  tab_header(
+    title = "Codeine Users per 1000 People (2022)",
+    subtitle = "Ranked highest to lowest by LHO"
+  ) %>%
+  cols_label(
+    LHO_area = "LHO",
+    CHO_area = "CHO",
+    codeine_users = "Codeine users",
+    total_people = "Total people",
+    codeine_users_per_1000 = "Codeine users per 1000"
+  ) %>%
+  fmt_number(
+    columns = c(codeine_users, total_people, codeine_users_per_1000),
+    decimals = 1
+  )
+
+rates_per_1000_table
+
+# ================================================================================================================
 # 100-SQUARE GP TILE PLOT (2022) — MATCHED CHOROPLETH COLOUR SCHEME
 # Updated bands: 0–24, 25–49, 50–74, 75–100
 # ================================================================================================================
@@ -3116,8 +3275,9 @@ print(gp_square_plot)
 
 
 # ================================================================================================================
-# SCATTER PLOT — TRUE PRACTICE SIZE vs HIGH-DOSE CODEINE (%)
+# FUNNEL PLOT — TRUE PRACTICE SIZE vs HIGH-DOSE CODEINE (%)
 # ================================================================================================================
+library(funnelR)
 
 gp_scatter_2022 <- df %>%
   filter(
@@ -3130,32 +3290,32 @@ gp_scatter_2022 <- df %>%
   ) %>%
   group_by(gpidentifiernumber) %>%
   summarise(
-    total_codeine_users = n_distinct(indID),
-    high_users = n_distinct(indID[codeine_ranking == "High"]),
-    pct_high = 100 * high_users / total_codeine_users,
+    d = n_distinct(indID),
+    n = n_distinct(indID[codeine_ranking == "High"]),
     .groups = "drop"
   ) %>%
-  filter(total_codeine_users > 0)
-gp_scatter_plot <- ggplot(gp_scatter_2022,
-                          aes(x = total_codeine_users, y = pct_high)) +
-  geom_jitter(
-    width = 0.3, 
-    height = 1.5, 
-    alpha = 0.5, 
-    size = 2,
-    colour = "black"
-  ) +
-  geom_smooth(
-    method = "lm",
-    se = FALSE,
-    colour = "red",
-    linewidth = 1
-  ) +
+  filter(d > 0) %>%
+  mutate(
+    pct_high = 100 * n / d
+  )
+
+gp_funnel_limits <- fundata(
+  input = gp_scatter_2022,
+  alpha = 0.95,
+  alpha2 = 0.995,
+  method = "approximate",
+  step = 1
+)
+
+gp_funnel_plot <- funplot(
+  input = gp_scatter_2022,
+  fundata = gp_funnel_limits
+) +
   labs(
     title = "High-Dose Codeine Use by GP Practice (2022)",
-    subtitle = "Each point represents one GP practice (jittered to reduce overlap)",
+    subtitle = "Funnel plot with 95% and 99.5% control limits",
     x = "Number of Codeine Users",
-    y = "% of Users Receiving High-Dose Codeine"
+    y = "Proportion of Users Receiving High-Dose Codeine"
   ) +
   theme_minimal(base_size = 13) +
   theme(
@@ -3163,4 +3323,4 @@ gp_scatter_plot <- ggplot(gp_scatter_2022,
     panel.grid.minor = element_blank()
   )
 
-print(gp_scatter_plot)
+print(gp_funnel_plot)
