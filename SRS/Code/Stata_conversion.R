@@ -2865,33 +2865,126 @@ print(forest_plot_by_year)
 # AREA-LEVEL TOTALS AND PERCENTAGES
 # ================================================================================================================
 
-# ================================================================================================================
-# STEP 1: PREP DATA
-# ================================================================================================================
+# =================================================================================================
+# CLEAN APRIL GMS LOOKUP + ADD CHO MAPPING + BUILD DENOMINATORS
+# =================================================================================================
 
-objective_three_amount <- df %>%
-  filter(!is.na(LHO_area)) %>%
+gms_april_lookup <- gms_april_lookup %>%
   mutate(
-    is_codeine = if_else(codeine == TRUE, 1L, 0L),
-    is_high_codeine = if_else(codeine == TRUE & codeine_ranking == "High", 1L, 0L)
+    LHO_DESC_CHO = str_squish(LHO_DESC_CHO),
+    GENDER = str_squish(GENDER),
+    CLIENT_NORM_AGE_GROUP_DESC = str_squish(CLIENT_NORM_AGE_GROUP_DESC),
+    
+    # standardise LHO names to match df / objective tables
+    LHO_DESC_CHO = case_when(
+      LHO_DESC_CHO == "Cavan / Monaghan" ~ "Cavan/Monaghan",
+      LHO_DESC_CHO == "Kildare / West Wicklow" ~ "Kildare/West Wicklow",
+      LHO_DESC_CHO == "Laois / Offaly" ~ "Laois/Offaly",
+      LHO_DESC_CHO == "Longford / Westmeath" ~ "Longford/Westmeath",
+      LHO_DESC_CHO == "North Tipp./East Limerick" ~ "North Tipperary/East Limerick",
+      LHO_DESC_CHO == "Sligo / Leitrim / West Cavan" ~ "Sligo/Leitrim/West Cavan",
+      TRUE ~ LHO_DESC_CHO
+    ),
+    
+    # make sure eligible count is numeric
+    Age_Classification = as.numeric(Age_Classification),
+    
+    # add CHO mapping based on LHO name
+    CHO_area = case_when(
+      
+      # CHO 1
+      LHO_DESC_CHO %in% c(
+        "Cavan/Monaghan",
+        "Donegal",
+        "Sligo/Leitrim/West Cavan"
+      ) ~ "1",
+      
+      # CHO 2
+      LHO_DESC_CHO %in% c(
+        "Galway",
+        "Mayo",
+        "Roscommon"
+      ) ~ "2",
+      
+      # CHO 3
+      LHO_DESC_CHO %in% c(
+        "Clare",
+        "North Tipperary/East Limerick",
+        "Limerick"
+      ) ~ "3",
+      
+      # CHO 4
+      LHO_DESC_CHO %in% c(
+        "South Lee",
+        "North Lee",
+        "West Cork",
+        "Kerry",
+        "North Cork"
+      ) ~ "4",
+      
+      # CHO 5
+      LHO_DESC_CHO %in% c(
+        "Carlow/Kilkenny",
+        "Waterford",
+        "South Tipperary",
+        "Wexford"
+      ) ~ "5",
+      
+      # CHO 6
+      LHO_DESC_CHO %in% c(
+        "Dun Laoghaire",
+        "Dublin South East",
+        "Wicklow"
+      ) ~ "6",
+      
+      # CHO 7
+      LHO_DESC_CHO %in% c(
+        "Dublin South City",
+        "Dublin South West",
+        "Dublin West",
+        "Kildare/West Wicklow"
+      ) ~ "7",
+      
+      # CHO 8
+      LHO_DESC_CHO %in% c(
+        "Laois/Offaly",
+        "Longford/Westmeath",
+        "Louth",
+        "Meath"
+      ) ~ "8",
+      
+      # CHO 9
+      LHO_DESC_CHO %in% c(
+        "Dublin North West",
+        "Dublin North Central",
+        "Dublin North"
+      ) ~ "9",
+      
+      TRUE ~ NA_character_
+    )
   )
 
-# eligible population denominators
-eligible_lho_denom <- df %>%
-  filter(age >= 16, !is.na(LHO_area)) %>%
-  distinct(indID, LHO_area, CHO_area) %>%
-  group_by(LHO_area, CHO_area) %>%
+# =================================================================================================
+# ELIGIBLE POPULATION DENOMINATORS
+# sums across age groups and sex within each LHO / CHO
+# =================================================================================================
+
+eligible_lho_denom <- gms_april_lookup %>%
+  filter(!is.na(LHO_DESC_CHO), !is.na(CHO_area), !is.na(Age_Classification)) %>%
+  group_by(LHO_DESC_CHO, CHO_area) %>%
   summarise(
-    eligible_people = n(),
+    eligible_people = sum(Age_Classification, na.rm = TRUE),
     .groups = "drop"
+  ) %>%
+  rename(
+    LHO_area = LHO_DESC_CHO
   )
 
-eligible_cho_denom <- df %>%
-  filter(age >= 16, !is.na(CHO_area)) %>%
-  distinct(indID, CHO_area) %>%
+eligible_cho_denom <- gms_april_lookup %>%
+  filter(!is.na(CHO_area), !is.na(Age_Classification)) %>%
   group_by(CHO_area) %>%
   summarise(
-    eligible_people = n(),
+    eligible_people = sum(Age_Classification, na.rm = TRUE),
     .groups = "drop"
   )
 
