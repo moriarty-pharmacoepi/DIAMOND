@@ -2876,6 +2876,25 @@ objective_three_amount <- df %>%
     is_high_codeine = if_else(codeine == TRUE & codeine_ranking == "High", 1L, 0L)
   )
 
+# eligible population denominators
+eligible_lho_denom <- df %>%
+  filter(age >= 16, !is.na(LHO_area)) %>%
+  distinct(indID, LHO_area, CHO_area) %>%
+  group_by(LHO_area, CHO_area) %>%
+  summarise(
+    eligible_people = n(),
+    .groups = "drop"
+  )
+
+eligible_cho_denom <- df %>%
+  filter(age >= 16, !is.na(CHO_area)) %>%
+  distinct(indID, CHO_area) %>%
+  group_by(CHO_area) %>%
+  summarise(
+    eligible_people = n(),
+    .groups = "drop"
+  )
+
 # ================================================================================================================
 # STEP 2: LHO-LEVEL RESULTS TABLE (VIEWER)
 # ================================================================================================================
@@ -2890,10 +2909,11 @@ objective_three_lho_table <- objective_three_amount %>%
     codeine_users = n_distinct(indID[is_codeine == 1]),
     pct_codeine_of_all = 100 * codeine_dispensings / total_dispensings,
     pct_high_of_codeine = 100 * high_codeine_dispensings / codeine_dispensings,
-    codeine_users_per_1000 = 1000 * codeine_users / total_people,
     .groups = "drop"
   ) %>%
+  left_join(eligible_lho_denom, by = c("LHO_area", "CHO_area")) %>%
   mutate(
+    codeine_users_per_1000 = 1000 * codeine_users / eligible_people,
     pct_codeine_of_all = round(pct_codeine_of_all, 1),
     pct_high_of_codeine = round(pct_high_of_codeine, 1),
     codeine_users_per_1000 = round(codeine_users_per_1000, 1)
@@ -2914,7 +2934,7 @@ objective_three_lho_table %>%
     codeine_dispensings = "Codeine dispensings",
     pct_codeine_of_all = "% Codeine of all dispensing",
     pct_high_of_codeine = "% High-dose of codeine",
-    codeine_users_per_1000 = "Codeine users per 1000 people"
+    codeine_users_per_1000 = "Codeine users per 1000 eligible people"
   ) %>%
   fmt_number(
     columns = where(is.numeric),
@@ -2936,10 +2956,11 @@ objective_three_cho_table <- objective_three_amount %>%
     codeine_users = n_distinct(indID[is_codeine == 1]),
     pct_codeine_of_all = 100 * codeine_dispensings / total_dispensings,
     pct_high_of_codeine = 100 * high_codeine_dispensings / codeine_dispensings,
-    codeine_users_per_1000 = 1000 * codeine_users / total_people,
     .groups = "drop"
   ) %>%
+  left_join(eligible_cho_denom, by = "CHO_area") %>%
   mutate(
+    codeine_users_per_1000 = 1000 * codeine_users / eligible_people,
     pct_codeine_of_all = round(pct_codeine_of_all, 1),
     pct_high_of_codeine = round(pct_high_of_codeine, 1),
     codeine_users_per_1000 = round(codeine_users_per_1000, 1)
@@ -3329,9 +3350,6 @@ print(gp_funnel_plot)
 # Table for Obj2
 # ================================================================================================================
 
-# =========================================================
-# FULL TABLE FOR 2022
-# =========================================================
 # eligible population = all people aged 16+
 table_df <- objective_two %>%
   filter(age >= 16)
@@ -3407,6 +3425,9 @@ fmt_npct <- function(n, denom) {
   paste0(n, " (", round(100 * n / denom, 2), "%)")
 }
 
+high_denom <- sum(table_df$high_codeine_dose == 1, na.rm = TRUE)
+low_denom  <- sum(table_df$high_codeine_dose == 0, na.rm = TRUE)
+
 make_row <- function(data, var, label) {
   
   tmp <- data %>%
@@ -3418,8 +3439,8 @@ make_row <- function(data, var, label) {
   
   tibble(
     `Variable (2022)` = label,
-    `Total Number of High-Dose Users` = fmt_npct(high_n, tot_n),
-    `Total Number of Low-Dose Users`  = fmt_npct(low_n, tot_n),
+    `Total Number of High-Dose Users` = fmt_npct(high_n, high_denom),
+    `Total Number of Low-Dose Users`  = fmt_npct(low_n, low_denom),
     `Total Population`                = fmt_npct(tot_n, eligible_denom)
   )
 }
