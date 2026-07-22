@@ -1,5 +1,5 @@
 # Author: Ryan Muddiman
-# Date of initial development (YYYY-MM-DD): 2024-10-22
+# Date of initial development (YYYY-MM-DD): 2026-07-22
 # Purpose: This script is the main simulation for generating a large synthetic
 # population health dataset, including health records,
 # with time-varying confounding.
