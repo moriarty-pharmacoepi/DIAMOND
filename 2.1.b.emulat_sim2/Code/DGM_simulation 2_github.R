@@ -1,5 +1,5 @@
 # Author: Ryan Muddiman
-# Date of initial development (YYYY-MM-DD): 2026-07-20
+# Date of initial development (YYYY-MM-DD): 2024-10-22
 # Purpose: This script is the main simulation for generating a large synthetic
 # population health dataset, including health records,
 # with time-varying confounding.
@@ -32,14 +32,7 @@ required_packages <- c("survival",
                        "flexsurv",
                        "MASS",
                        "data.table",
-                       "ggplot2",
-                       "tibble",
-                       "purrr",
-                       "tidycmprsk",
-                       "ggsurvfit",
-                       "GGally"
-                       )
-
+                       "ggplot2")
 
 
 missing_packages <- required_packages[!(required_packages %in% installed.packages())]
@@ -60,7 +53,7 @@ num_cores <- detectCores()
 
 
 
-generate_simulated_data <- function(nsim = 1,num_patients = 500,treat_strat = "taper",factor_seed = 70){
+generate_simulated_data <- function(nsim = 1,num_patients = 200,treat_strat = "taper",factor_seed = 9){
   
   # initialize cluster for parrallel computation
   cl <- makeCluster(num_cores-1)
@@ -85,7 +78,7 @@ generate_simulated_data <- function(nsim = 1,num_patients = 500,treat_strat = "t
   progress <- function(n) pb$tick()
   opts <- list(progress = progress)  
   
-  num_covariates<-5
+  num_covariates<-6
 
   simResults<-  foreach(
     sim = 1:nsim,
@@ -120,8 +113,9 @@ cov2<-data[,1]
 cov3<-data[,2]
 cov4<- 1 # starting dose
 cov5<- 0 # AE indicator
+cov6<-0
 
-data<-cbind(cov1,cov2,cov3,cov4,cov5)
+data<-cbind(cov1,cov2,cov3,cov4,cov5,cov6)
 
 init_covariates <- matrix(data = data, nrow = num_patients, ncol = num_covariates)
 
@@ -155,12 +149,12 @@ generate_Q_matrix_from_hazards <- function(hazards) {
 }
 
 # Compute cumulative hazard and sample sojourn time
-compute_cumulative_hazard <- function(hazard_params, clock, covariates_fn,dose_reduction) {
+compute_cumulative_hazard <- function(hazard_params, clock, covariates_fn,dose_reduction,adverse_event_occur) {
   
   # Total hazard at time t (scalar or vector)
   total_hazard <- function(t) {
     t_plus_clock <- t + clock
-    covariates_at_t <- covariates_fn(t_plus_clock,dose_reduction)  # n x p matrix if multiple subjects
+    covariates_at_t <- covariates_fn(t_plus_clock,dose_reduction,adverse_event_occur)  # n x p matrix if multiple subjects
    
     total_hazard_value <- rep(0, length(t))
     
@@ -199,14 +193,14 @@ compute_cumulative_hazard <- function(hazard_params, clock, covariates_fn,dose_r
 }
 
 # Computes the static cause specific hazard at a specific time
-get_cause_specific_hazard <- function(state, clock, sojourn_time, hazard_params, covariates_fn,dose_reduction) {
+get_cause_specific_hazard <- function(state, clock, sojourn_time, hazard_params, covariates_fn,dose_reduction,adverse_event_occur) {
   
   state_hazards <-subset(hazard_params, !is.na(type) & from==state)  # list of hazards for this state
   #print(state_hazards)
   n_causes <- nrow(state_hazards)
   
   # compute covariates at current clock time
-  covariates_at_t <- covariates_fn(clock,dose_reduction)   # numeric vector
+  covariates_at_t <- covariates_fn(clock,dose_reduction,adverse_event_occur)   # numeric vector
   
   # precompute time effect (scalar)
   time_effect <- clock
@@ -278,13 +272,13 @@ simulate_cmc <- function(time, hazard_params,baseline_covariates,starting_state)
   dose_reduction<-0
   
   # function defining covariates
-  covariates_fn <- function(t,dose_reduction) {
+  covariates_fn <- function(t,dose_reduction,adverse_event_occur) {
     # Sex
     z1 <- rep(baseline_covariates[1], length(t))             
     # Age
-    z2 <- rep( baseline_covariates[2], length(t))    
+    z2 <- rep( baseline_covariates[2], length(t))    + t
     # Comorbidity
-    z3 <- rep( baseline_covariates[3], length(t))    
+    z3 <- rep( baseline_covariates[3], length(t))    + 0.01*t
     
     if (treat_strat == "taper"){
     # Dose now
@@ -295,8 +289,10 @@ simulate_cmc <- function(time, hazard_params,baseline_covariates,starting_state)
     
     z5 <- dose_reduction
     
+    z6 <- adverse_event_occur
+    
     # Combine into a matrix
-    return(cbind(z1, z2, z3, z4, z5))
+    return(cbind(z1, z2, z3, z4, z5, z6))
   }
 
   #print(history_data[[1]]$X1)
@@ -306,7 +302,7 @@ simulate_cmc <- function(time, hazard_params,baseline_covariates,starting_state)
     state_hazards <- subset(hazard_params, !is.na(type) & from==current_state)
     
      
-    sojourn_time <- compute_cumulative_hazard(state_hazards, clock, covariates_fn,dose_reduction)
+    sojourn_time <- compute_cumulative_hazard(state_hazards, clock, covariates_fn,dose_reduction,adverse_event_occur)
     
     eta <- -2 +
      1.6 * previous_reduction -
@@ -319,7 +315,7 @@ simulate_cmc <- function(time, hazard_params,baseline_covariates,starting_state)
     previous_reduction <-dose_reduction
     
     #print(step)
-    covs <- matrix(covariates_fn(clock,dose_reduction), nrow = 1)
+    covs <- matrix(covariates_fn(clock,dose_reduction,adverse_event_occur), nrow = 1)
      # Update the simulation clock
     clock <- clock + sojourn_time
     # Update time spent in the current state
@@ -345,7 +341,7 @@ simulate_cmc <- function(time, hazard_params,baseline_covariates,starting_state)
     
     #possible_states <- possible_states[possible_states != current_state]
     # This defines the clock forward behaviour for deprescribing
-    cause_specific_hazards <- get_cause_specific_hazard(current_state,clock,sojourn_time,hazard_params,covariates_fn,dose_reduction)
+    cause_specific_hazards <- get_cause_specific_hazard(current_state,clock,sojourn_time,hazard_params,covariates_fn,dose_reduction,adverse_event_occur)
     
     # Calculate vector of probabilities using relative hazard
     transition_probs = cause_specific_hazards/sum(cause_specific_hazards)
@@ -390,14 +386,38 @@ simulate_cmc <- function(time, hazard_params,baseline_covariates,starting_state)
 hazards <- matrix(c(
   0.0, 0.05, 0.6, 0.08,   # 1 Initial → 1,2,3,4
   0.0, 0.0, 0.0, 0.0, # 2 Death
-  0.0, 0.1, 0.9, 0.1,    # 3 Visit
+  0.0, 0.05, 0.9, 0.1,    # 3 Visit
   0.0, 0.1, 0.5, 0.0     # 4 AE
 ), nrow = 4, ncol = 4, byrow = TRUE)
 
 
+effects_matrix<- matrix(
+  c(
+    0, 0, 0, 0, 0,0, #1
+    0,  0.1, 0.1,0,0,0,#2 #1->2
+    0, 0, 0, 0,  0,0, #3
+    0, 0, 0, 0,  0,0, #4
+    0, 0, 0, 0,  0,0, #5 2->1
+    0, 0, 0, 0,  0,0, #6 # 2->2
+    0, 0, 0, 0,  0,0, #7
+    0, 0, 0, 0,  0,0, #8  2->4
+    0, 0, 0, 0,  0,0, #9
+    0, 0, 0, 2,  0,0, #10  3->2
+    0, 0, 0, 0,  2,1, #11  3->3
+    0.1,0.1, 0,0,0,0, #12 Sex 3->4
+    0, 0, 0, 0, 0 ,0, #13
+    0.1,0.1, 0,  0.0, 0,0, #14 4->2
+    0, 0, 0, 0,  0,0, #15
+    0, 0, 0, 0, 0,0 #16
+  ),
+  nrow = 16,
+  byrow = TRUE
+)
 
+library(knitr)
+kable(as.data.frame(effects_matrix), digits = 1)
 
-
+library(tibble)
   
 hazard_params <- tibble(
   from = rep(1:4, each = 4),
@@ -418,28 +438,7 @@ hazard_params <- tibble(
   scale = rep(NA, 16),
   a = rep(NA, 16),
   b = rep(NA, 16),
-  effects =  matrix(
-    c(
-      0, 0, 0, 0, 0, #1
-      0, 0.1, 0.1, 0, 0,#2 #1->2
-      0, 0, 0, 0, 0, #3
-      0, 0, 0, 0, 0, #4
-      0, 0, 0, 0, 0, #5 2->1
-      0, 0, 0, 0, 0, #6 # 2->2
-      0, 0, 0, 0, 0, #7
-      0, 0, 0, 0, 0, #8  2->4
-      0, 0, 0, 0, 0, #9
-      0, 0, 0, 2, 0, #10  3->2
-      0, 0, 0, 0, 1, #11  3->3
-      0.1, 0.1, 0, 0, 0, #12 Sex 3->4
-      0, 0, 0, 0, 0, #13
-      0.1, 0.1, 0, 0.1, 0, #14 4->2
-      0, 0, 0, 0, 0, #15
-      0, 0, 0, 0, 0  #16
-    ),
-    nrow = 16,
-    byrow = TRUE
-  ),
+  effects = effects_matrix,
   time_effects = matrix(0, 16, num_covariates)
 )
 
@@ -566,14 +565,15 @@ result_list
   return(simResults)
 } # end generate_simulated_data function
 
-
+print("Finished generating data")
 
 
 # Calculating the true value of the estimand ------------------------------
 data_taper_raw<-generate_simulated_data(treat_strat = "taper")
 data_continue_raw<-generate_simulated_data(treat_strat = "continue")
 
-
+library(dplyr)
+library(purrr)
 
 overall_prop <- bind_rows(map(data_taper_raw, "ms_history")) %>%
   group_by(Patient_ID) %>%
@@ -601,8 +601,9 @@ ggplot(visit_dist, aes(x = nvisits)) +
 
 print(overall_prop)
 
-
-
+library(dplyr)
+library(tidycmprsk)
+library(ggsurvfit)
 
 prepare_data <- function(data) {
   data %>%
@@ -639,19 +640,13 @@ for (i in seq_len(nsim)) {
   risk_curves <- marginal_risk$tidy %>%
     dplyr::select(time, strata, estimate)
   
-  risk_diffs_true[i] <- risk5$estimate[2] - risk5$estimate[1]
+  risk_diffs_true[i] <- with(risk5, estimate[strata == "Taper"] - estimate[strata == "Continue"])
 }
 
 risk_diffs_true
 
 
-true_risk_curve<-cuminc(
-  Surv(TStop, status) ~ group,
-  data = result)%>%
-  ggcuminc()
-
-print(true_risk_curve)
-# Generating the natural course (with censoring) --------------------------
+# Generating the natural course (data for estimation) --------------------------
 
 data_natural_course <- lapply(data_taper_raw, function(x) {
   x$ms_history %>%
@@ -669,12 +664,14 @@ data_natural_course <- lapply(data_taper_raw, function(x) {
 
 
 
-
+library(ggplot2)
+library(GGally)
+library(patchwork)
 
 
 # Function for plotting event histories
 
-  
+# This code plots the 1st 20 patients event histories for dataset 1 (nsim=1)
   
   df<-data_taper_raw[[1]]$ms_history%>%
     ungroup()%>%   #important: remove any existing grouping
@@ -705,14 +702,14 @@ data_natural_course <- lapply(data_taper_raw, function(x) {
           y = "Patient ID",
           color = "State",
           shape = "State") 
-
+    # theme(text = element_text(size = 12))
 
   print(plot)
   
 df_dose<-data_taper_raw[[1]]$ms_history%>%
     dplyr::select(cov4,TStart,Patient_ID)
     
-
+# This code plots the dose trajectories of all patients for nsim=1
 plot_dose <- ggplot(df_dose) +
   geom_line(
     aes(x = TStart, y = cov4, color = Patient_ID),
